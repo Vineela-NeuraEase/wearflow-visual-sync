@@ -1,5 +1,5 @@
 
-import { Activity, HeartPulse, Calendar, BookOpen, Settings } from "lucide-react";
+import { Activity, HeartPulse, Calendar, BookOpen } from "lucide-react";
 import { ToolOption } from "@/components/overlay/ToolButton";
 
 export const toolOptions: ToolOption[] = [
@@ -26,11 +26,5 @@ export const toolOptions: ToolOption[] = [
     icon: <BookOpen className="h-10 w-10 text-green-500 mb-2" />, 
     path: "/learn", 
     bgColor: "bg-green-100 hover:bg-green-200" 
-  },
-  { 
-    name: "Settings", 
-    icon: <Settings className="h-10 w-10 text-gray-500 mb-2" />, 
-    path: "/settings", 
-    bgColor: "bg-gray-100 hover:bg-gray-200" 
   }
 ];

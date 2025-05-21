@@ -3,11 +3,7 @@ import {
   Palette, 
   Bell, 
   Lock, 
-  Eye, 
   Info, 
-  History, 
-  Users, 
-  BellRing, 
   BookOpen, 
   User,
   Accessibility,
@@ -23,7 +19,7 @@ export const appSettingsOptions = [
     path: "/settings/accessibility"
   },
   { 
-    name: "Notifications & Feedback", 
+    name: "Notifications & Alerts", 
     icon: <Bell className="h-5 w-5 text-pink-500" />,
     description: "Alerts, sounds and haptic feedback",
     path: "/settings/feedback" 
@@ -33,12 +29,6 @@ export const appSettingsOptions = [
     icon: <Lock className="h-5 w-5 text-green-500" />,
     description: "Data management and sharing",
     path: "/settings/privacy" 
-  },
-  { 
-    name: "Advanced Views", 
-    icon: <Eye className="h-5 w-5 text-purple-500" />,
-    description: "Enable additional features",
-    path: "/settings/advanced-views" 
   },
   { 
     name: "About", 
@@ -65,27 +55,15 @@ export const personalOptions = [
 
 export const additionalOptions = [
   {
-    name: "SOS & Safety",
-    icon: <History className="h-5 w-5 text-red-500" />,
-    description: "Manage emergency features",
-    path: "/sos-history"
-  },
-  {
-    name: "Connected Accounts",
-    icon: <Users className="h-5 w-5 text-blue-500" />,
-    description: "Caregivers and shared access",
-    path: "/caregiver-view"
+    name: "User Account",
+    icon: <User className="h-5 w-5 text-indigo-500" />,
+    description: "Manage your profile",
+    path: "/profile-account"
   },
   {
     name: "Resource Library",
     icon: <BookOpen className="h-5 w-5 text-teal-500" />,
     description: "Articles and helpful content",
     path: "/resource-library"
-  },
-  {
-    name: "Account",
-    icon: <User className="h-5 w-5 text-indigo-500" />,
-    description: "Manage your profile",
-    path: "/profile-account"
   }
 ];

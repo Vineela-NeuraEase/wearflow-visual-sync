@@ -9,32 +9,11 @@ const Monitor = () => {
   
   const monitorTools = [
     {
-      title: "Emotion Logger",
-      description: "Track your daily emotional state",
-      icon: <Heart className="h-6 w-6 text-pink-500" />,
-      path: "/emotion-logger",
-      color: "bg-pink-100"
-    },
-    {
       title: "Emotion Hub",
-      description: "Complete dashboard for emotion tracking",
+      description: "Complete dashboard for all emotion tracking",
       icon: <BarChart2 className="h-6 w-6 text-purple-500" />,
       path: "/emotion-hub",
       color: "bg-purple-100"
-    },
-    {
-      title: "Meltdown Tracker",
-      description: "Log and analyze meltdown episodes",
-      icon: <AlertTriangle className="h-6 w-6 text-amber-500" />,
-      path: "/meltdown-logger",
-      color: "bg-amber-100"
-    },
-    {
-      title: "Journal",
-      description: "Record your thoughts and experiences",
-      icon: <Book className="h-6 w-6 text-blue-500" />,
-      path: "/journal",
-      color: "bg-blue-100"
     },
     {
       title: "Body Stats",
@@ -42,6 +21,13 @@ const Monitor = () => {
       icon: <Activity className="h-6 w-6 text-green-500" />,
       path: "/body-stats",
       color: "bg-green-100"
+    },
+    {
+      title: "Environmental Tracking",
+      description: "Monitor external factors and triggers",
+      icon: <AlertTriangle className="h-6 w-6 text-amber-500" />,
+      path: "/environmental",
+      color: "bg-amber-100"
     },
     {
       title: "Bio Tracking",
@@ -57,11 +43,11 @@ const Monitor = () => {
       <div className="flex items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Monitor</h1>
-          <p className="text-muted-foreground">Track emotions, body stats, and meltdowns</p>
+          <p className="text-muted-foreground">Track emotions, body stats, and environmental factors</p>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {monitorTools.map((tool) => (
           <Card 
             key={tool.title}
@@ -81,14 +67,7 @@ const Monitor = () => {
         ))}
       </div>
       
-      <div className="mt-6 grid grid-cols-2 gap-4">
-        <Button
-          variant="outline"
-          className="w-full py-6"
-          onClick={() => navigate("/environmental")}
-        >
-          Environmental Factors
-        </Button>
+      <div className="mt-6">
         <Button
           variant="outline"
           className="w-full py-6"
