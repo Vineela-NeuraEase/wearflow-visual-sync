@@ -2,9 +2,7 @@
 import { useState } from "react";
 import HeaderSection from "@/components/home/HeaderSection";
 import StatusCard from "@/components/home/StatusCard";
-import AssistantCard from "@/components/home/AssistantCard";
-import QuickReliefSection from "@/components/home/QuickReliefSection";
-import QuickAccessSection from "@/components/home/QuickAccessSection";
+import QuickActionsSection from "@/components/home/QuickActionsSection";
 import UpcomingEventCard from "@/components/home/UpcomingEventCard";
 import AccessibilityNotice from "@/components/home/AccessibilityNotice";
 
@@ -25,11 +23,7 @@ const Home = () => {
         hrv={hrv} 
       />
       
-      <AssistantCard />
-      
-      <QuickReliefSection />
-      
-      <QuickAccessSection />
+      <QuickActionsSection />
       
       <UpcomingEventCard />
 

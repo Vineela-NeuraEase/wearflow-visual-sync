@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Bell, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { useAccessibility } from "@/context/AccessibilityContext";
 
 interface StatusCardProps {
@@ -20,24 +20,14 @@ const StatusCard = ({ regulationScore, heartRate, hrv }: StatusCardProps) => {
     <Card className={`${highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-blue/30'} rounded-3xl p-6 animate-fade-in`}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Current Status</h2>
-        <div className="flex gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-blue-600"
-            onClick={() => navigate('/bio-tracking')}
-          >
-            Details
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-amber-600 border-amber-300 bg-amber-50"
-            onClick={() => navigate('/warning-system')}
-          >
-            Warning System
-          </Button>
-        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-blue-600"
+          onClick={() => navigate('/bio-tracking')}
+        >
+          Details
+        </Button>
       </div>
       
       <div className="space-y-4">
