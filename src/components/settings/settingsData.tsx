@@ -7,7 +7,7 @@ import {
   Info, 
   History, 
   Users, 
-  Bell as BellIcon, 
+  BellRing, 
   BookOpen, 
   User,
   Accessibility,
@@ -17,25 +17,19 @@ import {
 
 export const appSettingsOptions = [
   { 
-    name: "Display", 
-    icon: <Palette className="h-5 w-5 text-blue-500" />,
-    description: "Theme, text size and animations",
-    path: "/settings/display"
-  },
-  { 
-    name: "Accessibility", 
+    name: "Display & Accessibility", 
     icon: <Accessibility className="h-5 w-5 text-purple-500" />,
-    description: "Text size, contrast, animations",
+    description: "Appearance, text size, contrast",
     path: "/settings/accessibility"
   },
   { 
-    name: "Feedback", 
+    name: "Notifications & Feedback", 
     icon: <Bell className="h-5 w-5 text-pink-500" />,
-    description: "Haptic and sound settings",
+    description: "Alerts, sounds and haptic feedback",
     path: "/settings/feedback" 
   },
   { 
-    name: "Privacy", 
+    name: "Privacy & Data", 
     icon: <Lock className="h-5 w-5 text-green-500" />,
     description: "Data management and sharing",
     path: "/settings/privacy" 
@@ -56,37 +50,31 @@ export const appSettingsOptions = [
 
 export const personalOptions = [
   {
-    name: "Sensory Profile",
+    name: "Sensory & Emotion Profile",
     icon: <Brain className="h-5 w-5 text-indigo-500" />,
-    description: "Personalize sensory preferences",
+    description: "Personalize your experience",
     path: "/sensory-profile"
   },
   {
-    name: "Emotion Insights",
+    name: "Insights & Statistics",
     icon: <BarChart2 className="h-5 w-5 text-pink-500" />,
-    description: "View emotion patterns and trends",
+    description: "View patterns and trends",
     path: "/emotion-insights"
   }
 ];
 
 export const additionalOptions = [
   {
-    name: "SOS History",
+    name: "SOS & Safety",
     icon: <History className="h-5 w-5 text-red-500" />,
-    description: "View past panic events",
+    description: "Manage emergency features",
     path: "/sos-history"
   },
   {
-    name: "Caregiver View",
+    name: "Connected Accounts",
     icon: <Users className="h-5 w-5 text-blue-500" />,
-    description: "Manage shared information",
+    description: "Caregivers and shared access",
     path: "/caregiver-view"
-  },
-  {
-    name: "Notifications",
-    icon: <BellIcon className="h-5 w-5 text-yellow-500" />,
-    description: "Manage app notifications",
-    path: "/notification-center"
   },
   {
     name: "Resource Library",
@@ -95,9 +83,9 @@ export const additionalOptions = [
     path: "/resource-library"
   },
   {
-    name: "Profile & Account",
+    name: "Account",
     icon: <User className="h-5 w-5 text-indigo-500" />,
-    description: "Manage your account details",
+    description: "Manage your profile",
     path: "/profile-account"
   }
 ];

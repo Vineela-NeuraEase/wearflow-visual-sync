@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Smile, AlertTriangle } from "lucide-react";
+import { Smile, AlertTriangle, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface EmotionLogItemProps {
@@ -43,24 +43,31 @@ const LogTabContent = ({ setIsEmotionLoggerOpen, setIsMeltdownLoggerOpen }: LogT
   return (
     <div className="space-y-4">
       <Card className="p-4 bg-blue-50 rounded-xl">
-        <h2 className="text-lg font-medium mb-2">How are you feeling?</h2>
+        <h2 className="text-lg font-medium mb-2">Track Your Well-being</h2>
         <p className="text-sm text-gray-600 mb-4">
-          Track your emotions to identify patterns and improve well-being.
+          Log emotions or stressful events to understand patterns.
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Button 
             className="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 py-6"
             onClick={() => setIsEmotionLoggerOpen(true)}
           >
             <Smile className="h-5 w-5 mr-2 text-purple-500" />
-            Log Emotion
+            <span className="text-xs">Emotion</span>
           </Button>
           <Button 
             className="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 py-6"
             onClick={() => setIsMeltdownLoggerOpen(true)}
           >
             <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
-            Log Meltdown
+            <span className="text-xs">Meltdown</span>
+          </Button>
+          <Button 
+            className="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 py-6"
+            onClick={() => navigate("/journal/quick")}
+          >
+            <BookOpen className="h-5 w-5 mr-2 text-blue-500" />
+            <span className="text-xs">Journal</span>
           </Button>
         </div>
       </Card>

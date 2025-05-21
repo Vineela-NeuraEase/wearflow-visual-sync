@@ -1,5 +1,5 @@
 
-import { Activity, HeartPulse, Calendar, BookOpen, Database, Settings } from "lucide-react";
+import { Activity, HeartPulse, Calendar, BookOpen, Settings } from "lucide-react";
 import { ToolOption } from "@/components/overlay/ToolButton";
 
 export const toolOptions: ToolOption[] = [
@@ -28,15 +28,9 @@ export const toolOptions: ToolOption[] = [
     bgColor: "bg-green-100 hover:bg-green-200" 
   },
   { 
-    name: "Data", 
-    icon: <Database className="h-10 w-10 text-pink-500 mb-2" />, 
-    path: "/data", 
-    bgColor: "bg-pink-100 hover:bg-pink-200" 
-  },
-  {
-    name: "Settings",
-    icon: <Settings className="h-10 w-10 text-gray-500 mb-2" />,
-    path: "/settings",
-    bgColor: "bg-gray-100 hover:bg-gray-200"
+    name: "Settings", 
+    icon: <Settings className="h-10 w-10 text-gray-500 mb-2" />, 
+    path: "/settings", 
+    bgColor: "bg-gray-100 hover:bg-gray-200" 
   }
 ];

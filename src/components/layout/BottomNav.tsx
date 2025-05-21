@@ -1,18 +1,18 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
-import { Activity, HeartPulse, Calendar, BookOpen, Database } from "lucide-react";
+import { Activity, HeartPulse, Calendar, BookOpen, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Simplified navigation items - keeping the most essential ones
   const navItems = [
     { name: "Monitor", path: "/monitor", icon: Activity },
     { name: "Support", path: "/support", icon: HeartPulse },
     { name: "Plan", path: "/plan", icon: Calendar },
     { name: "Learn", path: "/learn", icon: BookOpen },
-    { name: "Data", path: "/data", icon: Database },
+    { name: "Settings", path: "/settings", icon: Settings },
   ];
   
   return (
