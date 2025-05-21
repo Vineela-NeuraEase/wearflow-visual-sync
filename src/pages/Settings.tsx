@@ -1,11 +1,29 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Settings as SettingsIcon, Palette, Bell, Lock, Eye, Info, History, Users, Bell as BellIcon, BookOpen, User } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Settings as SettingsIcon, 
+  Palette, 
+  Bell, 
+  Lock, 
+  Eye, 
+  Info, 
+  History, 
+  Users, 
+  Bell as BellIcon, 
+  BookOpen, 
+  User,
+  Accessibility,
+  Brain,
+  BarChart2
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useAccessibility } from "@/context/AccessibilityContext";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { highContrastEnabled, reducedMotionEnabled } = useAccessibility();
   
   const settingsOptions = [
     { 
@@ -13,6 +31,13 @@ const Settings = () => {
       icon: <Palette className="h-5 w-5 text-blue-500" />,
       description: "Theme, text size and animations",
       path: "/settings/display"
+    },
+    { 
+      name: "Accessibility", 
+      icon: <Accessibility className="h-5 w-5 text-purple-500" />,
+      description: "Text size, contrast, animations",
+      path: "/settings/accessibility",
+      highlight: highContrastEnabled || reducedMotionEnabled
     },
     { 
       name: "Feedback", 
@@ -38,6 +63,21 @@ const Settings = () => {
       description: "App version and information",
       path: "/settings/about" 
     },
+  ];
+  
+  const personalOptions = [
+    {
+      name: "Sensory Profile",
+      icon: <Brain className="h-5 w-5 text-indigo-500" />,
+      description: "Personalize sensory preferences",
+      path: "/sensory-profile"
+    },
+    {
+      name: "Emotion Insights",
+      icon: <BarChart2 className="h-5 w-5 text-pink-500" />,
+      description: "View emotion patterns and trends",
+      path: "/emotion-insights"
+    }
   ];
   
   const additionalOptions = [
@@ -89,6 +129,30 @@ const Settings = () => {
         <h2 className="text-lg font-medium mb-3">App Settings</h2>
         <div className="space-y-4">
           {settingsOptions.map((option) => (
+            <Card 
+              key={option.name} 
+              className={`p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow ${option.highlight ? 'border-2 border-purple-300' : ''}`}
+              onClick={() => navigate(option.path)}
+            >
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                {option.icon}
+              </div>
+              <div>
+                <h3 className="font-medium">{option.name}</h3>
+                <p className="text-sm text-muted-foreground">{option.description}</p>
+              </div>
+              {option.highlight && (
+                <div className="ml-auto">
+                  <span className="bg-purple-100 text-purple-800 text-xs rounded-full px-2 py-1">Active</span>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+
+        <h2 className="text-lg font-medium mb-3 mt-8">Personal Preferences</h2>
+        <div className="space-y-4">
+          {personalOptions.map((option) => (
             <Card 
               key={option.name} 
               className="p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
