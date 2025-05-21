@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,9 @@ const Home = () => {
   const menuItems = [
     { name: "Home", path: "/", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> },
     { name: "Bio Tracking", path: "/bio-tracking", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg> },
+    { name: "Early Warning", path: "/warning-system", icon: <Bell className="h-4 w-4" /> },
     { name: "Environmental", path: "/environmental", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v14"></path><path d="M18 22V4"></path><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h2v8z"></path><path d="M6 10V4a2 2 0 0 1 2-2h2"></path><path d="M10 2v8"></path></svg> },
+    { name: "Personal Insights", path: "/insights", icon: <BarChart2 className="h-4 w-4" /> },
     { name: "Sensory Profile", path: "/sensory-profile", icon: <Brain className="h-4 w-4" /> },
     { name: "Emotion Insights", path: "/emotion-insights", icon: <BarChart2 className="h-4 w-4" /> },
     { name: "Accessibility", path: "/settings/accessibility", icon: <Accessibility className="h-4 w-4" /> },
@@ -90,14 +91,24 @@ const Home = () => {
       <Card className={`${highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-blue/30'} rounded-3xl p-6 animate-fade-in`}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Current Status</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-blue-600"
-            onClick={() => navigate('/bio-tracking')}
-          >
-            Details
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-blue-600"
+              onClick={() => navigate('/bio-tracking')}
+            >
+              Details
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-amber-600 border-amber-300 bg-amber-50"
+              onClick={() => navigate('/warning-system')}
+            >
+              Warning System
+            </Button>
+          </div>
         </div>
         
         <div className="space-y-4">
@@ -154,13 +165,23 @@ const Home = () => {
         <p className={`${highContrastEnabled ? 'text-black' : 'text-muted-foreground'} mb-4`}>
           Tap to check in with your assistant
         </p>
-        <Button 
-          className={`w-full ${highContrastEnabled ? 'bg-high-contrast-primary hover:bg-high-contrast-primary/90' : 'bg-white hover:bg-white/90'} text-foreground rounded-xl flex items-center gap-2 justify-center`}
-          onClick={() => navigate('/chat')}
-        >
-          <MessageCircle className={`h-5 w-5 ${highContrastEnabled ? 'text-white' : 'text-primary'}`} />
-          <span>Chat Now</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            className={`flex-1 ${highContrastEnabled ? 'bg-high-contrast-primary hover:bg-high-contrast-primary/90' : 'bg-white hover:bg-white/90'} text-foreground rounded-xl flex items-center gap-2 justify-center`}
+            onClick={() => navigate('/chat')}
+          >
+            <MessageCircle className={`h-5 w-5 ${highContrastEnabled ? 'text-white' : 'text-primary'}`} />
+            <span>Chat Now</span>
+          </Button>
+          
+          <Button 
+            className={`flex-1 ${highContrastEnabled ? 'bg-high-contrast-secondary hover:bg-high-contrast-secondary/90' : 'bg-purple-100 hover:bg-purple-200'} text-foreground rounded-xl flex items-center gap-2 justify-center`}
+            onClick={() => navigate('/insights')}
+          >
+            <BarChart2 className={`h-5 w-5 ${highContrastEnabled ? 'text-white' : 'text-purple-600'}`} />
+            <span>Insights</span>
+          </Button>
+        </div>
       </Card>
       
       <div>

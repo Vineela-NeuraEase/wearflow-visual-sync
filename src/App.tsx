@@ -25,6 +25,8 @@ import FocusMode from "./pages/FocusMode";
 import BodyStats from "./pages/BodyStats";
 import BioTracking from "./pages/BioTracking";
 import EnvironmentalFactors from "./pages/EnvironmentalFactors";
+import WarningSystem from "./pages/WarningSystem";
+import Insights from "./pages/Insights";
 
 // Settings pages
 import Settings from "./pages/Settings";
@@ -95,6 +97,8 @@ const App = () => (
               <Route path="body-stats" element={<BodyStats />} />
               <Route path="bio-tracking" element={<BioTracking />} />
               <Route path="environmental" element={<EnvironmentalFactors />} />
+              <Route path="warning-system" element={<WarningSystem />} />
+              <Route path="insights" element={<Insights />} />
               
               {/* Settings routes */}
               <Route path="settings" element={<Settings />} />
