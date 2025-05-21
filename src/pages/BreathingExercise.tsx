@@ -5,17 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { X, Music } from "lucide-react";
 import "../styles/animations.css";
+import { useAudio } from "@/context/AudioContext";
+import { motion } from "framer-motion";
 
 // Breathing states
 type BreathState = "inhale" | "hold" | "exhale" | "rest" | "idle";
 
 const BreathingExercise = () => {
   const navigate = useNavigate();
+  const { play, soundEnabled, toggleSound } = useAudio();
   const [isStarted, setIsStarted] = useState(false);
   const [breathState, setBreathState] = useState<BreathState>("idle");
   const [counter, setCounter] = useState(4);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const totalSessionTime = 180; // 3 minutes in seconds
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -28,9 +30,11 @@ const BreathingExercise = () => {
     
     if (breathState === "inhale") {
       setCounter(4);
+      play("breathing");
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
+            play("pop");
             setBreathState("hold");
             return 7;
           }
@@ -41,6 +45,7 @@ const BreathingExercise = () => {
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
+            play("pop");
             setBreathState("exhale");
             return 8;
           }
@@ -51,6 +56,7 @@ const BreathingExercise = () => {
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
+            play("pop");
             setBreathState("inhale");
             return 4;
           }
@@ -60,7 +66,7 @@ const BreathingExercise = () => {
     }
     
     return () => clearInterval(interval);
-  }, [breathState, isStarted]);
+  }, [breathState, isStarted, play]);
   
   // Track session time
   useEffect(() => {
@@ -69,6 +75,7 @@ const BreathingExercise = () => {
     const interval = setInterval(() => {
       setElapsedTime(prev => {
         if (prev >= totalSessionTime) {
+          play("complete");
           setIsStarted(false);
           return prev;
         }
@@ -77,30 +84,10 @@ const BreathingExercise = () => {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [isStarted]);
-  
-  // Handle audio
-  useEffect(() => {
-    if (soundEnabled) {
-      audioRef.current = new Audio('/placeholder-audio.mp3'); // Replace with actual audio file
-      audioRef.current.loop = true;
-      
-      if (isStarted) {
-        audioRef.current.play().catch(e => console.log("Audio play failed:", e));
-      }
-    } else if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [soundEnabled, isStarted]);
+  }, [isStarted, play]);
   
   const handleStart = () => {
+    play("whoosh");
     setIsStarted(true);
     setBreathState("inhale");
     setCounter(4);
@@ -108,13 +95,10 @@ const BreathingExercise = () => {
   };
   
   const handleStop = () => {
+    play("click");
     setIsStarted(false);
     setBreathState("idle");
     navigate("/tools");
-  };
-  
-  const toggleSound = () => {
-    setSoundEnabled(prev => !prev);
   };
   
   const formatTime = (seconds: number) => {
@@ -122,20 +106,39 @@ const BreathingExercise = () => {
     const secs = seconds % 60;
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
+
+  const circleVariants = {
+    inhale: {
+      scale: 1.2,
+      borderColor: "rgba(59, 130, 246, 0.8)",
+      transition: { duration: 4, ease: "easeInOut" }
+    },
+    exhale: {
+      scale: 1,
+      borderColor: "rgba(191, 219, 254, 0.8)",
+      transition: { duration: 8, ease: "easeInOut" }
+    },
+    hold: {
+      scale: 1.2,
+      borderColor: "rgba(59, 130, 246, 0.8)",
+      transition: { duration: 0.1 }
+    },
+    idle: {
+      scale: 1,
+      borderColor: "rgba(191, 219, 254, 0.8)",
+      transition: { duration: 0.1 }
+    }
+  };
   
   return (
     <div className="h-screen bg-calm-blue/30 flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="relative w-64 h-64 flex items-center justify-center">
-          <div 
-            className={`absolute inset-0 rounded-full border-8 border-blue-300 ${
-              breathState === "inhale"
-                ? "animate-breathe-in"
-                : breathState === "exhale"
-                ? "animate-breathe-out"
-                : ""
-            }`}
-          ></div>
+          <motion.div 
+            className="absolute inset-0 rounded-full border-8 border-blue-300"
+            variants={circleVariants}
+            animate={breathState}
+          ></motion.div>
           <div className="z-10 text-center">
             <span className="text-6xl font-bold">{counter}</span>
             <p className="text-xl mt-2">
@@ -179,12 +182,18 @@ const BreathingExercise = () => {
         )}
         
         {!isStarted && (
-          <Button 
-            className="mt-12 bg-primary text-white px-12 py-6 text-xl"
-            onClick={handleStart}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
           >
-            Start Breathing
-          </Button>
+            <Button 
+              className="mt-12 bg-primary text-white px-12 py-6 text-xl"
+              onClick={handleStart}
+            >
+              Start Breathing
+            </Button>
+          </motion.div>
         )}
       </div>
     </div>
