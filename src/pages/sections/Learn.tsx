@@ -47,7 +47,7 @@ const Learn = () => {
   return (
     <div className="space-y-6">
       <motion.div 
-        className="flex items-center mb-4 bg-gradient-to-r from-primary/10 to-primary/5 p-3 rounded-xl"
+        className="flex items-center mb-4 bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-pink-500/10 p-4 rounded-xl shadow-sm border border-indigo-200 dark:border-indigo-900/40"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -55,7 +55,7 @@ const Learn = () => {
         <div className="flex items-center">
           <MenuDrawer />
           <div>
-            <h1 className="text-xl font-medium bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-300 bg-clip-text text-transparent">Learn</h1>
+            <h1 className="text-xl font-medium bg-gradient-to-r from-indigo-600 via-primary to-pink-500 dark:from-indigo-400 dark:via-primary dark:to-pink-400 bg-clip-text text-transparent">Learn</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">Knowledge and insights</p>
           </div>
         </div>
@@ -81,11 +81,11 @@ const Learn = () => {
             whileHover={{ scale: 1.03 }}
           >
             <Card 
-              className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 ${tool.borderGradient} bg-gradient-to-br ${tool.gradient}`}
+              className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 ${tool.borderGradient} bg-gradient-to-br ${tool.gradient} shadow-md hover:shadow-lg`}
               onClick={() => navigate(tool.path)}
             >
               <div className="flex items-center">
-                <div className={`${tool.color} p-3 rounded-full mr-3 bg-gradient-to-br ${tool.gradient}`}>
+                <div className={`${tool.color} p-3 rounded-full mr-3 bg-gradient-to-br ${tool.gradient} shadow-inner`}>
                   {tool.icon}
                 </div>
                 <div>
@@ -103,10 +103,10 @@ const Learn = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        <Card className="p-4 mt-4 border-2 border-l-4 border-amber-500 dark:border-gray-700 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/10">
-          <h2 className="text-base font-medium mb-2 bg-gradient-to-r from-amber-600 to-amber-500 dark:from-amber-400 dark:to-amber-300 bg-clip-text text-transparent">Today's Featured</h2>
+        <Card className="p-4 mt-4 border-2 border-l-4 border-amber-500 dark:border-gray-700 bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-100 dark:from-amber-900/20 dark:via-amber-800/15 dark:to-yellow-800/10 shadow-md">
+          <h2 className="text-base font-medium mb-2 bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-amber-300 dark:to-yellow-400 bg-clip-text text-transparent">Today's Featured</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Sensory Processing Basics</p>
-          <div className="bg-gradient-to-r from-amber-100 to-amber-200 dark:from-amber-900/30 dark:to-amber-800/20 rounded-lg h-24 flex items-center justify-center">
+          <div className="bg-gradient-to-r from-amber-100 via-amber-200 to-yellow-100 dark:from-amber-900/30 dark:via-amber-800/20 dark:to-yellow-900/20 rounded-lg h-24 flex items-center justify-center shadow-inner">
             <BookOpenCheck className="h-6 w-6 text-amber-500 animate-pulse-gentle" />
           </div>
         </Card>
