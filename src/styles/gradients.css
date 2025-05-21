@@ -20,6 +20,23 @@
   background: linear-gradient(90.5deg, rgba(255,207,139,0.50) 1.1%, rgba(255,207,139,1) 81.3%);
 }
 
+/* Enhanced gradient styles for autistic visual support */
+.bg-gradient-resources {
+  background: linear-gradient(90deg, #e0f2fe 0%, #bae6fd 100%);
+}
+
+.bg-gradient-insights {
+  background: linear-gradient(90deg, #f3e8ff 0%, #e9d5ff 100%);
+}
+
+.bg-gradient-emotions {
+  background: linear-gradient(90deg, #fce7f3 0%, #fbcfe8 100%);
+}
+
+.bg-gradient-category-header {
+  background: linear-gradient(90deg, rgba(var(--primary), 0.1), rgba(var(--primary), 0.05));
+}
+
 /* Dark mode gradients */
 .dark .bg-gradient-cool-blue {
   background: linear-gradient(90deg, hsla(221, 45%, 23%, 1) 0%, hsla(220, 78%, 19%, 1) 100%);
@@ -41,7 +58,20 @@
   background: linear-gradient(90.5deg, rgba(155, 127, 85, 0.5) 1.1%, rgba(155, 127, 85, 1) 81.3%);
 }
 
-/* Card gradients */
+/* Dark mode enhanced gradients */
+.dark .bg-gradient-resources {
+  background: linear-gradient(90deg, rgba(7, 89, 133, 0.5) 0%, rgba(3, 105, 161, 0.3) 100%);
+}
+
+.dark .bg-gradient-insights {
+  background: linear-gradient(90deg, rgba(107, 33, 168, 0.5) 0%, rgba(126, 34, 206, 0.3) 100%);
+}
+
+.dark .bg-gradient-emotions {
+  background: linear-gradient(90deg, rgba(157, 23, 77, 0.5) 0%, rgba(190, 24, 93, 0.3) 100%);
+}
+
+/* Card gradients with enhanced visual cues */
 .card-gradient-default {
   @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900;
 }
@@ -66,7 +96,7 @@
   @apply bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/30 dark:to-pink-800/30;
 }
 
-/* Button gradients */
+/* Enhanced button gradients with stronger visual identity */
 .btn-gradient-primary {
   @apply bg-gradient-to-r from-primary to-purple-500 hover:from-primary hover:to-purple-600 text-white;
 }
@@ -77,6 +107,19 @@
 
 .btn-gradient-danger {
   @apply bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white;
+}
+
+/* Enhanced visual cues for different content categories */
+.category-resources {
+  @apply bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 border-l-4 border-blue-500;
+}
+
+.category-insights {
+  @apply bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/10 border-l-4 border-purple-500;
+}
+
+.category-emotions {
+  @apply bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/10 border-l-4 border-pink-500;
 }
 
 /* Background glass effect */
@@ -103,4 +146,26 @@
 .dark .custom-gradient {
   --gradient-start: 40, 40, 40;
   --gradient-end: 20, 20, 20;
+}
+
+/* New accessibility gradients for better visual distinction */
+.focus-gradient {
+  @apply bg-gradient-to-r from-primary/20 to-primary/5 border-l-4 border-primary;
+}
+
+.important-gradient {
+  @apply bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/20 dark:to-amber-800/10 border-l-4 border-amber-500;
+}
+
+.success-gradient {
+  @apply bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/20 dark:to-green-800/10 border-l-4 border-green-500;
+}
+
+.warning-gradient {
+  @apply bg-gradient-to-r from-orange-100 to-orange-50 dark:from-orange-900/20 dark:to-orange-800/10 border-l-4 border-orange-500;
+}
+
+/* Gradient text for important headings */
+.gradient-text-primary {
+  @apply bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-300 bg-clip-text text-transparent;
 }
