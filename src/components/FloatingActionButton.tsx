@@ -22,7 +22,7 @@ const FloatingActionButton = () => {
   return (
     <>
       <motion.div 
-        className="fixed bottom-20 right-4"
+        className="fixed bottom-20 right-4 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ 
