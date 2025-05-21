@@ -2,7 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Heart, BarChart2, AlertTriangle, Book } from "lucide-react";
+import { Activity, Heart, BarChart2, AlertTriangle } from "lucide-react";
+import MenuDrawer from "@/components/home/MenuDrawer";
 
 const Monitor = () => {
   const navigate = useNavigate();
@@ -40,10 +41,13 @@ const Monitor = () => {
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Monitor</h1>
-          <p className="text-muted-foreground">Track emotions, body stats, and environmental factors</p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <MenuDrawer />
+          <div>
+            <h1 className="text-2xl font-semibold">Monitor</h1>
+            <p className="text-muted-foreground">Track emotions, body stats, and environmental factors</p>
+          </div>
         </div>
       </div>
       
