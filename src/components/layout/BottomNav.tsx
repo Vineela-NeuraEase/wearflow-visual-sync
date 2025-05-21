@@ -1,6 +1,6 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, MessageCircle, Layers, Calendar, Menu } from "lucide-react";
+import { Activity, HeartPulse, Calendar, BookOpen, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const BottomNav = () => {
@@ -8,10 +8,11 @@ const BottomNav = () => {
   const location = useLocation();
   
   const navItems = [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Chat", path: "/chat", icon: MessageCircle },
-    { name: "Tools", path: "/tools", icon: Layers },
-    { name: "Routine", path: "/routine", icon: Calendar },
+    { name: "Monitor", path: "/monitor", icon: Activity },
+    { name: "Support", path: "/support", icon: HeartPulse },
+    { name: "Plan", path: "/plan", icon: Calendar },
+    { name: "Learn", path: "/learn", icon: BookOpen },
+    { name: "Data", path: "/data", icon: Database },
   ];
   
   return (
