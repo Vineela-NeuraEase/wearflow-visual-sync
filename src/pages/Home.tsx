@@ -1,11 +1,16 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Bell, MessageCircle, Wind, Heart, Zap } from "lucide-react";
+import { Bell, MessageCircle, Wind, Heart, Zap, Timer, Smile, Book } from "lucide-react";
+import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
+import EmotionLoggerSheet from "@/components/sheets/EmotionLoggerSheet";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [isBreakTimerOpen, setIsBreakTimerOpen] = useState(false);
+  const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
   
   return (
     <div className="space-y-6">
@@ -82,6 +87,41 @@ const Home = () => {
         </div>
       </div>
       
+      <div>
+        <h2 className="text-xl font-semibold mb-3">Quick Access</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <Card 
+            className="p-4 rounded-2xl cursor-pointer hover:scale-105 transition-transform bg-blue-100"
+            onClick={() => setIsBreakTimerOpen(true)}
+          >
+            <div className="mb-2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
+              <Timer className="h-5 w-5 text-blue-500" />
+            </div>
+            <h3 className="font-medium text-sm">Break Timer</h3>
+          </Card>
+          
+          <Card 
+            className="p-4 rounded-2xl cursor-pointer hover:scale-105 transition-transform bg-purple-100"
+            onClick={() => setIsEmotionLoggerOpen(true)}
+          >
+            <div className="mb-2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
+              <Smile className="h-5 w-5 text-purple-500" />
+            </div>
+            <h3 className="font-medium text-sm">Log Mood</h3>
+          </Card>
+          
+          <Card 
+            className="p-4 rounded-2xl cursor-pointer hover:scale-105 transition-transform bg-pink-100"
+            onClick={() => navigate('/journal')}
+          >
+            <div className="mb-2 rounded-full bg-white w-10 h-10 flex items-center justify-center">
+              <Book className="h-5 w-5 text-pink-500" />
+            </div>
+            <h3 className="font-medium text-sm">Journal</h3>
+          </Card>
+        </div>
+      </div>
+      
       <Card className="bg-white rounded-2xl p-4">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold">Next up: Reading Time</h2>
@@ -99,6 +139,10 @@ const Home = () => {
           </div>
         </div>
       </Card>
+
+      {/* Sheets */}
+      <BreakTimerSheet isOpen={isBreakTimerOpen} onClose={() => setIsBreakTimerOpen(false)} />
+      <EmotionLoggerSheet isOpen={isEmotionLoggerOpen} onClose={() => setIsEmotionLoggerOpen(false)} />
     </div>
   );
 };
