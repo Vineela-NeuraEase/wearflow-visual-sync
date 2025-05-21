@@ -10,28 +10,28 @@ const Plan = () => {
   const planTools = [
     {
       title: "Daily Routine",
-      description: "Organize your day with visual schedules",
+      description: "Organize your day visually",
       icon: <Calendar className="h-6 w-6 text-blue-500" />,
       path: "/routine",
       color: "bg-blue-100"
     },
     {
       title: "Break Timer",
-      description: "Structured breaks to maintain balance",
+      description: "Schedule structured breaks",
       icon: <Timer className="h-6 w-6 text-green-500" />,
       path: "/break-timer",
       color: "bg-green-100"
     },
     {
       title: "Focus Mode",
-      description: "Minimize distractions for productive work",
+      description: "Reduce distractions",
       icon: <Focus className="h-6 w-6 text-purple-500" />,
       path: "/focus",
       color: "bg-purple-100"
     },
     {
       title: "Routine Wizard",
-      description: "Create and customize your ideal routines",
+      description: "Create custom routines",
       icon: <Calendar className="h-6 w-6 text-amber-500" />,
       path: "/routine-wizard",
       color: "bg-amber-100"
@@ -40,30 +40,30 @@ const Plan = () => {
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center mb-4">
         <div className="flex items-center">
           <MenuDrawer />
           <div>
-            <h1 className="text-2xl font-semibold">Plan</h1>
-            <p className="text-muted-foreground">Routines, breaks, and focus tools</p>
+            <h1 className="text-xl font-medium">Plan</h1>
+            <p className="text-sm text-gray-600">Daily organization tools</p>
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {planTools.map((tool) => (
           <Card 
             key={tool.title}
-            className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+            className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
             onClick={() => navigate(tool.path)}
           >
             <div className="flex items-center">
-              <div className={`${tool.color} p-3 rounded-full mr-4`}>
+              <div className={`${tool.color} p-3 rounded-full mr-3`}>
                 {tool.icon}
               </div>
               <div>
-                <h3 className="font-medium">{tool.title}</h3>
-                <p className="text-sm text-muted-foreground">{tool.description}</p>
+                <h3 className="font-medium text-base">{tool.title}</h3>
+                <p className="text-sm text-gray-600">{tool.description}</p>
               </div>
             </div>
           </Card>
