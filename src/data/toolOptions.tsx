@@ -1,5 +1,5 @@
 
-import { Wind, AlertTriangle, Eye, Vibration, Music } from "lucide-react";
+import { Wind, AlertTriangle, Eye, Vibrate, Music } from "lucide-react";
 import { ToolOption } from "@/components/overlay/ToolButton";
 
 export const toolOptions: ToolOption[] = [
@@ -23,7 +23,7 @@ export const toolOptions: ToolOption[] = [
   },
   { 
     name: "Haptic", 
-    icon: <Vibration className="h-10 w-10 text-pink-500 mb-2" />, 
+    icon: <Vibrate className="h-10 w-10 text-pink-500 mb-2" />, 
     path: "/haptic", 
     bgColor: "bg-pink-100 hover:bg-pink-200" 
   },
