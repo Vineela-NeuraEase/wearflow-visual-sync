@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Filter, Info } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Filter, Info, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
