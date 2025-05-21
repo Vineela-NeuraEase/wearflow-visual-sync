@@ -30,7 +30,7 @@ const JournalHeader = ({ mode, handleSave, formattedDate }: JournalHeaderProps) 
 
   return (
     <>
-      <div className="bg-blue-100 p-4 rounded-b-3xl">
+      <div className="bg-amber-100 p-4 rounded-b-3xl">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full">
@@ -41,7 +41,7 @@ const JournalHeader = ({ mode, handleSave, formattedDate }: JournalHeaderProps) 
           {mode !== "voice" && (
             <Button 
               onClick={handleSave}
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-amber-500 hover:bg-amber-600"
             >
               Save
             </Button>
