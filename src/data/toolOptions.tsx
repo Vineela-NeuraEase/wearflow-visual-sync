@@ -1,5 +1,5 @@
 
-import { Wind, AlertTriangle, Eye, Vibrate, Music } from "lucide-react";
+import { Wind, AlertTriangle, Eye, Vibrate, Music, Settings } from "lucide-react";
 import { ToolOption } from "@/components/overlay/ToolButton";
 
 export const toolOptions: ToolOption[] = [
@@ -33,4 +33,10 @@ export const toolOptions: ToolOption[] = [
     path: "/sounds", 
     bgColor: "bg-green-100 hover:bg-green-200" 
   },
+  {
+    name: "Settings",
+    icon: <Settings className="h-10 w-10 text-gray-500 mb-2" />,
+    path: "/settings",
+    bgColor: "bg-gray-100 hover:bg-gray-200"
+  }
 ];
