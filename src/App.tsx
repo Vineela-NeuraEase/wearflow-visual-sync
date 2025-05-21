@@ -23,7 +23,7 @@ import JournalEntry from "./pages/JournalEntry";
 import FocusMode from "./pages/FocusMode";
 import BodyStats from "./pages/BodyStats";
 
-// New settings pages
+// Settings pages
 import Settings from "./pages/Settings";
 import DisplaySettings from "./pages/DisplaySettings";
 import FeedbackSettings from "./pages/FeedbackSettings";
@@ -37,6 +37,13 @@ import ChooseSOSSide from "./pages/ChooseSOSSide";
 import WearablePairing from "./pages/WearablePairing";
 import AddOnsMarketplace from "./pages/AddOnsMarketplace";
 import WelcomeFinish from "./pages/WelcomeFinish";
+
+// New pages
+import SOSHistory from "./pages/SOSHistory";
+import CaregiverView from "./pages/CaregiverView";
+import NotificationCenter from "./pages/NotificationCenter";
+import ResourceLibrary from "./pages/ResourceLibrary";
+import ProfileAccount from "./pages/ProfileAccount";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +89,13 @@ const App = () => (
             <Route path="settings/privacy" element={<PrivacySettings />} />
             <Route path="settings/advanced-views" element={<AdvancedViewsSettings />} />
             <Route path="settings/add-ons" element={<AddOnsMarketplace />} />
+            
+            {/* New page routes */}
+            <Route path="sos-history" element={<SOSHistory />} />
+            <Route path="caregiver-view" element={<CaregiverView />} />
+            <Route path="notification-center" element={<NotificationCenter />} />
+            <Route path="resource-library" element={<ResourceLibrary />} />
+            <Route path="profile-account" element={<ProfileAccount />} />
             
             <Route path="*" element={<NotFound />} />
           </Route>

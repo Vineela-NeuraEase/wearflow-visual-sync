@@ -3,20 +3,65 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Bell, MessageCircle, Wind, Heart, Zap, Timer, Smile, Book } from "lucide-react";
+import { Bell, MessageCircle, Wind, Heart, Zap, Timer, Smile, Book, Menu } from "lucide-react";
 import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
 import EmotionLoggerSheet from "@/components/sheets/EmotionLoggerSheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Home = () => {
   const navigate = useNavigate();
   const [isBreakTimerOpen, setIsBreakTimerOpen] = useState(false);
   const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
   
+  const menuItems = [
+    { name: "SOS History", path: "/sos-history" },
+    { name: "Caregiver View", path: "/caregiver-view" },
+    { name: "Notification Center", path: "/notification-center" },
+    { name: "Resource Library", path: "/resource-library" },
+    { name: "Profile & Account", path: "/profile-account" },
+    { name: "Settings", path: "/settings" },
+    { name: "Daily Routine", path: "/routine" },
+    { name: "Focus Mode", path: "/focus" },
+    { name: "Journal Entries", path: "/journal" },
+    { name: "Body Stats", path: "/body-stats" },
+  ];
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Calm Space</h1>
-        <Button variant="outline" size="icon" className="rounded-full">
+        <div className="flex items-center">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <div className="py-6">
+                <h2 className="text-2xl font-bold mb-6 px-2">Hana</h2>
+                <div className="space-y-2">
+                  {menuItems.map((item) => (
+                    <Button 
+                      key={item.path} 
+                      variant="ghost" 
+                      className="w-full justify-start text-lg"
+                      onClick={() => navigate(item.path)}
+                    >
+                      {item.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <h1 className="text-2xl font-bold">Hana</h1>
+        </div>
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="rounded-full"
+          onClick={() => navigate("/notification-center")}
+        >
           <Bell className="h-4 w-4" />
         </Button>
       </div>
