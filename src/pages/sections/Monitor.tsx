@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Activity, Heart, BarChart2, AlertTriangle } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
+import { motion } from "framer-motion";
 
 const Monitor = () => {
   const navigate = useNavigate();
@@ -51,35 +52,56 @@ const Monitor = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
-        {monitorTools.map((tool) => (
-          <Card 
+      <motion.div 
+        className="grid grid-cols-2 gap-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        {monitorTools.map((tool, index) => (
+          <motion.div
             key={tool.title}
-            className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
-            onClick={() => navigate(tool.path)}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+            whileHover={{ scale: 1.05 }}
           >
-            <div className="flex items-center">
-              <div className={`${tool.color} p-3 rounded-full mr-3`}>
-                {tool.icon}
+            <Card 
+              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
+              onClick={() => navigate(tool.path)}
+            >
+              <div className="flex items-center">
+                <div className={`${tool.color} p-3 rounded-full mr-3`}>
+                  {tool.icon}
+                </div>
+                <div>
+                  <h3 className="font-medium text-base">{tool.title}</h3>
+                  <p className="text-sm text-gray-600">{tool.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium text-base">{tool.title}</h3>
-                <p className="text-sm text-gray-600">{tool.description}</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
       
-      <div className="mt-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.3 }}
+      >
         <Button
           variant="outline"
-          className="w-full py-3 border-2"
+          className="w-full py-3 border-2 hover:bg-gray-50"
           onClick={() => navigate("/warning-system")}
         >
-          Warning System
+          <motion.div
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
+            Warning System
+          </motion.div>
         </Button>
-      </div>
+      </motion.div>
     </div>
   );
 };

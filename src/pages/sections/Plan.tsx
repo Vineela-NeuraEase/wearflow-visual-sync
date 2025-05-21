@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Calendar, Timer, Focus } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
+import { motion } from "framer-motion";
 
 const Plan = () => {
   const navigate = useNavigate();
@@ -38,6 +39,22 @@ const Plan = () => {
     }
   ];
   
+  // Animation variants for staggered animations
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-4">
@@ -50,25 +67,36 @@ const Plan = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 gap-3"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
         {planTools.map((tool) => (
-          <Card 
+          <motion.div
             key={tool.title}
-            className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
-            onClick={() => navigate(tool.path)}
+            variants={item}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <div className="flex items-center">
-              <div className={`${tool.color} p-3 rounded-full mr-3`}>
-                {tool.icon}
+            <Card 
+              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
+              onClick={() => navigate(tool.path)}
+            >
+              <div className="flex items-center">
+                <div className={`${tool.color} p-3 rounded-full mr-3`}>
+                  {tool.icon}
+                </div>
+                <div>
+                  <h3 className="font-medium text-base">{tool.title}</h3>
+                  <p className="text-sm text-gray-600">{tool.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium text-base">{tool.title}</h3>
-                <p className="text-sm text-gray-600">{tool.description}</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

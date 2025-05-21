@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { BookOpen, BarChart2 } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
+import { motion } from "framer-motion";
+import "../styles/animations.css";
 
 const Learn = () => {
   const navigate = useNavigate();
@@ -31,6 +33,12 @@ const Learn = () => {
     }
   ];
   
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-4">
@@ -43,33 +51,56 @@ const Learn = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 gap-3"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.15
+            }
+          }
+        }}
+      >
         {learnTools.map((tool) => (
-          <Card 
+          <motion.div
             key={tool.title}
-            className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
-            onClick={() => navigate(tool.path)}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.03 }}
           >
-            <div className="flex items-center">
-              <div className={`${tool.color} p-3 rounded-full mr-3`}>
-                {tool.icon}
+            <Card 
+              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
+              onClick={() => navigate(tool.path)}
+            >
+              <div className="flex items-center">
+                <div className={`${tool.color} p-3 rounded-full mr-3`}>
+                  {tool.icon}
+                </div>
+                <div>
+                  <h3 className="font-medium text-base">{tool.title}</h3>
+                  <p className="text-sm text-gray-600">{tool.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium text-base">{tool.title}</h3>
-                <p className="text-sm text-gray-600">{tool.description}</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
       
-      <Card className="p-3 mt-4 border-2">
-        <h2 className="text-base font-medium mb-2">Today's Featured</h2>
-        <p className="text-sm text-gray-600 mb-3">Sensory Processing Basics</p>
-        <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center">
-          <BookOpen className="h-6 w-6 text-gray-400" />
-        </div>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
+        <Card className="p-3 mt-4 border-2">
+          <h2 className="text-base font-medium mb-2">Today's Featured</h2>
+          <p className="text-sm text-gray-600 mb-3">Sensory Processing Basics</p>
+          <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center">
+            <BookOpen className="h-6 w-6 text-gray-400 animate-pulse-gentle" />
+          </div>
+        </Card>
+      </motion.div>
     </div>
   );
 };
