@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -7,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ThresholdSettings {
   heartRateHigh: number;
@@ -18,10 +18,72 @@ interface ThresholdSettings {
   enableAutoAdjust: boolean;
 }
 
+interface ThresholdPreset {
+  id: string;
+  name: string;
+  settings: ThresholdSettings;
+}
+
 interface CustomThresholdEditorProps {
   initialSettings?: Partial<ThresholdSettings>;
   onSave: (settings: ThresholdSettings) => void;
 }
+
+// Default presets that users can choose from
+const defaultPresets: ThresholdPreset[] = [
+  {
+    id: "standard",
+    name: "Standard",
+    settings: {
+      heartRateHigh: 90,
+      heartRateLow: 55,
+      hrvLow: 35,
+      sleepQualityMin: 65,
+      regulationScore: 70,
+      enableNotifications: true,
+      enableAutoAdjust: false
+    }
+  },
+  {
+    id: "sensitive",
+    name: "High Sensitivity",
+    settings: {
+      heartRateHigh: 85,
+      heartRateLow: 60,
+      hrvLow: 40,
+      sleepQualityMin: 70,
+      regulationScore: 80,
+      enableNotifications: true,
+      enableAutoAdjust: true
+    }
+  },
+  {
+    id: "relaxed",
+    name: "Low Sensitivity",
+    settings: {
+      heartRateHigh: 100,
+      heartRateLow: 50,
+      hrvLow: 30,
+      sleepQualityMin: 60,
+      regulationScore: 65,
+      enableNotifications: true,
+      enableAutoAdjust: false
+    }
+  },
+  {
+    id: "sleep",
+    name: "Sleep Focus",
+    settings: {
+      heartRateHigh: 85,
+      heartRateLow: 50,
+      hrvLow: 35,
+      sleepQualityMin: 80,
+      regulationScore: 75,
+      enableNotifications: false,
+      enableAutoAdjust: true
+    }
+  }
+];
 
 export const CustomThresholdEditor = ({
   initialSettings = {},
@@ -37,12 +99,76 @@ export const CustomThresholdEditor = ({
     enableNotifications: initialSettings.enableNotifications ?? true,
     enableAutoAdjust: initialSettings.enableAutoAdjust ?? false
   });
+  
+  const [presets, setPresets] = useState<ThresholdPreset[]>(defaultPresets);
+  const [selectedPreset, setSelectedPreset] = useState<string>("custom");
+  const [presetName, setPresetName] = useState<string>("");
+  const [showSavePresetOption, setShowSavePresetOption] = useState<boolean>(false);
 
   const handleChange = (key: keyof ThresholdSettings, value: number | boolean) => {
     setSettings(prev => ({
       ...prev,
       [key]: value
     }));
+    
+    // When manually changing settings, switch to custom mode
+    if (selectedPreset !== "custom") {
+      setSelectedPreset("custom");
+    }
+  };
+
+  const handlePresetChange = (presetId: string) => {
+    if (presetId === "custom") {
+      // Keep current settings when switching to custom
+      setSelectedPreset("custom");
+      return;
+    }
+    
+    if (presetId === "save-new") {
+      setShowSavePresetOption(true);
+      return;
+    }
+    
+    // Find the selected preset and apply its settings
+    const preset = presets.find(p => p.id === presetId);
+    if (preset) {
+      setSettings(preset.settings);
+      setSelectedPreset(presetId);
+      setShowSavePresetOption(false);
+      
+      toast({
+        title: "Preset applied",
+        description: `${preset.name} thresholds have been applied`,
+      });
+    }
+  };
+
+  const handleSaveNewPreset = () => {
+    if (!presetName.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter a name for your preset",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Create new preset from current settings
+    const newPreset: ThresholdPreset = {
+      id: `custom-${Date.now()}`,
+      name: presetName,
+      settings: { ...settings }
+    };
+    
+    setPresets(prev => [...prev, newPreset]);
+    setSelectedPreset(newPreset.id);
+    setPresetName("");
+    setShowSavePresetOption(false);
+    
+    toast({
+      title: "Preset saved",
+      description: `${newPreset.name} preset has been saved`,
+    });
   };
 
   const handleSave = () => {
@@ -62,6 +188,52 @@ export const CustomThresholdEditor = ({
       <p className="text-sm text-muted-foreground mb-6">
         Adjust these values to determine when Hana will notify you about potential regulation challenges.
       </p>
+      
+      <div className="mb-6">
+        <Label className="text-base mb-2 block">Threshold Preset</Label>
+        <Select value={selectedPreset} onValueChange={handlePresetChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a preset" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="custom">Custom Settings</SelectItem>
+            {presets.map(preset => (
+              <SelectItem key={preset.id} value={preset.id}>
+                {preset.name}
+              </SelectItem>
+            ))}
+            <SelectItem value="save-new">+ Save Current as New Preset</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {showSavePresetOption && (
+          <div className="mt-4 space-y-2">
+            <Label htmlFor="preset-name">Preset Name</Label>
+            <div className="flex gap-2">
+              <input 
+                id="preset-name"
+                type="text" 
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                placeholder="Enter preset name"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <Button 
+                onClick={handleSaveNewPreset}
+                variant="outline"
+              >
+                Save
+              </Button>
+              <Button 
+                onClick={() => setShowSavePresetOption(false)}
+                variant="ghost"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
       
       <div className="space-y-6">
         <div>
@@ -182,4 +354,3 @@ export const CustomThresholdEditor = ({
     </Card>
   );
 };
-
