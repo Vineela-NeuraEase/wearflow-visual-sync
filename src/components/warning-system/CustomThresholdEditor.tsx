@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ThresholdSettings {
@@ -57,7 +57,7 @@ export const CustomThresholdEditor = ({
     <Card className="p-5">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
         Personalized Warning Thresholds 
-        <InfoCircle className="h-4 w-4 ml-2 text-muted-foreground" />
+        <Info className="h-4 w-4 ml-2 text-muted-foreground" />
       </h2>
       <p className="text-sm text-muted-foreground mb-6">
         Adjust these values to determine when Hana will notify you about potential regulation challenges.
@@ -182,3 +182,4 @@ export const CustomThresholdEditor = ({
     </Card>
   );
 };
+
