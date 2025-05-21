@@ -8,6 +8,7 @@ import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
 import EmotionLoggerSheet from "@/components/sheets/EmotionLoggerSheet";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAccessibility } from "@/context/AccessibilityContext";
+import { Progress } from "@/components/ui/progress";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,8 +16,15 @@ const Home = () => {
   const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
   const { highContrastEnabled, reducedMotionEnabled } = useAccessibility();
   
+  // Mock data for biometric status
+  const regulationScore = 85;
+  const heartRate = 72;
+  const hrv = 48;
+  
   const menuItems = [
     { name: "Home", path: "/", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> },
+    { name: "Bio Tracking", path: "/bio-tracking", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg> },
+    { name: "Environmental", path: "/environmental", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v14"></path><path d="M18 22V4"></path><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h2v8z"></path><path d="M6 10V4a2 2 0 0 1 2-2h2"></path><path d="M10 2v8"></path></svg> },
     { name: "Sensory Profile", path: "/sensory-profile", icon: <Brain className="h-4 w-4" /> },
     { name: "Emotion Insights", path: "/emotion-insights", icon: <BarChart2 className="h-4 w-4" /> },
     { name: "Accessibility", path: "/settings/accessibility", icon: <Accessibility className="h-4 w-4" /> },
@@ -78,6 +86,69 @@ const Home = () => {
         </Button>
       </div>
       
+      {/* Biometric Status Card */}
+      <Card className={`${highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-blue/30'} rounded-3xl p-6 animate-fade-in`}>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Current Status</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-blue-600"
+            onClick={() => navigate('/bio-tracking')}
+          >
+            Details
+          </Button>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-green-600 font-medium">Regulation Status</span>
+              <span>{regulationScore}%</span>
+            </div>
+            <Progress value={regulationScore} className="h-2 bg-green-100" />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white p-3 rounded-xl">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-full bg-blue-100">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+                    <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600">Heart Rate</div>
+                  <div className="font-medium">{heartRate} bpm</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-3 rounded-xl">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-full bg-purple-100">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600">HRV</div>
+                  <div className="font-medium">{hrv} ms</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <Button 
+            className={`w-full ${highContrastEnabled ? 'bg-high-contrast-primary hover:bg-high-contrast-primary/90' : 'bg-white hover:bg-white/90'} text-foreground rounded-xl flex items-center gap-2 justify-center`}
+            onClick={() => navigate('/sos')}
+          >
+            <Zap className={`h-5 w-5 ${highContrastEnabled ? 'text-white' : 'text-primary'}`} />
+            <span>SOS Support</span>
+          </Button>
+        </div>
+      </Card>
+      
       <Card className={`${highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-blue/30'} rounded-3xl p-6`}>
         <h2 className="text-xl font-semibold mb-2">How are you feeling?</h2>
         <p className={`${highContrastEnabled ? 'text-black' : 'text-muted-foreground'} mb-4`}>
@@ -133,13 +204,17 @@ const Home = () => {
           
           <Card 
             className={`${highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-green/30'} p-4 rounded-2xl cursor-pointer hover:scale-105 transition-transform`}
-            onClick={() => navigate('/sos')}
+            onClick={() => navigate('/environmental')}
           >
             <div className={`mb-3 rounded-full ${highContrastEnabled ? 'bg-gray-100 border border-black' : 'bg-white'} w-12 h-12 flex items-center justify-center`}>
-              <Zap className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-secondary' : 'text-tool-green'}`} />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-secondary' : 'text-tool-green'}`}>
+                <path d="M18 2h-3a5 5 0 0 0-5 5v14"></path>
+                <path d="M18 22V4"></path>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h2v8z"></path>
+              </svg>
             </div>
-            <h3 className="font-medium">SOS Calm</h3>
-            <p className="text-sm text-muted-foreground">Quick relief</p>
+            <h3 className="font-medium">Environment</h3>
+            <p className="text-sm text-muted-foreground">Track factors</p>
           </Card>
         </div>
       </div>

@@ -23,6 +23,8 @@ import RoutineWizard from "./pages/RoutineWizard";
 import JournalEntry from "./pages/JournalEntry";
 import FocusMode from "./pages/FocusMode";
 import BodyStats from "./pages/BodyStats";
+import BioTracking from "./pages/BioTracking";
+import EnvironmentalFactors from "./pages/EnvironmentalFactors";
 
 // Settings pages
 import Settings from "./pages/Settings";
@@ -86,6 +88,8 @@ const App = () => (
               <Route path="journal/voice" element={<JournalEntry mode="voice" />} />
               <Route path="focus" element={<FocusMode />} />
               <Route path="body-stats" element={<BodyStats />} />
+              <Route path="bio-tracking" element={<BioTracking />} />
+              <Route path="environmental" element={<EnvironmentalFactors />} />
               
               {/* Settings routes */}
               <Route path="settings" element={<Settings />} />
