@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, BookOpen, Calendar, BarChart2, PlusCircle, Smile, AlertTriangle } from "lucide-react";
@@ -7,15 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import EmotionLoggerSheet from "@/components/sheets/EmotionLoggerSheet";
+import MeltdownLoggerSheet from "@/components/sheets/MeltdownLoggerSheet";
 
 const EmotionHub = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
-
-  const handleOpenMeltdownLogger = () => {
-    navigate("/meltdown-logger");
-  };
+  const [isMeltdownLoggerOpen, setIsMeltdownLoggerOpen] = useState(false);
 
   return (
     <div className="space-y-6 pb-16">
@@ -53,7 +50,7 @@ const EmotionHub = () => {
                 </Button>
                 <Button 
                   className="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 py-6"
-                  onClick={handleOpenMeltdownLogger}
+                  onClick={() => setIsMeltdownLoggerOpen(true)}
                 >
                   <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
                   Log Meltdown
@@ -161,7 +158,7 @@ const EmotionHub = () => {
               </p>
               <Button 
                 className="w-full bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 py-6"
-                onClick={handleOpenMeltdownLogger}
+                onClick={() => setIsMeltdownLoggerOpen(true)}
               >
                 <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
                 Log New Meltdown
@@ -266,6 +263,7 @@ const EmotionHub = () => {
       
       {/* Sheets */}
       <EmotionLoggerSheet isOpen={isEmotionLoggerOpen} onClose={() => setIsEmotionLoggerOpen(false)} />
+      <MeltdownLoggerSheet isOpen={isMeltdownLoggerOpen} onClose={() => setIsMeltdownLoggerOpen(false)} />
     </div>
   );
 };
