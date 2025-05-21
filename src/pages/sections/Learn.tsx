@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { BookOpen, BarChart2 } from "lucide-react";
+import { BookOpen, BarChart2, BookOpenCheck } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
 import { motion } from "framer-motion";
 
@@ -15,7 +15,8 @@ const Learn = () => {
       icon: <BookOpen className="h-6 w-6 text-blue-500" />,
       path: "/resource-library",
       color: "bg-blue-100 dark:bg-blue-900/30",
-      gradient: "from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/30"
+      gradient: "from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/30",
+      borderGradient: "border-l-4 border-blue-500"
     },
     {
       title: "Personal Insights",
@@ -23,7 +24,8 @@ const Learn = () => {
       icon: <BarChart2 className="h-6 w-6 text-purple-500" />,
       path: "/insights",
       color: "bg-purple-100 dark:bg-purple-900/30",
-      gradient: "from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/30"
+      gradient: "from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/30",
+      borderGradient: "border-l-4 border-purple-500"
     },
     {
       title: "Emotion Insights",
@@ -31,7 +33,8 @@ const Learn = () => {
       icon: <BarChart2 className="h-6 w-6 text-pink-500" />,
       path: "/emotion-insights",
       color: "bg-pink-100 dark:bg-pink-900/30",
-      gradient: "from-pink-100 to-pink-200 dark:from-pink-900/40 dark:to-pink-800/30"
+      gradient: "from-pink-100 to-pink-200 dark:from-pink-900/40 dark:to-pink-800/30",
+      borderGradient: "border-l-4 border-pink-500"
     }
   ];
   
@@ -78,7 +81,7 @@ const Learn = () => {
             whileHover={{ scale: 1.03 }}
           >
             <Card 
-              className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 bg-gradient-to-br ${tool.gradient}`}
+              className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 ${tool.borderGradient} bg-gradient-to-br ${tool.gradient}`}
               onClick={() => navigate(tool.path)}
             >
               <div className="flex items-center">
@@ -86,7 +89,7 @@ const Learn = () => {
                   {tool.icon}
                 </div>
                 <div>
-                  <h3 className="font-medium text-base">{tool.title}</h3>
+                  <h3 className="font-medium text-base bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">{tool.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{tool.description}</p>
                 </div>
               </div>
@@ -100,11 +103,11 @@ const Learn = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        <Card className="p-3 mt-4 border-2 dark:border-gray-700 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900">
-          <h2 className="text-base font-medium mb-2 bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-300 bg-clip-text text-transparent">Today's Featured</h2>
+        <Card className="p-4 mt-4 border-2 border-l-4 border-amber-500 dark:border-gray-700 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/10">
+          <h2 className="text-base font-medium mb-2 bg-gradient-to-r from-amber-600 to-amber-500 dark:from-amber-400 dark:to-amber-300 bg-clip-text text-transparent">Today's Featured</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Sensory Processing Basics</p>
-          <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg h-24 flex items-center justify-center">
-            <BookOpen className="h-6 w-6 text-primary animate-pulse-gentle" />
+          <div className="bg-gradient-to-r from-amber-100 to-amber-200 dark:from-amber-900/30 dark:to-amber-800/20 rounded-lg h-24 flex items-center justify-center">
+            <BookOpenCheck className="h-6 w-6 text-amber-500 animate-pulse-gentle" />
           </div>
         </Card>
       </motion.div>

@@ -169,3 +169,31 @@
 .gradient-text-primary {
   @apply bg-gradient-to-r from-primary to-purple-500 dark:from-primary dark:to-purple-300 bg-clip-text text-transparent;
 }
+
+/* New high contrast gradient patterns for enhanced visual distinction */
+.pattern-gradient-dots {
+  background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0);
+  background-size: 10px 10px;
+}
+
+.pattern-gradient-stripes {
+  background-image: linear-gradient(45deg, currentColor 25%, transparent 25%, transparent 50%, currentColor 50%, currentColor 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+}
+
+/* New category color-coding gradients for visual clarity */
+.category-learn {
+  @apply bg-gradient-to-br from-indigo-50 via-indigo-100 to-purple-50 dark:from-indigo-900/20 dark:via-indigo-800/20 dark:to-purple-900/20 border-l-4 border-indigo-500;
+}
+
+.category-plan {
+  @apply bg-gradient-to-br from-emerald-50 via-emerald-100 to-teal-50 dark:from-emerald-900/20 dark:via-emerald-800/20 dark:to-teal-900/20 border-l-4 border-emerald-500;
+}
+
+.category-monitor {
+  @apply bg-gradient-to-br from-sky-50 via-sky-100 to-blue-50 dark:from-sky-900/20 dark:via-sky-800/20 dark:to-blue-900/20 border-l-4 border-sky-500;
+}
+
+.category-support {
+  @apply bg-gradient-to-br from-rose-50 via-rose-100 to-red-50 dark:from-rose-900/20 dark:via-rose-800/20 dark:to-red-900/20 border-l-4 border-rose-500;
+}

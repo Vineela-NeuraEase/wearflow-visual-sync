@@ -54,7 +54,7 @@ const Data = () => {
   return (
     <div className="space-y-6">
       <motion.div 
-        className="flex items-center mb-4 bg-gradient-to-r from-primary/10 to-primary/5 p-3 rounded-xl"
+        className="flex items-center mb-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/5 p-3 rounded-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -73,7 +73,7 @@ const Data = () => {
         initial="hidden"
         animate="show"
       >
-        <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 border-2 border-blue-200 dark:border-blue-800/30 mb-4">
+        <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 border-2 border-blue-200 dark:border-blue-800/30 mb-4 category-monitor">
           <h2 className="text-lg font-medium mb-2 bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-400 dark:to-cyan-300 bg-clip-text text-transparent">How Your Data Helps</h2>
           <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
             Anonymous sharing helps improve recommendations for the neurodiverse community.
@@ -91,11 +91,11 @@ const Data = () => {
                   onClick={() => option.path && navigate(option.path)}
                 >
                   <div className="flex items-center">
-                    <div className={`${option.color} p-3 rounded-full mr-3`}>
+                    <div className={`${option.color} p-3 rounded-full mr-3 bg-radial-pulse`}>
                       {option.icon}
                     </div>
                     <div>
-                      <h3 className="font-medium text-base">{option.title}</h3>
+                      <h3 className="font-medium text-base bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">{option.title}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{option.description}</p>
                     </div>
                   </div>
@@ -111,8 +111,8 @@ const Data = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <Card className="p-4 border-2 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/10 border-l-4 border-amber-500">
-          <h3 className="text-base font-medium mb-2">Privacy Notice</h3>
+        <Card className="p-4 important-gradient">
+          <h3 className="text-base font-medium mb-2 bg-gradient-to-r from-amber-600 to-amber-500 dark:from-amber-400 dark:to-amber-300 bg-clip-text text-transparent">Privacy Notice</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             All data is anonymous. You can opt out at any time.
           </p>
