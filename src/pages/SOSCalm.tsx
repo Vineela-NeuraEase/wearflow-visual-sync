@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Volume, Mic, HeartOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import "../styles/animations.css";
 
 const SOSCalm = () => {
   const navigate = useNavigate();

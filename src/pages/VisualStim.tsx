@@ -1,145 +1,87 @@
 
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import "../styles/animations.css";
 
 const VisualStim = () => {
   const navigate = useNavigate();
   const [intensity, setIntensity] = useState(65);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reqAnimRef = useRef<number | null>(null);
-  
-  // Initialize canvas animation
+  const [circles, setCircles] = useState<JSX.Element[]>([]);
+
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const colors = [
+      'rgb(191, 219, 254)', // blue
+      'rgb(253, 224, 171)', // yellow
+      'rgb(251, 207, 232)', // pink
+      'rgb(167, 243, 208)', // green
+    ];
     
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const newCircles = [];
+    const circleCount = 4 + Math.floor(intensity / 20); // 4-9 circles based on intensity
     
-    // Set canvas dimensions
-    const resizeCanvas = () => {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    };
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Bubble objects
-    type Bubble = {
-      x: number;
-      y: number;
-      radius: number;
-      color: string;
-      dx: number;
-      dy: number;
-      opacity: number;
-      growth: number;
-    };
-    
-    const bubbles: Bubble[] = [];
-    const colors = ['#D0E6FF', '#E9DFFF', '#FFE0EF', '#D5F5E3'];
-    
-    // Create initial bubbles
-    const createBubbles = () => {
-      const numBubbles = 5 + Math.floor(intensity / 10);
+    for (let i = 0; i < circleCount; i++) {
+      const size = 100 + (Math.random() * intensity);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = `${10 + Math.random() * 80}%`;
+      const top = `${10 + Math.random() * 60}%`;
+      const delay = Math.random() * 2;
       
-      for (let i = 0; i < numBubbles; i++) {
-        const radius = 30 + Math.random() * 70;
-        bubbles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          dx: (Math.random() - 0.5) * 1,
-          dy: (Math.random() - 0.5) * 1,
-          opacity: 0.3 + Math.random() * 0.5,
-          growth: Math.random() * 0.2 - 0.1,
-        });
-      }
-    };
+      newCircles.push(
+        <div
+          key={i}
+          className="visual-circle appear"
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            backgroundColor: color,
+            left,
+            top,
+            animationDelay: `${delay}s`,
+            zIndex: 10 - i,
+          }}
+        ></div>
+      );
+    }
     
-    createBubbles();
-    
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw and update each bubble
-      bubbles.forEach(bubble => {
-        ctx.beginPath();
-        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
-        ctx.fillStyle = bubble.color + Math.floor(bubble.opacity * 255).toString(16).padStart(2, '0');
-        ctx.fill();
-        
-        // Update position
-        bubble.x += bubble.dx;
-        bubble.y += bubble.dy;
-        
-        // Bounce off edges
-        if (bubble.x - bubble.radius < 0 || bubble.x + bubble.radius > canvas.width) {
-          bubble.dx = -bubble.dx;
-        }
-        
-        if (bubble.y - bubble.radius < 0 || bubble.y + bubble.radius > canvas.height) {
-          bubble.dy = -bubble.dy;
-        }
-        
-        // Change size slightly
-        bubble.radius += bubble.growth;
-        
-        // Change direction occasionally
-        if (Math.random() < 0.02) {
-          bubble.dx = (Math.random() - 0.5) * 2;
-          bubble.dy = (Math.random() - 0.5) * 2;
-        }
-        
-        // Reverse growth if too big or small
-        if (bubble.radius > 100 || bubble.radius < 20) {
-          bubble.growth = -bubble.growth;
-        }
-      });
-      
-      reqAnimRef.current = requestAnimationFrame(animate);
-    };
-    
-    reqAnimRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (reqAnimRef.current) {
-        cancelAnimationFrame(reqAnimRef.current);
-      }
-    };
+    setCircles(newCircles);
   }, [intensity]);
-  
+
+  const handleIntensityChange = (value: number[]) => {
+    setIntensity(value[0]);
+  };
+
   return (
-    <div className="h-screen relative">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full bg-gradient-to-br from-calm-purple to-calm-pink"></canvas>
+    <div className="h-screen bg-purple-100/50 relative">
+      <div className="absolute inset-0 overflow-hidden">
+        {circles}
+      </div>
       
-      <div className="absolute inset-0 flex flex-col justify-end p-6">
-        <div className="bg-white rounded-xl p-6 mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg font-medium">Intensity</span>
-            <span className="font-medium">{intensity}%</span>
+      <div className="relative h-full flex flex-col">
+        <div className="flex-1"></div>
+        
+        <div className="p-6 bg-white rounded-t-xl space-y-6">
+          <div className="flex justify-between items-center">
+            <div className="text-lg font-medium">Intensity</div>
+            <div>{intensity}%</div>
           </div>
           
           <Slider
-            value={[intensity]}
-            onValueChange={(value) => setIntensity(value[0])}
+            defaultValue={[intensity]}
             max={100}
             step={1}
-            className="mb-6"
+            onValueChange={handleIntensityChange}
+            className="my-6"
           />
           
           <Button 
-            className="w-full bg-white border border-gray-300"
+            variant="outline" 
+            className="w-full py-6" 
             onClick={() => navigate('/tools')}
           >
-            <X className="mr-2 h-4 w-4" /> Exit Visual Mode
+            <X className="mr-2 h-5 w-5" /> Exit Visual Mode
           </Button>
         </div>
       </div>

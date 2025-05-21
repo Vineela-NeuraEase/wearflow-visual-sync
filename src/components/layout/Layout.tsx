@@ -2,6 +2,7 @@
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import BottomNav from "./BottomNav";
+import FloatingActionButton from "../FloatingActionButton";
 
 const Layout = () => {
   const location = useLocation();
@@ -14,6 +15,7 @@ const Layout = () => {
         <Outlet />
       </main>
       {!isFullScreen && <BottomNav />}
+      {!isFullScreen && <FloatingActionButton />}
     </div>
   );
 };

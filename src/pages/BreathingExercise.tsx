@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { X, Music } from "lucide-react";
+import "../styles/animations.css";
 
 // Breathing states
 type BreathState = "inhale" | "hold" | "exhale" | "rest" | "idle";
@@ -127,7 +128,7 @@ const BreathingExercise = () => {
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="relative w-64 h-64 flex items-center justify-center">
           <div 
-            className={`absolute inset-0 rounded-full border-4 border-blue-300 ${
+            className={`absolute inset-0 rounded-full border-8 border-blue-300 ${
               breathState === "inhale"
                 ? "animate-breathe-in"
                 : breathState === "exhale"

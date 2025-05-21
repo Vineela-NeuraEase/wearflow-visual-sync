@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Bell, Briefcase, Book, Home } from "lucide-react";
+import { ArrowLeft, Plus, Bell, Briefcase, Book, Home, Coffee, Sun } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import DailyInsightModal from "@/components/modals/DailyInsightModal";
 
 type RoutineItem = {
   id: string;
@@ -17,6 +18,7 @@ type RoutineItem = {
 const DailyRoutine = () => {
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState(2); // 0-indexed, so 2 = Wednesday
+  const [showInsightModal, setShowInsightModal] = useState(false);
   
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const dates = [5, 6, 7, 8, 9, 10, 11]; // Example dates
@@ -27,7 +29,7 @@ const DailyRoutine = () => {
       time: "7:00 AM",
       title: "Wake Up",
       description: "Morning routine",
-      icon: <Home className="h-6 w-6" />,
+      icon: <Sun className="h-6 w-6" />,
       color: "bg-yellow-100",
     },
     {
@@ -35,15 +37,7 @@ const DailyRoutine = () => {
       time: "8:00 AM",
       title: "Breakfast",
       description: "With medication",
-      icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 2H21V4H3V2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M21 18H3V14C3 11.7909 4.79086 10 7 10H17C19.2091 10 21 11.7909 21 14V18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M6 18V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M18 18V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M3 6H21V8C21 8.55228 20.5523 9 20 9H4C3.44772 9 3 8.55228 3 8V6Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
+      icon: <Coffee className="h-6 w-6" />,
       color: "bg-blue-100",
     },
     {
@@ -67,14 +61,23 @@ const DailyRoutine = () => {
   const selectDay = (index: number) => {
     setSelectedDay(index);
   };
+
+  const showInsight = () => {
+    setShowInsightModal(true);
+  };
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center mb-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-          <ArrowLeft className="h-5 w-5" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-semibold ml-2">Routine Day View</h1>
+        </div>
+        <Button variant="ghost" size="icon" onClick={showInsight}>
+          <Bell className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-semibold ml-2">Routine Day View</h1>
       </div>
       
       <div className="calm-container bg-calm-blue/30">
@@ -140,6 +143,15 @@ const DailyRoutine = () => {
           </div>
         </div>
       </div>
+
+      <DailyInsightModal 
+        isOpen={showInsightModal} 
+        onClose={() => setShowInsightModal(false)}
+        calmScore={78}
+        comparedToYesterday="Better than yesterday"
+        insight="You had fewer stress peaks today and your breathing exercises helped maintain balance."
+        recommendation="Try a morning breathing session tomorrow"
+      />
     </div>
   );
 };
