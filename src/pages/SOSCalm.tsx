@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Sound, Mic, HeartOff } from "lucide-react";
+import { X, Volume, Mic, HeartOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SOSCalm = () => {
@@ -80,7 +80,7 @@ const SOSCalm = () => {
                 className={`flex-1 mx-1 ${soundEnabled ? "bg-primary text-white" : ""}`}
                 onClick={toggleSound}
               >
-                <Sound className="mr-2 h-4 w-4" /> Sound
+                <Volume className="mr-2 h-4 w-4" /> Sound
               </Button>
               
               <Button 
@@ -141,7 +141,7 @@ const SOSCalm = () => {
               
               <Button variant="outline" className="w-full py-6 justify-start text-left">
                 <div className="mr-4 rounded-full bg-calm-purple/30 p-2">
-                  <Sound className="h-5 w-5 text-purple-500" />
+                  <Volume className="h-5 w-5 text-purple-500" />
                 </div>
                 <span>1-minute calming sound</span>
               </Button>
@@ -159,8 +159,6 @@ const SOSCalm = () => {
     </div>
   );
 };
-
-export default SOSCalm;
 
 // Custom Wind icon for this component
 const Wind = (props: React.SVGProps<SVGSVGElement>) => {
