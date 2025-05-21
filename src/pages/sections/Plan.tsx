@@ -14,28 +14,28 @@ const Plan = () => {
       description: "Organize your day visually",
       icon: <Calendar className="h-6 w-6 text-blue-500" />,
       path: "/routine",
-      color: "bg-blue-100"
+      color: "bg-blue-100 dark:bg-blue-900/30"
     },
     {
       title: "Break Timer",
       description: "Schedule structured breaks",
       icon: <Timer className="h-6 w-6 text-green-500" />,
       path: "/break-timer",
-      color: "bg-green-100"
+      color: "bg-green-100 dark:bg-green-900/30"
     },
     {
       title: "Focus Mode",
       description: "Reduce distractions",
       icon: <Focus className="h-6 w-6 text-purple-500" />,
       path: "/focus",
-      color: "bg-purple-100"
+      color: "bg-purple-100 dark:bg-purple-900/30"
     },
     {
       title: "Routine Wizard",
       description: "Create custom routines",
       icon: <Calendar className="h-6 w-6 text-amber-500" />,
       path: "/routine-wizard",
-      color: "bg-amber-100"
+      color: "bg-amber-100 dark:bg-amber-900/30"
     }
   ];
   
@@ -62,7 +62,7 @@ const Plan = () => {
           <MenuDrawer />
           <div>
             <h1 className="text-xl font-medium">Plan</h1>
-            <p className="text-sm text-gray-600">Daily organization tools</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Daily organization tools</p>
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@ const Plan = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Card 
-              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
+              className="p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
               onClick={() => navigate(tool.path)}
             >
               <div className="flex items-center">
@@ -90,7 +90,7 @@ const Plan = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-base">{tool.title}</h3>
-                  <p className="text-sm text-gray-600">{tool.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{tool.description}</p>
                 </div>
               </div>
             </Card>

@@ -15,28 +15,28 @@ const Monitor = () => {
       description: "Track your emotions",
       icon: <BarChart2 className="h-6 w-6 text-purple-500" />,
       path: "/emotion-hub",
-      color: "bg-purple-100"
+      color: "bg-purple-100 dark:bg-purple-900/30"
     },
     {
       title: "Body Stats",
       description: "Physical measurements",
       icon: <Activity className="h-6 w-6 text-green-500" />,
       path: "/body-stats",
-      color: "bg-green-100"
+      color: "bg-green-100 dark:bg-green-900/30"
     },
     {
       title: "Environment",
       description: "Track external triggers",
       icon: <AlertTriangle className="h-6 w-6 text-amber-500" />,
       path: "/environmental",
-      color: "bg-amber-100"
+      color: "bg-amber-100 dark:bg-amber-900/30"
     },
     {
       title: "Bio Tracking",
       description: "Monitor vitals",
       icon: <Heart className="h-6 w-6 text-red-500" />,
       path: "/bio-tracking",
-      color: "bg-red-100"
+      color: "bg-red-100 dark:bg-red-900/30"
     }
   ];
   
@@ -47,7 +47,7 @@ const Monitor = () => {
           <MenuDrawer />
           <div>
             <h1 className="text-xl font-medium">Monitor</h1>
-            <p className="text-sm text-gray-600">Track your wellbeing</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Track your wellbeing</p>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ const Monitor = () => {
             whileHover={{ scale: 1.05 }}
           >
             <Card 
-              className="p-3 cursor-pointer hover:bg-gray-50 transition-colors border-2"
+              className="p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
               onClick={() => navigate(tool.path)}
             >
               <div className="flex items-center">
@@ -76,7 +76,7 @@ const Monitor = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-base">{tool.title}</h3>
-                  <p className="text-sm text-gray-600">{tool.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{tool.description}</p>
                 </div>
               </div>
             </Card>
@@ -91,12 +91,13 @@ const Monitor = () => {
       >
         <Button
           variant="outline"
-          className="w-full py-3 border-2 hover:bg-gray-50"
+          className="w-full py-3 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-900/20 dark:to-amber-900/20"
           onClick={() => navigate("/warning-system")}
         >
           <motion.div
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ repeat: Infinity, duration: 2 }}
+            className="text-red-600 dark:text-red-400"
           >
             Warning System
           </motion.div>

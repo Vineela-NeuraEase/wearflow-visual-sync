@@ -35,11 +35,11 @@ const FloatingActionButton = () => {
       >
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 relative overflow-hidden"
+          className="h-14 w-14 rounded-full shadow-lg bg-gradient-to-br from-primary to-purple-500 hover:from-primary hover:to-purple-600 dark:from-primary dark:to-purple-700 relative overflow-hidden"
           onClick={openOverlay}
         >
           <motion.div
-            className="absolute inset-0 bg-purple-400 opacity-30"
+            className="absolute inset-0 bg-white dark:bg-purple-300 opacity-30"
             animate={{
               scale: [1, 1.5, 1],
               opacity: [0.3, 0.2, 0.3]
@@ -50,7 +50,7 @@ const FloatingActionButton = () => {
               ease: "easeInOut"
             }}
           />
-          <Plus className="h-6 w-6" />
+          <Plus className="h-6 w-6 text-white" />
         </Button>
       </motion.div>
       
