@@ -16,6 +16,12 @@ import SOSCalm from "./pages/SOSCalm";
 import DailyRoutine from "./pages/DailyRoutine";
 import GentleBuzz from "./pages/GentleBuzz";
 import NotFound from "./pages/NotFound";
+import BreakTimer from "./pages/BreakTimer";
+import EmotionLogger from "./pages/EmotionLogger";
+import RoutineWizard from "./pages/RoutineWizard";
+import JournalEntry from "./pages/JournalEntry";
+import FocusMode from "./pages/FocusMode";
+import BodyStats from "./pages/BodyStats";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +42,15 @@ const App = () => (
             <Route path="sos" element={<SOSCalm />} />
             <Route path="routine" element={<DailyRoutine />} />
             <Route path="haptic" element={<GentleBuzz />} />
+            <Route path="break-timer" element={<BreakTimer />} />
+            <Route path="emotion-logger" element={<EmotionLogger />} />
+            <Route path="routine-wizard" element={<RoutineWizard />} />
+            <Route path="journal" element={<JournalEntry mode="quick" />} />
+            <Route path="journal/prompted" element={<JournalEntry mode="prompted" />} />
+            <Route path="journal/free" element={<JournalEntry mode="free" />} />
+            <Route path="journal/voice" element={<JournalEntry mode="voice" />} />
+            <Route path="focus" element={<FocusMode />} />
+            <Route path="body-stats" element={<BodyStats />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
