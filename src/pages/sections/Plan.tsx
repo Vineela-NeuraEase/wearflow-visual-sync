@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Calendar, Timer, Focus } from "lucide-react";
+import MenuDrawer from "@/components/home/MenuDrawer";
 
 const Plan = () => {
   const navigate = useNavigate();
@@ -40,9 +41,12 @@ const Plan = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Plan</h1>
-          <p className="text-muted-foreground">Routines, breaks, and focus tools</p>
+        <div className="flex items-center">
+          <MenuDrawer />
+          <div>
+            <h1 className="text-2xl font-semibold">Plan</h1>
+            <p className="text-muted-foreground">Routines, breaks, and focus tools</p>
+          </div>
         </div>
       </div>
       

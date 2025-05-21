@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Wind, Eye, Music, Vibrate, AlertTriangle } from "lucide-react";
+import MenuDrawer from "@/components/home/MenuDrawer";
 
 const Support = () => {
   const navigate = useNavigate();
@@ -47,9 +48,12 @@ const Support = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Support</h1>
-          <p className="text-muted-foreground">Tools to help with self-regulation</p>
+        <div className="flex items-center">
+          <MenuDrawer />
+          <div>
+            <h1 className="text-2xl font-semibold">Support</h1>
+            <p className="text-muted-foreground">Tools to help with self-regulation</p>
+          </div>
         </div>
       </div>
       

@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { BookOpen, BarChart2 } from "lucide-react";
+import MenuDrawer from "@/components/home/MenuDrawer";
 
 const Learn = () => {
   const navigate = useNavigate();
@@ -33,9 +34,12 @@ const Learn = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Learn</h1>
-          <p className="text-muted-foreground">Resources, insights, and patterns</p>
+        <div className="flex items-center">
+          <MenuDrawer />
+          <div>
+            <h1 className="text-2xl font-semibold">Learn</h1>
+            <p className="text-muted-foreground">Resources, insights, and patterns</p>
+          </div>
         </div>
       </div>
       

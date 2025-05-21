@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Database, BarChart2, Shield } from "lucide-react";
+import MenuDrawer from "@/components/home/MenuDrawer";
 
 const Data = () => {
   const navigate = useNavigate();
@@ -31,9 +32,12 @@ const Data = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Data Collection</h1>
-          <p className="text-muted-foreground">Help improve AI recommendations</p>
+        <div className="flex items-center">
+          <MenuDrawer />
+          <div>
+            <h1 className="text-2xl font-semibold">Data Collection</h1>
+            <p className="text-muted-foreground">Help improve AI recommendations</p>
+          </div>
         </div>
       </div>
       
