@@ -51,6 +51,11 @@ import ProfileAccount from "./pages/ProfileAccount";
 import SensoryProfile from "./pages/SensoryProfile";
 import EmotionInsights from "./pages/EmotionInsights";
 
+// Added new pages for emotion hub and meltdown tracking
+import EmotionHub from "./pages/EmotionHub";
+import MeltdownLogger from "./pages/MeltdownLogger";
+import MeltdownHistory from "./pages/MeltdownHistory";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -108,6 +113,11 @@ const App = () => (
               <Route path="profile-account" element={<ProfileAccount />} />
               <Route path="sensory-profile" element={<SensoryProfile />} />
               <Route path="emotion-insights" element={<EmotionInsights />} />
+              
+              {/* New emotion hub and meltdown tracking routes */}
+              <Route path="emotion-hub" element={<EmotionHub />} />
+              <Route path="meltdown-logger" element={<MeltdownLogger />} />
+              <Route path="meltdown-history" element={<MeltdownHistory />} />
               
               <Route path="*" element={<NotFound />} />
             </Route>
