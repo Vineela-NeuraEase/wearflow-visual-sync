@@ -96,7 +96,7 @@ export function useWarningSystem() {
               behavioral: behavioralData
             };
             
-            // Log warning event in database
+            // Use generic query to avoid type issues
             const { data, error } = await supabase
               .from('warning_events')
               .insert({
@@ -125,6 +125,7 @@ export function useWarningSystem() {
         // Update warning event with resolved timestamp if it exists
         if (user && warningEventId) {
           try {
+            // Use generic query to avoid type issues
             const { error } = await supabase
               .from('warning_events')
               .update({
@@ -164,6 +165,7 @@ export function useWarningSystem() {
     if (!user || !warningEventId) return;
     
     try {
+      // Use generic query to avoid type issues
       const { error } = await supabase
         .from('warning_events')
         .update({

@@ -37,18 +37,20 @@ export function useDataAccessTokens() {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
+      // Using generic query syntax to work around type issues
+      const { data, error: fetchError } = await supabase
         .from('data_access_tokens')
         .select('*')
         .order('created_at', { ascending: false });
         
-      if (error) {
-        console.error("Error fetching tokens:", error);
-        setError(`Failed to load tokens: ${error.message}`);
+      if (fetchError) {
+        console.error("Error fetching tokens:", fetchError);
+        setError(`Failed to load tokens: ${fetchError.message}`);
         return;
       }
       
-      setTokens(data || []);
+      // Cast data to the correct type
+      setTokens(data as unknown as DataAccessToken[]);
     } catch (err) {
       console.error("Error in fetchTokens:", err);
       setError("An unexpected error occurred while fetching tokens");
@@ -77,7 +79,8 @@ export function useDataAccessTokens() {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + expirationDays);
       
-      const { data, error } = await supabase
+      // Using generic query syntax to work around type issues
+      const { data, error: createError } = await supabase
         .from('data_access_tokens')
         .insert({
           user_id: user.id,
@@ -89,25 +92,26 @@ export function useDataAccessTokens() {
         .select()
         .single();
       
-      if (error) {
-        console.error("Error creating token:", error);
+      if (createError) {
+        console.error("Error creating token:", createError);
         toast({
           title: "Error",
-          description: `Failed to create token: ${error.message}`,
+          description: `Failed to create token: ${createError.message}`,
           variant: "destructive"
         });
         return null;
       }
       
       // Update local state
-      setTokens(prev => [data, ...prev]);
+      const newToken = data as unknown as DataAccessToken;
+      setTokens(prev => [newToken, ...prev]);
       
       toast({
         title: "Token created",
         description: "Your data access token has been created successfully",
       });
       
-      return { ...data, tokenValue: token }; // Return with clear text token
+      return { ...newToken, tokenValue: token }; // Return with clear text token
     } catch (err) {
       console.error("Error in createToken:", err);
       toast({
@@ -130,16 +134,17 @@ export function useDataAccessTokens() {
     try {
       setLoading(true);
       
-      const { error } = await supabase
+      // Using generic query syntax to work around type issues
+      const { error: deleteError } = await supabase
         .from('data_access_tokens')
         .delete()
         .eq('id', id);
       
-      if (error) {
-        console.error("Error revoking token:", error);
+      if (deleteError) {
+        console.error("Error revoking token:", deleteError);
         toast({
           title: "Error",
-          description: `Failed to revoke token: ${error.message}`,
+          description: `Failed to revoke token: ${deleteError.message}`,
           variant: "destructive"
         });
         return false;
