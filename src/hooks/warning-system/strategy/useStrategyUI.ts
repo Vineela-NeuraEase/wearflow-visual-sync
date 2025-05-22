@@ -37,7 +37,7 @@ export function useStrategyUI(): UseStrategyUIReturn {
     return names[category] || category;
   };
   
-  const getCategoryIcon = (category: string): JSX.Element => {
+  const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'sensory':
         return <CircleHalf className="h-4 w-4" />;
