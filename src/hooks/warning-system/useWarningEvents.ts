@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { BiometricDataPoint } from '@/hooks/biometrics/types';
 import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
+import { WarningStrategy } from './types';
 
 interface UseWarningEventsProps {
   regulationScore: number;
@@ -103,8 +104,8 @@ export function useWarningEvents({
     handleWarningStateChange();
   }, [regulationScore, warningActive, user, dataPoints, sensoryData, sleepData, routineData, behavioralData, warningLevel, latestPatterns, warningEventId]);
 
-  const resolveWarningWithStrategy = async (strategyId: string, strategies: any[]) => {
-    if (!user || !warningEventId) return;
+  const resolveWarningWithStrategy = async (strategyId: string, strategies: WarningStrategy[]) => {
+    if (!user || !warningEventId) return false;
     
     try {
       // Cast the supabase client to any to bypass type checking for this call
