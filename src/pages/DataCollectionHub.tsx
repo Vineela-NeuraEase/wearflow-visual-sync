@@ -5,15 +5,20 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Activity, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/strategy";
+import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
 import { SleepTracker } from "@/components/tracking/SleepTracker";
 import { SensoryTracker } from "@/components/tracking/SensoryTracker";
 import { RoutineTracker } from "@/components/tracking/RoutineTracker";
 import { BehavioralTracker } from "@/components/tracking/BehavioralTracker";
-import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
 import { useDataCollection } from "@/hooks/data-collection";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  SleepData as BiometricSleepData,
+  SensoryData as BiometricSensoryData, 
+  RoutineData as BiometricRoutineData, 
+  BehavioralData as BiometricBehavioralData 
+} from "@/types/biometric";
 
 const DataCollectionHub = () => {
   const navigate = useNavigate();
@@ -72,7 +77,7 @@ const DataCollectionHub = () => {
   }, [user, fetchSleepData, fetchSensoryData, fetchRoutineData, fetchBehavioralData]);
   
   // Handlers for saving different types of data
-  const handleSaveSleepData = async (data: Omit<SleepData, "user_id">) => {
+  const handleSaveSleepData = async (data: Omit<BiometricSleepData, "user_id">) => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -84,7 +89,7 @@ const DataCollectionHub = () => {
     await saveSleepData(data);
   };
   
-  const handleSaveSensoryData = async (data: Omit<SensoryData, "user_id">) => {
+  const handleSaveSensoryData = async (data: Omit<BiometricSensoryData, "user_id">) => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -96,7 +101,7 @@ const DataCollectionHub = () => {
     await saveSensoryData(data);
   };
   
-  const handleSaveRoutineData = async (data: Omit<RoutineData, "user_id">) => {
+  const handleSaveRoutineData = async (data: Omit<BiometricRoutineData, "user_id">) => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -108,7 +113,7 @@ const DataCollectionHub = () => {
     await saveRoutineData(data);
   };
   
-  const handleSaveBehavioralData = async (data: Omit<BehavioralData, "user_id">) => {
+  const handleSaveBehavioralData = async (data: Omit<BiometricBehavioralData, "user_id">) => {
     if (!user) {
       toast({
         title: "Authentication required",

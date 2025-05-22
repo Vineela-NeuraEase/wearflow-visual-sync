@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from "react";
-import { CircleHalf, Brain, Activity, Users, Home, Sparkles } from "lucide-react";
+import { CircleHelp, Brain, Activity, Users, Home, Sparkles } from "lucide-react";
 import { UseStrategyUIReturn } from './types';
 
 export function useStrategyUI(): UseStrategyUIReturn {
@@ -40,7 +40,7 @@ export function useStrategyUI(): UseStrategyUIReturn {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'sensory':
-        return <CircleHalf className="h-4 w-4" />;
+        return <CircleHelp className="h-4 w-4" />;
       case 'cognitive':
         return <Brain className="h-4 w-4" />;
       case 'physical':

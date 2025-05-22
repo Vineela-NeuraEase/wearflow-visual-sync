@@ -25,11 +25,16 @@ export const useSensoryData = ({ user, setIsLoading }: UseSensoryDataProps) => {
     setIsLoading(true);
     
     try {
+      // Rename light_level to light_intensity for database compatibility
+      const { light_level, ...otherData } = data;
+      
       const { data: savedData, error } = await supabase
         .from('sensory_data')
         .insert({
-          ...data,
-          user_id: user.id
+          ...otherData,
+          light_intensity: light_level, // Map light_level to light_intensity
+          user_id: user.id,
+          timestamp: data.timestamp || new Date().toISOString()
         })
         .select()
         .single();

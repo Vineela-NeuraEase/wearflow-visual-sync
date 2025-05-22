@@ -18,10 +18,14 @@ export const useSensorData = ({
   user
 }: UseSensorDataProps) => {
   // Function to collect data
-  const collectData = useCallback(() => {
-    console.log("Collecting data...");
+  const collectData = useCallback((data?: BiometricData) => {
+    console.log("Collecting data...", data);
+    // If data is provided, pass it to onDataReceived
+    if (data && onDataReceived) {
+      onDataReceived(data);
+    }
     // This could be expanded to fetch historical data, process offline data, etc.
-  }, []);
+  }, [onDataReceived]);
   
   // Listen for data from the Bluetooth device
   useEffect(() => {
