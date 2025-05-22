@@ -44,6 +44,7 @@ export function useBiometricData({
     if (offlineData.length > 0) {
       await originalSyncOfflineData();
     }
+    // No return value (void)
   }, [offlineData.length, originalSyncOfflineData]);
   
   // Sync offline data when online status changes

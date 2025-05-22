@@ -20,7 +20,6 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <Stack.Navigator 
-          id={undefined}
           initialRouteName="Home"
         >
           <Stack.Screen 

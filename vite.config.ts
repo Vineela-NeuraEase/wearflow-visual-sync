@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -17,6 +18,19 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Add React Native web compatibility
+      'react-native': 'react-native-web',
+      '@react-native-async-storage/async-storage': 'react-native-web/dist/exports/AsyncStorage',
+      '@react-native-community/netinfo': path.resolve(__dirname, './src/polyfills/netinfo-polyfill.js'),
+      'react-native-ble-plx': path.resolve(__dirname, './src/polyfills/ble-plx-polyfill.js'),
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: 'globalThis',
+      },
     },
   },
 }));
