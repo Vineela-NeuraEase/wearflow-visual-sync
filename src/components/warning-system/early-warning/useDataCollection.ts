@@ -4,6 +4,7 @@ import { BiometricData } from "./types";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 interface UseDataCollectionProps {
   userId?: string;
@@ -11,8 +12,12 @@ interface UseDataCollectionProps {
 
 export function useDataCollection({ userId }: UseDataCollectionProps = {}) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isDeviceConnected, setIsDeviceConnected] = useState(false);
   const [biometricData, setBiometricData] = useState<BiometricData[]>([]);
+  
+  // Use authenticated user ID if available
+  const currentUserId = userId || user?.id;
   
   // Local storage key for offline data
   const OFFLINE_DATA_KEY = 'hana_offline_biometric_data';
@@ -45,18 +50,19 @@ export function useDataCollection({ userId }: UseDataCollectionProps = {}) {
   
   // Fetch latest sensor data
   const { data: latestSensorData } = useQuery({
-    queryKey: ['latestSensorData', userId],
+    queryKey: ['latestSensorData', currentUserId],
     queryFn: async () => {
-      if (!navigator.onLine) {
-        console.log("Offline mode: skipping server fetch");
+      if (!navigator.onLine || !currentUserId) {
+        console.log("Offline mode or no user ID: skipping server fetch");
         return null;
       }
       
       try {
-        // In a real app, this would fetch from a specific user's data
+        // Fetch from the specific user's data
         const { data, error } = await supabase
           .from('sensor_data')
           .select('*')
+          .eq('user_id', currentUserId)
           .order('timestamp', { ascending: false })
           .limit(10);
           
@@ -72,7 +78,7 @@ export function useDataCollection({ userId }: UseDataCollectionProps = {}) {
       }
     },
     refetchInterval: 15000, // Refetch every 15 seconds
-    enabled: navigator.onLine && userId !== undefined, // Only run when online
+    enabled: navigator.onLine && currentUserId !== undefined, // Only run when online and user is authenticated
   });
   
   // Handler for receiving real-time data from wearable
@@ -86,13 +92,27 @@ export function useDataCollection({ userId }: UseDataCollectionProps = {}) {
     // Log for debugging
     console.log("Received new biometric data:", data);
     
-    // If we're online, we could also sync this with the backend
-    if (navigator.onLine) {
-      // In a real app, we would sync with Supabase or another backend
-      console.log("Online: data could be synced to backend");
-      // Example: supabase.from('sensor_data').insert([data])
+    // If we're online and authenticated, sync with the backend
+    if (navigator.onLine && currentUserId) {
+      // Convert the biometric data to sensor_data format
+      const sensorDataToSync = [
+        { data_type: 'heartRate', value: data.heartRate || 0, user_id: currentUserId },
+        { data_type: 'hrv', value: data.hrv || 0, user_id: currentUserId },
+        { data_type: 'stress', value: data.stressLevel || 0, user_id: currentUserId }
+      ];
+      
+      // Only sync values that are present
+      const validSensorData = sensorDataToSync.filter(item => item.value > 0);
+      
+      if (validSensorData.length > 0) {
+        supabase.from('sensor_data')
+          .insert(validSensorData)
+          .then(({ error }) => {
+            if (error) console.error("Error syncing data to Supabase:", error);
+          });
+      }
     }
-  }, []);
+  }, [currentUserId]);
   
   // Handle device connection
   const handleDeviceConnected = (device: any) => {

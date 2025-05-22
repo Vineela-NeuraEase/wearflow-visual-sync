@@ -1,55 +1,53 @@
 
-export interface BiometricData {
-  heartRate: number;
-  hrv: number;
-  stressLevel: number;
-  timestamp: string;
-  sleepQuality?: number;
-  sleepDuration?: number;
-  sensoryLoad?: number;
-  routineDeviation?: number;
-  behavioralState?: number;
-}
-
-export interface DeviceInfo {
-  name: string;
-  id: string;
-  [key: string]: any;
-}
+// Define biometric data types
 
 export interface SleepData {
+  user_id?: string;
   date: string;
   quality: number;
   duration: number;
-  deepSleepPercentage: number;
-  remSleepPercentage: number;
+  deep_sleep_percentage: number;
+  rem_sleep_percentage: number;
   awakenings: number;
 }
 
 export interface SensoryData {
-  timestamp: string;
-  noiseLevel: number;
-  lightIntensity: number;
+  user_id?: string;
+  timestamp?: string;
+  noise_level: number;
+  light_intensity: number;
   temperature: number;
   crowding: number;
-  textureSensitivity?: number;
-  smellSensitivity?: number;
+  texture_sensitivity?: number;
+  smell_sensitivity?: number;
 }
 
 export interface RoutineData {
-  timestamp: string;
-  expectedActivity: string;
-  actualActivity: string;
-  deviationScore: number;
+  user_id?: string;
+  timestamp?: string;
+  expected_activity: string;
+  actual_activity: string;
+  deviation_score: number;
   location: string;
-  isUnexpectedChange: boolean;
+  is_unexpected_change: boolean;
 }
 
 export interface BehavioralData {
-  timestamp: string;
-  selfReportedMood: number;
+  user_id?: string;
+  timestamp?: string;
+  self_reported_mood: number;
   stimming: number;
-  communicationDifficulty: number;
-  socialWithdrawal: number;
-  irritabilityLevel: number;
+  communication_difficulty: number;
+  social_withdrawal: number;
+  irritability_level: number;
+}
+
+export interface BiometricData {
+  timestamp?: string;
+  heartRate?: number;
+  hrv?: number;
+  stressLevel?: number;
+  temperature?: number;
+  skinConductance?: number;
+  movementIntensity?: number;
 }

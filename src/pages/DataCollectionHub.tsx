@@ -5,72 +5,56 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Activity, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/biometric";
 import { SleepTracker } from "@/components/tracking/SleepTracker";
 import { SensoryTracker } from "@/components/tracking/SensoryTracker";
 import { RoutineTracker } from "@/components/tracking/RoutineTracker";
 import { BehavioralTracker } from "@/components/tracking/BehavioralTracker";
 import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
+import { useDataCollection } from "@/hooks/useDataCollection";
+import { useAuth } from "@/context/AuthContext";
 
 const DataCollectionHub = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("biometric");
+  const { 
+    isLoading,
+    saveSleepData,
+    saveSensoryData,
+    saveRoutineData,
+    saveBehavioralData
+  } = useDataCollection();
   
   // Handlers for saving different types of data
-  const handleSaveSleepData = (data: SleepData) => {
-    console.log("Saving sleep data:", data);
-    // In a real implementation, this would sync with the database
-    toast({
-      title: "Sleep data saved",
-      description: "Your sleep information has been recorded"
-    });
+  const handleSaveSleepData = async (data: Omit<SleepData, "user_id">) => {
+    await saveSleepData(data);
   };
   
-  const handleSaveSensoryData = (data: SensoryData) => {
-    console.log("Saving sensory data:", data);
-    // In a real implementation, this would sync with the database
-    toast({
-      title: "Sensory data saved",
-      description: "Your sensory environment has been recorded"
-    });
+  const handleSaveSensoryData = async (data: Omit<SensoryData, "user_id">) => {
+    await saveSensoryData(data);
   };
   
-  const handleSaveRoutineData = (data: RoutineData) => {
-    console.log("Saving routine data:", data);
-    // In a real implementation, this would sync with the database
-    toast({
-      title: "Routine data saved",
-      description: "Your schedule change has been recorded"
-    });
+  const handleSaveRoutineData = async (data: Omit<RoutineData, "user_id">) => {
+    await saveRoutineData(data);
   };
   
-  const handleSaveBehavioralData = (data: BehavioralData) => {
-    console.log("Saving behavioral data:", data);
-    // In a real implementation, this would sync with the database
-    toast({
-      title: "Behavioral data saved",
-      description: "Your current state has been recorded"
-    });
+  const handleSaveBehavioralData = async (data: Omit<BehavioralData, "user_id">) => {
+    await saveBehavioralData(data);
   };
 
   const handleDeviceConnected = (device: any) => {
     console.log("Device connected:", device);
-    toast({
-      title: "Device Connected",
-      description: `Connected to ${device.name || "your device"}`
-    });
   };
 
   const handleDataReceived = (data: any) => {
     console.log("Data received:", data);
-    // In a real implementation, this would process and store the data
+    // Process the real-time data as needed
   };
 
   return (
     <div className="space-y-6 pb-16">
-      <div className="bg-blue-50 p-4 rounded-lg">
+      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
         <div className="flex items-center mb-2">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
@@ -83,7 +67,7 @@ const DataCollectionHub = () => {
       </div>
 
       <div className="px-4 space-y-6">
-        <Card className="p-4 bg-gradient-to-r from-blue-50 to-purple-50">
+        <Card className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
           <div className="flex items-center gap-3">
             <Database className="h-5 w-5 text-blue-500" />
             <div>
@@ -109,25 +93,25 @@ const DataCollectionHub = () => {
           </TabsList>
           
           <TabsContent value="biometric" className="mt-0">
-            <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg mb-4">
+            <div className="flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-800/50 rounded-lg mb-4">
               <Activity className="h-16 w-16 text-blue-400 opacity-70" />
             </div>
             <p className="text-center text-sm text-muted-foreground mb-6">
               Connect a wearable device above to automatically track biometric data
             </p>
-            <RoutineTracker onSave={handleSaveRoutineData} />
+            <RoutineTracker onSave={handleSaveRoutineData} isLoading={isLoading} />
           </TabsContent>
           
           <TabsContent value="sleep" className="mt-0">
-            <SleepTracker onSave={handleSaveSleepData} />
+            <SleepTracker onSave={handleSaveSleepData} isLoading={isLoading} />
           </TabsContent>
           
           <TabsContent value="sensory" className="mt-0">
-            <SensoryTracker onSave={handleSaveSensoryData} />
+            <SensoryTracker onSave={handleSaveSensoryData} isLoading={isLoading} />
           </TabsContent>
           
           <TabsContent value="behavioral" className="mt-0">
-            <BehavioralTracker onSave={handleSaveBehavioralData} />
+            <BehavioralTracker onSave={handleSaveBehavioralData} isLoading={isLoading} />
           </TabsContent>
         </Tabs>
       </div>

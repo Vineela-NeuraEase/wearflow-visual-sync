@@ -6,6 +6,8 @@ import { AccessibilityProvider } from "@/context/AccessibilityContext";
 import { AudioProvider } from "@/context/AudioContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/context/AuthContext";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 
 // Import layouts
 import Layout from "./components/layout/Layout";
@@ -26,6 +28,9 @@ import PersonalizeExperience from "./pages/onboarding/PersonalizeExperience";
 import WearablePairing from "./pages/onboarding/WearablePairing";
 import AddOns from "./pages/onboarding/AddOns";
 import DataCollectionHub from "./pages/DataCollectionHub";
+import Auth from "./pages/Auth";
+import MeltdownHistory from "./pages/MeltdownHistory";
+import Insights from "./pages/Insights";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -43,25 +48,81 @@ function App() {
       <AccessibilityProvider>
         <AudioProvider>
           <QueryClientProvider client={queryClient}>
-            <Router>
-              <Routes>
-                <Route path="/" element={<Layout children={<Home />} />} />
-                <Route path="/settings" element={<Layout children={<Settings />} />} />
-                <Route path="/settings/accessibility" element={<Layout children={<Accessibility />} />} />
-                <Route path="/emotion-logger" element={<MinimalLayout children={<EmotionLogger />} />} />
-                <Route path="/meltdown-logger" element={<MinimalLayout children={<MeltdownLogger />} />} />
-                <Route path="/emotion-hub" element={<Layout children={<EmotionHub />} />} />
-                <Route path="/warning-system" element={<Layout children={<WarningSystem />} />} />
-                <Route path="/data-collection" element={<Layout children={<DataCollectionHub />} />} />
-                <Route path="/learn" element={<Layout children={<Learn />} />} />
-                <Route path="/learn/:resourceId" element={<Layout children={<ResourceDetail />} />} />
-                <Route path="/welcome" element={<MinimalLayout children={<Welcome />} />} />
-                <Route path="/welcome/personalize" element={<MinimalLayout children={<PersonalizeExperience />} />} />
-                <Route path="/welcome/wearable" element={<MinimalLayout children={<WearablePairing />} />} />
-                <Route path="/welcome/add-ons" element={<MinimalLayout children={<AddOns />} />} />
-              </Routes>
-            </Router>
-            <Toaster />
+            <AuthProvider>
+              <Router>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/welcome" element={<MinimalLayout children={<Welcome />} />} />
+                  <Route path="/welcome/personalize" element={<MinimalLayout children={<PersonalizeExperience />} />} />
+                  <Route path="/welcome/wearable" element={<MinimalLayout children={<WearablePairing />} />} />
+                  <Route path="/welcome/add-ons" element={<MinimalLayout children={<AddOns />} />} />
+                  
+                  {/* Protected routes */}
+                  <Route path="/" element={
+                    <AuthGuard>
+                      <Layout children={<Home />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/settings" element={
+                    <AuthGuard>
+                      <Layout children={<Settings />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/settings/accessibility" element={
+                    <AuthGuard>
+                      <Layout children={<Accessibility />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/emotion-logger" element={
+                    <AuthGuard>
+                      <MinimalLayout children={<EmotionLogger />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/meltdown-logger" element={
+                    <AuthGuard>
+                      <MinimalLayout children={<MeltdownLogger />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/meltdown-history" element={
+                    <AuthGuard>
+                      <Layout children={<MeltdownHistory />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/emotion-hub" element={
+                    <AuthGuard>
+                      <Layout children={<EmotionHub />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/warning-system" element={
+                    <AuthGuard>
+                      <Layout children={<WarningSystem />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/data-collection" element={
+                    <AuthGuard>
+                      <Layout children={<DataCollectionHub />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/insights" element={
+                    <AuthGuard>
+                      <Layout children={<Insights />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/learn" element={
+                    <AuthGuard>
+                      <Layout children={<Learn />} />
+                    </AuthGuard>
+                  } />
+                  <Route path="/learn/:resourceId" element={
+                    <AuthGuard>
+                      <Layout children={<ResourceDetail />} />
+                    </AuthGuard>
+                  } />
+                </Routes>
+              </Router>
+              <Toaster />
+            </AuthProvider>
           </QueryClientProvider>
         </AudioProvider>
       </AccessibilityProvider>
