@@ -29,14 +29,14 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Index />} />
               
-              {/* Protected routes */}
-              <Route path="/home" element={<AuthGuard><Home /></AuthGuard>} />
-              <Route path="/warning-system" element={<AuthGuard><WarningSystem /></AuthGuard>} />
-              <Route path="/biotracking" element={<AuthGuard><BioTracking /></AuthGuard>} />
-              <Route path="/resources" element={<AuthGuard><Resources /></AuthGuard>} />
-              <Route path="/meltdown-tracking" element={<AuthGuard><MeltdownTracking /></AuthGuard>} />
-              <Route path="/data-access" element={<AuthGuard><DataAccess /></AuthGuard>} />
-              <Route path="/profile-account" element={<AuthGuard><ProfileAccount /></AuthGuard>} />
+              {/* All routes are accessible during development */}
+              <Route path="/home" element={<Home />} />
+              <Route path="/warning-system" element={<WarningSystem />} />
+              <Route path="/biotracking" element={<BioTracking />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/meltdown-tracking" element={<MeltdownTracking />} />
+              <Route path="/data-access" element={<DataAccess />} />
+              <Route path="/profile-account" element={<ProfileAccount />} />
 
               {/* Fallback route */}
               <Route path="*" element={<Navigate to="/" />} />
