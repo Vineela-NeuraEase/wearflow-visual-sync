@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Music } from "lucide-react";
+import { ArrowLeft, Music, Wind } from "lucide-react"; // Added Wind icon
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -51,6 +51,28 @@ const CalmingTools = () => {
         <h3 className="text-xl font-medium mt-6 mb-4">Activities</h3>
         
         <motion.div className="space-y-4" variants={containerVariants}>
+          {/* Breathing Exercise Card - Added first with prominent styling */}
+          <motion.div variants={itemVariants}>
+            <Card 
+              className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow border-2 border-blue-200"
+              onClick={() => navigate('/breathing')}
+            >
+              <motion.div 
+                className="bg-blue-100 rounded-full p-3 mr-4"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <Wind className="h-6 w-6 text-blue-500" />
+              </motion.div>
+              <div>
+                <h3 className="font-medium text-lg">Breathing Exercise</h3>
+                <p className="text-muted-foreground">Guided breathing patterns for relaxation</p>
+              </div>
+            </Card>
+          </motion.div>
+        
           <motion.div variants={itemVariants}>
             <Card 
               className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
@@ -103,9 +125,12 @@ const CalmingTools = () => {
           variants={itemVariants}
           transition={{ delay: 0.4 }}
         >
-          <h3 className="text-xl font-medium mt-8 mb-4">Featured: Bubble Pop</h3>
+          <h3 className="text-xl font-medium mt-8 mb-4">Featured: Breathing Exercise</h3>
           
-          <Card className="bg-white rounded-xl p-4 overflow-hidden">
+          <Card 
+            className="bg-white rounded-xl p-4 overflow-hidden cursor-pointer hover:shadow-md"
+            onClick={() => navigate('/breathing')}
+          >
             <motion.div
               animate={{ 
                 y: [0, 5, 0],
@@ -114,27 +139,26 @@ const CalmingTools = () => {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="relative"
             >
-              <img 
-                src="https://placeholder.pics/svg/320x180/DEDEDE/555555/Bubble%20pop%20activity" 
-                alt="Bubble pop activity" 
-                className="w-full h-[180px] object-cover rounded-lg"
-              />
-              <motion.div 
-                className="absolute w-8 h-8 bg-blue-300 rounded-full opacity-70"
-                style={{ top: '20%', left: '20%' }}
-                animate={{ scale: [1, 1.5, 0], opacity: [0.7, 0.2, 0] }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 1 }}
-              />
-              <motion.div 
-                className="absolute w-6 h-6 bg-purple-200 rounded-full opacity-70"
-                style={{ top: '60%', left: '70%' }}
-                animate={{ scale: [1, 1.5, 0], opacity: [0.7, 0.2, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 0.5, delay: 1 }}
-              />
+              <div className="w-full h-[180px] bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                <motion.div
+                  className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    boxShadow: [
+                      '0 0 10px rgba(120, 180, 255, 0.3)',
+                      '0 0 30px rgba(120, 180, 255, 0.7)',
+                      '0 0 10px rgba(120, 180, 255, 0.3)'
+                    ]
+                  }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Wind className="h-16 w-16 text-blue-500" />
+                </motion.div>
+              </div>
+              <p className="mt-4 text-center text-muted-foreground">
+                Guided breathing patterns to help reduce stress and promote relaxation
+              </p>
             </motion.div>
-            <p className="mt-4 text-center text-muted-foreground">
-              A calming activity to help reduce stress through interactive bubble popping
-            </p>
           </Card>
         </motion.div>
       </motion.div>
