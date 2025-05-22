@@ -32,9 +32,9 @@ const soundPaths: Record<string, string> = {
   breathing: "/sounds/breathing.mp3"
 };
 
-export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [volume, setVolume] = useState(0.7);
+export const AudioProvider = ({ children }: AudioProviderProps) => {
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [volume, setVolume] = useState<number>(0.7);
   const audioRefs = React.useRef<Record<string, HTMLAudioElement>>({});
   
   useEffect(() => {

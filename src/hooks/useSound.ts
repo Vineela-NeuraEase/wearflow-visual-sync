@@ -31,10 +31,15 @@ export const useSound = () => {
   useEffect(() => {
     // Preload audio files
     Object.entries(soundPaths).forEach(([key, path]) => {
-      const audio = new Audio();
-      audio.src = path;
-      audio.preload = "auto";
-      audioRefs.current[key as SoundType] = audio;
+      try {
+        const audio = new Audio();
+        audio.src = path;
+        audio.preload = "auto";
+        audioRefs.current[key as SoundType] = audio;
+      } catch (error) {
+        console.warn(`Failed to create audio for ${key}:`, error);
+        audioRefs.current[key as SoundType] = null;
+      }
     });
 
     // Handle errors
@@ -60,14 +65,18 @@ export const useSound = () => {
   const play = (sound: SoundType) => {
     const audio = audioRefs.current[sound];
     if (audio) {
-      // Reset the audio to start from beginning if it's already playing
-      audio.pause();
-      audio.currentTime = 0;
-      
-      // Play the sound
-      audio.play().catch(error => {
-        console.warn("Audio play failed:", error);
-      });
+      try {
+        // Reset the audio to start from beginning if it's already playing
+        audio.pause();
+        audio.currentTime = 0;
+        
+        // Play the sound
+        audio.play().catch(error => {
+          console.warn("Audio play failed:", error);
+        });
+      } catch (error) {
+        console.warn(`Error playing sound ${sound}:`, error);
+      }
     } else {
       console.warn(`Audio not found for sound: ${sound}`);
     }
