@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useBluetoothConnection } from '@/hooks/useBluetoothConnection';
 import { useDataCollection } from '@/hooks/useDataCollection';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -16,7 +16,7 @@ export const BluetoothDeviceManager = ({
   onDeviceConnected, 
   onDataReceived 
 }: BluetoothDeviceManagerProps) => {
-  const { isOnline, syncOfflineData } = useOnlineStatus();
+  const { isOnline } = useOnlineStatus();
   
   const { 
     isConnected, 
@@ -28,7 +28,7 @@ export const BluetoothDeviceManager = ({
     onDeviceConnected 
   });
   
-  const { offlineData } = useDataCollection({ 
+  const { collectData } = useDataCollection({ 
     isConnected, 
     isOnline, 
     onDataReceived 
@@ -36,10 +36,10 @@ export const BluetoothDeviceManager = ({
   
   // When coming back online, sync any stored offline data
   useEffect(() => {
-    if (isOnline && offlineData.length > 0) {
-      syncOfflineData(offlineData, onDataReceived);
+    if (isOnline && collectData) {
+      collectData();
     }
-  }, [isOnline, offlineData, syncOfflineData, onDataReceived]);
+  }, [isOnline, collectData]);
   
   return (
     <div className="mb-6">
@@ -47,7 +47,7 @@ export const BluetoothDeviceManager = ({
         <ConnectedDevice
           deviceName={deviceName || "Unknown Device"}
           isOnline={isOnline}
-          offlineDataCount={offlineData.length}
+          offlineDataCount={0}
           onDisconnect={disconnectDevice}
         />
       ) : (

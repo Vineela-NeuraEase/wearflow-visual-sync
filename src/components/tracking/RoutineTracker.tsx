@@ -2,154 +2,100 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { Save, Calendar, MapPin, AlertCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 import { RoutineData } from "@/types/biometric";
 
 interface RoutineTrackerProps {
-  onSave: (routineData: RoutineData) => void;
+  onSaveData: (data: RoutineData) => void;
 }
 
-export const RoutineTracker = ({ onSave }: RoutineTrackerProps) => {
-  const { toast } = useToast();
-  const [expectedActivity, setExpectedActivity] = useState("");
-  const [actualActivity, setActualActivity] = useState("");
-  const [deviationScore, setDeviationScore] = useState(0);
-  const [location, setLocation] = useState("home");
-  const [isUnexpectedChange, setIsUnexpectedChange] = useState(false);
-
-  const locationOptions = [
-    { value: "home", label: "Home" },
-    { value: "school", label: "School" },
-    { value: "work", label: "Work" },
-    { value: "public", label: "Public Place" },
-    { value: "transit", label: "In Transit" },
-    { value: "unfamiliar", label: "Unfamiliar Place" },
-    { value: "other", label: "Other" }
-  ];
+export const RoutineTracker = ({ onSaveData }: RoutineTrackerProps) => {
+  const [routineData, setRoutineData] = useState<Partial<RoutineData>>({
+    expected_activity: "",
+    actual_activity: "",
+    deviation_score: 50,
+    location: "",
+    is_unexpected_change: false
+  });
 
   const handleSave = () => {
-    if (!expectedActivity || !actualActivity) {
-      toast({
-        variant: "destructive",
-        title: "Missing information",
-        description: "Please fill in both expected and actual activities"
-      });
-      return;
-    }
-
-    const routineData: RoutineData = {
-      timestamp: new Date().toISOString(),
-      expectedActivity,
-      actualActivity,
-      deviationScore,
-      location,
-      isUnexpectedChange
-    };
-
-    onSave(routineData);
-    toast({
-      title: "Routine change recorded",
-      description: "Your schedule deviation has been logged"
+    onSaveData({
+      expected_activity: routineData.expected_activity || "Unspecified",
+      actual_activity: routineData.actual_activity || "Unspecified",
+      deviation_score: routineData.deviation_score || 0,
+      location: routineData.location || "Unspecified",
+      is_unexpected_change: routineData.is_unexpected_change || false
     });
   };
 
   return (
     <Card className="p-5">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Routine & Schedule</h2>
-        <Calendar className="text-purple-500" />
-      </div>
-
+      <h2 className="text-lg font-medium mb-4">Routine & Change Tracking</h2>
+      
       <div className="space-y-6">
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="expected">Expected Activity</Label>
-          <Input
-            id="expected"
-            placeholder="What was scheduled?"
-            value={expectedActivity}
-            onChange={(e) => setExpectedActivity(e.target.value)}
+          <Input 
+            id="expected" 
+            value={routineData.expected_activity}
+            onChange={(e) => setRoutineData(prev => ({ ...prev, expected_activity: e.target.value }))}
+            placeholder="What was planned?"
           />
         </div>
-
-        <div>
+        
+        <div className="space-y-2">
           <Label htmlFor="actual">Actual Activity</Label>
-          <Input
-            id="actual"
+          <Input 
+            id="actual" 
+            value={routineData.actual_activity}
+            onChange={(e) => setRoutineData(prev => ({ ...prev, actual_activity: e.target.value }))}
             placeholder="What actually happened?"
-            value={actualActivity}
-            onChange={(e) => setActualActivity(e.target.value)}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <Label>Deviation Impact</Label>
-            <span className="text-sm">{
-              deviationScore === 0 ? "None" :
-              deviationScore < 30 ? "Minimal" :
-              deviationScore < 60 ? "Moderate" :
-              "Significant"
-            }</span>
+        
+        <div className="space-y-2">
+          <Label htmlFor="location">Location</Label>
+          <Input 
+            id="location" 
+            value={routineData.location}
+            onChange={(e) => setRoutineData(prev => ({ ...prev, location: e.target.value }))}
+            placeholder="Where did this happen?"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Deviation Score</Label>
+            <span>{routineData.deviation_score}/100</span>
           </div>
-          <Slider
-            value={[deviationScore]}
-            onValueChange={(values) => setDeviationScore(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[routineData.deviation_score || 50]} 
+            min={0} 
+            max={100} 
             step={1}
+            onValueChange={(values) => setRoutineData(prev => ({ ...prev, deviation_score: values[0] }))}
           />
+          <p className="text-xs text-gray-500">
+            How different was the actual activity from what was expected?
+          </p>
         </div>
-
-        <div>
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="unexpected-change">Unexpected Change?</Label>
-            <Switch
-              id="unexpected-change"
-              checked={isUnexpectedChange}
-              onCheckedChange={setIsUnexpectedChange}
-            />
-            {isUnexpectedChange && (
-              <AlertCircle className="h-4 w-4 text-amber-500" />
-            )}
-          </div>
-          {isUnexpectedChange && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Unexpected changes may have a greater impact on regulation
-            </p>
-          )}
+        
+        <div className="flex items-center space-x-2">
+          <Switch 
+            checked={routineData.is_unexpected_change}
+            onCheckedChange={(checked) => setRoutineData(prev => ({ ...prev, is_unexpected_change: checked }))}
+          />
+          <Label>Was this change unexpected?</Label>
         </div>
-
-        <div>
-          <div className="flex items-center mb-1">
-            <MapPin className="h-4 w-4 mr-1" />
-            <Label>Location</Label>
-          </div>
-          <Select value={location} onValueChange={setLocation}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select location" />
-            </SelectTrigger>
-            <SelectContent>
-              {locationOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button
-          className="w-full"
+        
+        <Button 
           onClick={handleSave}
+          className="w-full bg-purple-500 hover:bg-purple-600"
         >
-          <Save className="mr-2 h-4 w-4" />
-          Save Routine Change
+          Save Routine Data
         </Button>
       </div>
     </Card>

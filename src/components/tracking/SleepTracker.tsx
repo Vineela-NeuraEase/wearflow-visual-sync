@@ -1,152 +1,126 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Save, MoonStar, Clock } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { SleepData } from "@/types/biometric";
 
 interface SleepTrackerProps {
-  onSave: (sleepData: SleepData) => void;
-  initialData?: Partial<SleepData>;
+  onSaveData: (data: SleepData) => void;
 }
 
-export const SleepTracker = ({ onSave, initialData }: SleepTrackerProps) => {
-  const { toast } = useToast();
-  const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
-  const [quality, setQuality] = useState(initialData?.quality || 50);
-  const [duration, setDuration] = useState(initialData?.duration || 7.5);
-  const [deepSleep, setDeepSleep] = useState(initialData?.deepSleepPercentage || 20);
-  const [remSleep, setRemSleep] = useState(initialData?.remSleepPercentage || 25);
-  const [awakenings, setAwakenings] = useState(initialData?.awakenings || 2);
+export const SleepTracker = ({ onSaveData }: SleepTrackerProps) => {
+  const [sleepData, setSleepData] = useState<Partial<SleepData>>({
+    date: new Date().toISOString().split('T')[0],
+    quality: 75,
+    duration: 7.5,
+    deep_sleep_percentage: 20,
+    rem_sleep_percentage: 25,
+    awakenings: 2
+  });
 
   const handleSave = () => {
-    const sleepData: SleepData = {
-      date,
-      quality,
-      duration,
-      deepSleepPercentage: deepSleep,
-      remSleepPercentage: remSleep,
-      awakenings
-    };
-
-    onSave(sleepData);
-    toast({
-      title: "Sleep data saved",
-      description: "Your sleep information has been recorded"
+    onSaveData({
+      date: sleepData.date || new Date().toISOString().split('T')[0],
+      quality: sleepData.quality || 50,
+      duration: sleepData.duration || 7,
+      deep_sleep_percentage: sleepData.deep_sleep_percentage || 15,
+      rem_sleep_percentage: sleepData.rem_sleep_percentage || 20,
+      awakenings: sleepData.awakenings || 0
     });
   };
 
   return (
     <Card className="p-5">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Sleep Tracking</h2>
-        <MoonStar className="text-blue-500" />
-      </div>
-
+      <h2 className="text-lg font-medium mb-4">Sleep Data</h2>
+      
       <div className="space-y-6">
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="date">Date</Label>
-          <Input
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+          <Input 
+            type="date" 
+            id="date" 
+            value={sleepData.date}
+            onChange={(e) => setSleepData(prev => ({ ...prev, date: e.target.value }))}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
             <Label>Sleep Quality</Label>
-            <span>{quality}%</span>
+            <span>{sleepData.quality}%</span>
           </div>
-          <Slider
-            value={[quality]}
-            onValueChange={(values) => setQuality(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[sleepData.quality || 75]} 
+            min={0} 
+            max={100} 
             step={1}
+            onValueChange={(values) => setSleepData(prev => ({ ...prev, quality: values[0] }))}
           />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>Poor</span>
-            <span>Average</span>
-            <span>Excellent</span>
-          </div>
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
             <Label>Sleep Duration (hours)</Label>
-            <span>{duration} hrs</span>
+            <span>{sleepData.duration}</span>
           </div>
-          <Slider
-            value={[duration]}
-            onValueChange={(values) => setDuration(values[0])}
-            min={0}
-            max={12}
-            step={0.5}
+          <Slider 
+            value={[sleepData.duration || 7.5]} 
+            min={0} 
+            max={12} 
+            step={0.1}
+            onValueChange={(values) => setSleepData(prev => ({ ...prev, duration: values[0] }))}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <Label>Deep Sleep Percentage</Label>
-            <span>{deepSleep}%</span>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Deep Sleep (%)</Label>
+            <span>{sleepData.deep_sleep_percentage}%</span>
           </div>
-          <Slider
-            value={[deepSleep]}
-            onValueChange={(values) => setDeepSleep(values[0])}
-            min={0}
-            max={50}
+          <Slider 
+            value={[sleepData.deep_sleep_percentage || 20]} 
+            min={0} 
+            max={50} 
             step={1}
+            onValueChange={(values) => setSleepData(prev => ({ ...prev, deep_sleep_percentage: values[0] }))}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <Label>REM Sleep Percentage</Label>
-            <span>{remSleep}%</span>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>REM Sleep (%)</Label>
+            <span>{sleepData.rem_sleep_percentage}%</span>
           </div>
-          <Slider
-            value={[remSleep]}
-            onValueChange={(values) => setRemSleep(values[0])}
-            min={0}
-            max={50}
+          <Slider 
+            value={[sleepData.rem_sleep_percentage || 25]} 
+            min={0} 
+            max={50} 
             step={1}
+            onValueChange={(values) => setSleepData(prev => ({ ...prev, rem_sleep_percentage: values[0] }))}
           />
         </div>
-
-        <div>
-          <Label htmlFor="awakenings">Awakenings</Label>
-          <div className="flex items-center">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setAwakenings(Math.max(0, awakenings - 1))}
-            >
-              -
-            </Button>
-            <span className="mx-4">{awakenings}</span>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setAwakenings(awakenings + 1)}
-            >
-              +
-            </Button>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Night Awakenings</Label>
+            <span>{sleepData.awakenings}</span>
           </div>
+          <Slider 
+            value={[sleepData.awakenings || 2]} 
+            min={0} 
+            max={10} 
+            step={1}
+            onValueChange={(values) => setSleepData(prev => ({ ...prev, awakenings: values[0] }))}
+          />
         </div>
-
-        <Button
-          className="w-full"
+        
+        <Button 
           onClick={handleSave}
+          className="w-full bg-blue-500 hover:bg-blue-600"
         >
-          <Save className="mr-2 h-4 w-4" />
           Save Sleep Data
         </Button>
       </div>

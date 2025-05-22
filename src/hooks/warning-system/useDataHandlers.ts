@@ -29,8 +29,8 @@ export function useDataHandlers(
     // Update sensory data based on environmental factors
     const newSensoryData: SensoryData = {
       timestamp: new Date().toISOString(),
-      noiseLevel: factors.find((f: any) => f.name === "Noise Level")?.value || 50,
-      lightIntensity: factors.find((f: any) => f.name === "Brightness")?.value || 60,
+      noise_level: factors.find((f: any) => f.name === "Noise Level")?.value || 50,
+      light_intensity: factors.find((f: any) => f.name === "Brightness")?.value || 60,
       temperature: factors.find((f: any) => f.name === "Temperature")?.value || 72,
       crowding: factors.find((f: any) => f.name === "Crowding")?.value || 30,
     };

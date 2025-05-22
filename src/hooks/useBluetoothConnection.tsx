@@ -1,170 +1,82 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { BiometricData } from '@/types/biometric';
-import { getBiometricService } from '../services/BluetoothServiceFactory';
+import { useState, useCallback } from 'react';
 
 interface UseBluetoothConnectionProps {
   onDeviceConnected?: (device: any) => void;
-  onDataReceived?: (data: BiometricData) => void;
 }
 
-export function useBluetoothConnection({
-  onDeviceConnected,
-  onDataReceived
-}: UseBluetoothConnectionProps = {}) {
-  const { toast } = useToast();
+export const useBluetoothConnection = ({ onDeviceConnected }: UseBluetoothConnectionProps = {}) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [deviceName, setDeviceName] = useState<string | null>(null);
+  const [device, setDevice] = useState<any>(null);
   
-  // Get the appropriate Bluetooth service for the platform
-  const bluetoothService = getBiometricService();
-  
-  // Initialize Bluetooth on hook mount
-  useEffect(() => {
-    bluetoothService.initialize().catch(error => {
-      console.error("Failed to initialize Bluetooth:", error);
-    });
-    
-    // Add connection listener
-    const connectionListener = (connected: boolean, device?: any) => {
-      setIsConnected(connected);
-      if (connected && device) {
-        setDeviceName(device.name || "Connected Device");
-      } else {
-        setDeviceName(null);
-      }
-    };
-    
-    bluetoothService.addConnectionListener(connectionListener);
-    
-    // Add data listener for Bluetooth readings
-    const dataListener = (data: any) => {
-      if (onDataReceived) {
-        // Convert to our BiometricData format, including new fields if available
-        const biometricData: BiometricData = {
-          heartRate: data.heartRate,
-          hrv: data.hrv || 0,
-          stressLevel: data.stressLevel || 0,
-          timestamp: data.timestamp,
-          // Include new metrics if available from device
-          sleepQuality: data.sleepQuality,
-          sleepDuration: data.sleepDuration,
-          sensoryLoad: data.sensoryLoad,
-          routineDeviation: data.routineDeviation,
-          behavioralState: data.behavioralState
-        };
-        onDataReceived(biometricData);
-      }
-    };
-    
-    // Register data listener
-    bluetoothService.addDataListener(dataListener);
-    
-    // Check for already connected device
-    if (bluetoothService.isConnected()) {
-      const device = bluetoothService.getConnectedDevice();
-      setIsConnected(true);
-      setDeviceName(device?.name || "Connected Device");
-    }
-    
-    // Clean up on unmount
-    return () => {
-      bluetoothService.removeConnectionListener(connectionListener);
-      bluetoothService.removeDataListener(dataListener);
-    };
-  }, [onDataReceived]);
-  
+  // Connect to a Bluetooth device
   const connectToDevice = useCallback(async () => {
     setIsConnecting(true);
     
     try {
-      // Request Bluetooth permissions
-      const permissionsGranted = await bluetoothService.requestPermissions();
+      // In a real app, this would use Web Bluetooth API
+      // For demo purposes, we'll simulate a connection
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      if (!permissionsGranted) {
-        toast({
-          variant: "destructive",
-          title: "Permission Error",
-          description: "Bluetooth permissions are required to connect to devices.",
-        });
-        setIsConnecting(false);
-        return;
+      const mockDevice = {
+        name: "HeartSense Pro",
+        id: "mock-device-id",
+        sendData: () => {},
+      };
+      
+      setIsConnected(true);
+      setDeviceName(mockDevice.name);
+      setDevice(mockDevice);
+      
+      if (onDeviceConnected) {
+        onDeviceConnected(mockDevice);
       }
       
-      // Scan for devices
-      const devices = await bluetoothService.scanForDevices(5000);
-      
-      if (devices.length === 0) {
-        toast({
-          variant: "destructive",
-          title: "No Devices Found",
-          description: "No compatible devices were found nearby. Please make sure your device is on and in range.",
-        });
-        setIsConnecting(false);
-        return;
-      }
-      
-      // Connect to the first device found
-      const device = devices[0];
-      const connected = await bluetoothService.connectToDevice(device.deviceId);
-      
-      if (connected) {
-        toast({
-          title: "Device Connected",
-          description: `Successfully connected to ${device.name || 'wearable device'}`,
-        });
+      // Start sending mock data
+      window.bluetoothInterval = setInterval(() => {
+        // Random biometric data simulation
+        const mockData = {
+          timestamp: new Date().toISOString(),
+          heartRate: Math.floor(Math.random() * 30) + 60, // 60-90
+          hrv: Math.floor(Math.random() * 30) + 40, // 40-70
+          stressLevel: Math.floor(Math.random() * 40) + 20, // 20-60
+          temperature: 98.6 - (Math.random() * 2) + Math.random(), // Around 98.6
+          skinConductance: Math.random() * 10 + 5,
+          movementIntensity: Math.random() * 100
+        };
         
-        // Call the callback if provided
-        if (onDeviceConnected) {
-          onDeviceConnected({
-            name: device.name || "Bluetooth Device",
-            id: device.deviceId
-          });
-        }
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Connection Failed",
-          description: "Could not connect to the selected device. Please try again.",
-        });
-      }
+        // Dispatch an event with the mock data
+        const dataEvent = new CustomEvent('bluetoothData', { detail: mockData });
+        window.dispatchEvent(dataEvent);
+      }, 5000);
+      
     } catch (error) {
-      console.error("Bluetooth connection error:", error);
-      toast({
-        variant: "destructive",
-        title: "Connection Error",
-        description: "An error occurred while connecting to the device.",
-      });
+      console.error('Error connecting to device:', error);
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, onDeviceConnected]);
+  }, [onDeviceConnected]);
   
-  const disconnectDevice = useCallback(async () => {
-    try {
-      await bluetoothService.disconnectDevice();
-      
-      toast({
-        title: "Device Disconnected",
-        description: "Device has been disconnected",
-      });
-    } catch (error) {
-      console.error("Error disconnecting:", error);
-      toast({
-        variant: "destructive", 
-        title: "Disconnection Error",
-        description: "Failed to disconnect from the device",
-      });
+  // Disconnect from the device
+  const disconnectDevice = useCallback(() => {
+    if (window.bluetoothInterval) {
+      clearInterval(window.bluetoothInterval);
+      window.bluetoothInterval = undefined;
     }
-  }, [toast]);
-
+    
+    setIsConnected(false);
+    setDeviceName(null);
+    setDevice(null);
+  }, []);
+  
   return {
     isConnected,
     isConnecting,
     deviceName,
+    device,
     connectToDevice,
     disconnectDevice
   };
-}
+};

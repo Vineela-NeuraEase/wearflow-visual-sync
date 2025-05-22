@@ -1,156 +1,118 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Save, Smile, PuzzleIcon, MessageSquare, UserMinus, Frown } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { BehavioralData } from "@/types/biometric";
 
 interface BehavioralTrackerProps {
-  onSave: (behavioralData: BehavioralData) => void;
+  onSaveData: (data: BehavioralData) => void;
 }
 
-export const BehavioralTracker = ({ onSave }: BehavioralTrackerProps) => {
-  const { toast } = useToast();
-  const [mood, setMood] = useState(50);
-  const [stimming, setStimming] = useState(30);
-  const [communication, setCommunication] = useState(20);
-  const [withdrawal, setWithdrawal] = useState(10);
-  const [irritability, setIrritability] = useState(15);
+export const BehavioralTracker = ({ onSaveData }: BehavioralTrackerProps) => {
+  const [behavioralData, setBehavioralData] = useState<Partial<BehavioralData>>({
+    self_reported_mood: 70,
+    stimming: 30,
+    communication_difficulty: 20,
+    social_withdrawal: 15,
+    irritability_level: 25
+  });
 
   const handleSave = () => {
-    const behavioralData: BehavioralData = {
-      timestamp: new Date().toISOString(),
-      selfReportedMood: mood,
-      stimming,
-      communicationDifficulty: communication,
-      socialWithdrawal: withdrawal,
-      irritabilityLevel: irritability
-    };
-
-    onSave(behavioralData);
-    toast({
-      title: "Behavioral state recorded",
-      description: "Your current behavioral state has been logged"
+    onSaveData({
+      self_reported_mood: behavioralData.self_reported_mood || 50,
+      stimming: behavioralData.stimming || 0,
+      communication_difficulty: behavioralData.communication_difficulty || 0,
+      social_withdrawal: behavioralData.social_withdrawal || 0,
+      irritability_level: behavioralData.irritability_level || 0
     });
   };
 
   return (
     <Card className="p-5">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Current State</h2>
-        <Smile className="text-amber-500" />
-      </div>
-
+      <h2 className="text-lg font-medium mb-4">Behavioral State</h2>
+      
       <div className="space-y-6">
-        <div>
-          <div className="flex justify-between mb-1">
-            <div className="flex items-center">
-              <Smile className="mr-2 h-4 w-4" />
-              <Label>Mood</Label>
-            </div>
-            <span>{
-              mood < 30 ? "Distressed" :
-              mood < 50 ? "Uneasy" :
-              mood < 70 ? "Calm" :
-              "Happy"
-            }</span>
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Current Mood</Label>
+            <span>{behavioralData.self_reported_mood}/100</span>
           </div>
-          <Slider
-            value={[mood]}
-            onValueChange={(values) => setMood(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[behavioralData.self_reported_mood || 70]} 
+            min={0} 
+            max={100} 
             step={1}
+            onValueChange={(values) => setBehavioralData(prev => ({ ...prev, self_reported_mood: values[0] }))}
           />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>Distressed</span>
-            <span>Neutral</span>
-            <span>Happy</span>
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>Low</span>
+            <span>High</span>
           </div>
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <div className="flex items-center">
-              <PuzzleIcon className="mr-2 h-4 w-4" />
-              <Label>Stimming Level</Label>
-            </div>
-            <span>{stimming}</span>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Stimming Intensity</Label>
+            <span>{behavioralData.stimming}/100</span>
           </div>
-          <Slider
-            value={[stimming]}
-            onValueChange={(values) => setStimming(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[behavioralData.stimming || 30]} 
+            min={0} 
+            max={100} 
             step={1}
-          />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>Minimal</span>
-            <span>Moderate</span>
-            <span>Intense</span>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <div className="flex items-center">
-              <MessageSquare className="mr-2 h-4 w-4" />
-              <Label>Communication Difficulty</Label>
-            </div>
-            <span>{communication}</span>
-          </div>
-          <Slider
-            value={[communication]}
-            onValueChange={(values) => setCommunication(values[0])}
-            min={0}
-            max={100}
-            step={1}
+            onValueChange={(values) => setBehavioralData(prev => ({ ...prev, stimming: values[0] }))}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <div className="flex items-center">
-              <UserMinus className="mr-2 h-4 w-4" />
-              <Label>Social Withdrawal</Label>
-            </div>
-            <span>{withdrawal}</span>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Communication Difficulty</Label>
+            <span>{behavioralData.communication_difficulty}/100</span>
           </div>
-          <Slider
-            value={[withdrawal]}
-            onValueChange={(values) => setWithdrawal(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[behavioralData.communication_difficulty || 20]} 
+            min={0} 
+            max={100} 
             step={1}
+            onValueChange={(values) => setBehavioralData(prev => ({ ...prev, communication_difficulty: values[0] }))}
           />
         </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <div className="flex items-center">
-              <Frown className="mr-2 h-4 w-4" />
-              <Label>Irritability</Label>
-            </div>
-            <span>{irritability}</span>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Social Withdrawal</Label>
+            <span>{behavioralData.social_withdrawal}/100</span>
           </div>
-          <Slider
-            value={[irritability]}
-            onValueChange={(values) => setIrritability(values[0])}
-            min={0}
-            max={100}
+          <Slider 
+            value={[behavioralData.social_withdrawal || 15]} 
+            min={0} 
+            max={100} 
             step={1}
+            onValueChange={(values) => setBehavioralData(prev => ({ ...prev, social_withdrawal: values[0] }))}
           />
         </div>
-
-        <Button
-          className="w-full"
+        
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Irritability</Label>
+            <span>{behavioralData.irritability_level}/100</span>
+          </div>
+          <Slider 
+            value={[behavioralData.irritability_level || 25]} 
+            min={0} 
+            max={100} 
+            step={1}
+            onValueChange={(values) => setBehavioralData(prev => ({ ...prev, irritability_level: values[0] }))}
+          />
+        </div>
+        
+        <Button 
           onClick={handleSave}
+          className="w-full bg-red-500 hover:bg-red-600"
         >
-          <Save className="mr-2 h-4 w-4" />
-          Save Current State
+          Save Behavioral Data
         </Button>
       </div>
     </Card>

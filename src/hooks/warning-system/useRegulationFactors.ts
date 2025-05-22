@@ -2,125 +2,151 @@
 import { useState, useEffect } from "react";
 import { BiometricDataPoint } from "@/hooks/biometrics/types";
 import { SleepData, SensoryData, RoutineData } from "@/types/biometric";
-import { RegulationFactor, RegulationFactorTrend } from "@/pages/WarningSystem";
+import { RegulationFactor } from "@/pages/WarningSystem";
 
 export function useRegulationFactors(
-  dataPoints: BiometricDataPoint[], 
-  sleepData: SleepData | null, 
+  dataPoints: BiometricDataPoint[],
+  sleepData: SleepData | null,
   sensoryData: SensoryData | null,
   routineData: RoutineData | null
 ) {
   const [regulationFactors, setRegulationFactors] = useState<RegulationFactor[]>([
-    { name: "Heart Rate", value: 78, impact: "medium", trend: "increasing" },
-    { name: "HRV", value: 42, impact: "high", trend: "decreasing" },
-    { name: "Sleep Quality", value: 65, impact: "medium", trend: "stable" },
-    { name: "Environmental", value: 40, impact: "low", trend: "stable" },
-    { name: "Sensory Load", value: 45, impact: "medium", trend: "stable" },
-    { name: "Routine Deviation", value: 20, impact: "low", trend: "stable" }
+    {
+      name: "Heart Rate",
+      value: 72,
+      impact: "medium",
+      trend: "stable"
+    },
+    {
+      name: "HRV",
+      value: 45,
+      impact: "high",
+      trend: "decreasing"
+    },
+    {
+      name: "Sleep Quality",
+      value: 65,
+      impact: "medium", 
+      trend: "stable"
+    }
   ]);
   
-  // Update regulation factors based on real-time data
+  // Update regulation factors based on available data
   useEffect(() => {
-    if (dataPoints.length === 0) return;
+    const updatedFactors: RegulationFactor[] = [];
     
-    // Get the most recent data point
-    const latestData = dataPoints[0];
-    
-    // Update regulation factors with real values
-    const updatedFactors = [...regulationFactors];
-    
-    // Update Heart Rate
-    if (latestData.heartRate) {
-      const hrTrend = dataPoints.length > 1 && latestData.heartRate > dataPoints[1].heartRate 
-        ? "increasing" 
-        : dataPoints.length > 1 && latestData.heartRate < dataPoints[1].heartRate
-          ? "decreasing"
-          : "stable";
-          
-      updatedFactors[0] = {
+    // Heart rate factor from biometric data
+    if (dataPoints.length > 0) {
+      const latestData = dataPoints[0];
+      
+      updatedFactors.push({
         name: "Heart Rate",
         value: latestData.heartRate,
-        impact: latestData.heartRate > 85 ? "high" : latestData.heartRate > 75 ? "medium" : "low",
-        trend: hrTrend as RegulationFactorTrend
-      };
-    }
-    
-    // Update HRV
-    if (latestData.hrv) {
-      const hrvTrend = dataPoints.length > 1 && latestData.hrv < dataPoints[1].hrv 
-        ? "decreasing" 
-        : dataPoints.length > 1 && latestData.hrv > dataPoints[1].hrv
-          ? "increasing"
-          : "stable";
-          
-      updatedFactors[1] = {
+        impact: getHeartRateImpact(latestData.heartRate),
+        trend: getHeartRateTrend(dataPoints)
+      });
+      
+      updatedFactors.push({
         name: "HRV",
         value: latestData.hrv,
-        impact: latestData.hrv < 45 ? "high" : latestData.hrv < 55 ? "medium" : "low",
-        trend: hrvTrend as RegulationFactorTrend
-      };
+        impact: getHrvImpact(latestData.hrv),
+        trend: getHrvTrend(dataPoints)
+      });
     }
     
-    // Update Sleep Quality if available
-    if (latestData.sleepQuality !== undefined) {
-      updatedFactors[2] = {
-        name: "Sleep Quality",
-        value: latestData.sleepQuality,
-        impact: latestData.sleepQuality < 50 ? "high" : latestData.sleepQuality < 70 ? "medium" : "low",
-        trend: "stable" // We don't have previous sleep data in this context
-      };
-    } else if (sleepData) {
-      updatedFactors[2] = {
+    // Sleep factor from sleep data
+    if (sleepData) {
+      updatedFactors.push({
         name: "Sleep Quality",
         value: sleepData.quality,
-        impact: sleepData.quality < 50 ? "high" : sleepData.quality < 70 ? "medium" : "low",
-        trend: "stable"
-      };
+        impact: getSleepImpact(sleepData.quality),
+        trend: "stable" // We'd need historical sleep data for a trend
+      });
     }
     
-    // Update Sensory Load if available
-    if (latestData.sensoryLoad !== undefined) {
-      updatedFactors[4] = {
-        name: "Sensory Load",
-        value: latestData.sensoryLoad,
-        impact: latestData.sensoryLoad > 70 ? "high" : latestData.sensoryLoad > 50 ? "medium" : "low",
-        trend: "stable" // We need more context to determine trend
-      };
-    } else if (sensoryData) {
-      const avgSensoryLoad = (
-        sensoryData.noiseLevel + 
-        sensoryData.lightIntensity + 
-        Math.abs(sensoryData.temperature - 72) * 2 + 
-        sensoryData.crowding
-      ) / 4;
+    // Sensory factors from sensory data
+    if (sensoryData) {
+      const avgSensoryLoad = Math.round(
+        (sensoryData.noise_level + 
+         sensoryData.light_intensity + 
+         sensoryData.crowding) / 3
+      );
       
-      updatedFactors[4] = {
+      updatedFactors.push({
         name: "Sensory Load",
-        value: Math.min(100, avgSensoryLoad),
-        impact: avgSensoryLoad > 70 ? "high" : avgSensoryLoad > 50 ? "medium" : "low",
-        trend: "stable"
-      };
+        value: avgSensoryLoad,
+        impact: getSensoryImpact(avgSensoryLoad),
+        trend: "stable" // We'd need historical sensory data for a trend
+      });
     }
     
-    // Update Routine Deviation if available
-    if (latestData.routineDeviation !== undefined) {
-      updatedFactors[5] = {
-        name: "Routine Deviation",
-        value: latestData.routineDeviation,
-        impact: latestData.routineDeviation > 70 ? "high" : latestData.routineDeviation > 40 ? "medium" : "low",
-        trend: "stable"
-      };
-    } else if (routineData) {
-      updatedFactors[5] = {
-        name: "Routine Deviation",
-        value: routineData.deviationScore,
-        impact: routineData.deviationScore > 70 ? "high" : routineData.deviationScore > 40 ? "medium" : "low",
-        trend: "stable"
-      };
+    // Routine factors from routine data
+    if (routineData) {
+      updatedFactors.push({
+        name: "Routine Change",
+        value: routineData.deviation_score,
+        impact: getRoutineImpact(routineData.deviation_score),
+        trend: routineData.deviation_score > 50 ? "increasing" : "stable"
+      });
     }
     
-    setRegulationFactors(updatedFactors);
-  }, [dataPoints, sleepData, sensoryData, routineData, regulationFactors]);
+    if (updatedFactors.length > 0) {
+      setRegulationFactors(updatedFactors);
+    }
+  }, [dataPoints, sleepData, sensoryData, routineData]);
+  
+  // Helper functions to determine impact and trends
+  function getHeartRateImpact(heartRate: number): "high" | "medium" | "low" {
+    if (heartRate > 90) return "high";
+    if (heartRate > 80) return "medium";
+    return "low";
+  }
+  
+  function getHeartRateTrend(data: BiometricDataPoint[]): "increasing" | "decreasing" | "stable" {
+    if (data.length < 3) return "stable";
+    
+    const recent = data.slice(0, 3).reduce((sum, item) => sum + item.heartRate, 0) / 3;
+    const previous = data.slice(3, 6).reduce((sum, item) => sum + item.heartRate, 0) / 3;
+    
+    if (recent > previous + 5) return "increasing";
+    if (recent < previous - 5) return "decreasing";
+    return "stable";
+  }
+  
+  function getHrvImpact(hrv: number): "high" | "medium" | "low" {
+    if (hrv < 40) return "high";
+    if (hrv < 50) return "medium";
+    return "low";
+  }
+  
+  function getHrvTrend(data: BiometricDataPoint[]): "increasing" | "decreasing" | "stable" {
+    if (data.length < 3) return "stable";
+    
+    const recent = data.slice(0, 3).reduce((sum, item) => sum + item.hrv, 0) / 3;
+    const previous = data.slice(3, 6).reduce((sum, item) => sum + item.hrv, 0) / 3;
+    
+    if (recent > previous + 3) return "increasing";
+    if (recent < previous - 3) return "decreasing";
+    return "stable";
+  }
+  
+  function getSleepImpact(quality: number): "high" | "medium" | "low" {
+    if (quality < 60) return "high";
+    if (quality < 75) return "medium";
+    return "low";
+  }
+  
+  function getSensoryImpact(load: number): "high" | "medium" | "low" {
+    if (load > 70) return "high";
+    if (load > 50) return "medium";
+    return "low";
+  }
+  
+  function getRoutineImpact(score: number): "high" | "medium" | "low" {
+    if (score > 70) return "high";
+    if (score > 40) return "medium";
+    return "low";
+  }
 
   return { regulationFactors };
 }
