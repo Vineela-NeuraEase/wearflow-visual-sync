@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useOfflineStorage } from './useOfflineStorage';
 import { useDeviceConnection } from './useDeviceConnection';
 import { useDataStream } from './useDataStream';
-import { UseBiometricDataProps, UseBiometricDataReturn, BiometricDataPoint } from '../types';
+import { UseBiometricDataProps, UseBiometricDataReturn, BiometricData } from '../types';
 
 export function useBiometricData({ 
   maxDataPoints = 100 
@@ -29,7 +29,7 @@ export function useBiometricData({
   } = useDataStream({ isConnected, maxDataPoints });
   
   // Wrapper for adding data that handles online/offline state
-  const addDataPoint = useCallback((data: BiometricDataPoint) => {
+  const addDataPoint = useCallback((data: BiometricData) => {
     // Add to main data stream
     addStreamDataPoint(data);
     
@@ -58,3 +58,6 @@ export function useBiometricData({
     syncOfflineData
   };
 }
+
+// Need to import useEffect
+import { useEffect } from 'react';

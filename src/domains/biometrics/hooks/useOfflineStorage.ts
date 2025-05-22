@@ -1,15 +1,15 @@
 
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { BiometricDataPoint } from '../types';
+import { BiometricData } from '../types';
 
 export function useOfflineStorage() {
   const { toast } = useToast();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [offlineData, setOfflineData] = useState<BiometricDataPoint[]>([]);
+  const [offlineData, setOfflineData] = useState<BiometricData[]>([]);
   
   // Add offline data point
-  const addOfflineDataPoint = useCallback((data: BiometricDataPoint) => {
+  const addOfflineDataPoint = useCallback((data: BiometricData) => {
     setOfflineData(prev => [...prev, data]);
     console.log("Data stored for offline sync", data);
   }, []);
