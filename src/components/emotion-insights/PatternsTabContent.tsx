@@ -1,12 +1,7 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
-
-interface PatternInsight {
-  title: string;
-  description: string;
-}
+import { PatternInsight } from "@/data/patternInsights";
 
 interface PatternsTabContentProps {
   patternInsights: PatternInsight[];

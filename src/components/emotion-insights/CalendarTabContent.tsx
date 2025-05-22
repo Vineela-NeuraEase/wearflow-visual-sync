@@ -1,8 +1,6 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
 import { getEmotionEmoji } from "@/utils/emotionUtils";
 
 interface CalendarTabContentProps {
