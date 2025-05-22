@@ -15,6 +15,7 @@ import Index from './pages/Index';
 import ProfileAccount from './pages/ProfileAccount';
 import { AuthGuard } from './components/auth/AuthGuard';
 import { ProfileProvider } from './context/ProfileContext';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -27,9 +28,10 @@ function App() {
               {/* Public routes */}
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Index />} />
-
+              
               {/* Protected routes */}
-              <Route path="/home" element={<AuthGuard><WarningSystem /></AuthGuard>} />
+              <Route path="/home" element={<AuthGuard><Home /></AuthGuard>} />
+              <Route path="/warning-system" element={<AuthGuard><WarningSystem /></AuthGuard>} />
               <Route path="/biotracking" element={<AuthGuard><BioTracking /></AuthGuard>} />
               <Route path="/resources" element={<AuthGuard><Resources /></AuthGuard>} />
               <Route path="/meltdown-tracking" element={<AuthGuard><MeltdownTracking /></AuthGuard>} />
