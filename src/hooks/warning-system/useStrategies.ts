@@ -1,8 +1,17 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Strategy } from "@/types/strategy";
 import { useToast } from "@/hooks/use-toast";
+
+// Define Strategy type and export it
+export interface Strategy {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  effectiveness: number;
+  user_id?: string;
+}
 
 // Export the interface for the hook return type
 export interface UseStrategiesReturn {
@@ -10,6 +19,7 @@ export interface UseStrategiesReturn {
   strategies: Strategy[];
   loading: boolean;
   error: string | null;
+  isLoading: boolean;
   handleShowStrategies: () => void;
   handleHideStrategies: () => void;
   saveStrategy: (strategy: Omit<Strategy, "id" | "user_id">) => Promise<Strategy | null>;
@@ -21,6 +31,7 @@ export function useStrategies(): UseStrategiesReturn {
   const [showStrategies, setShowStrategies] = useState(false);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -50,7 +61,7 @@ export function useStrategies(): UseStrategiesReturn {
     }
   ];
   
-  // Load strategies from local storage (for now, until we have the Supabase table)
+  // Load strategies
   useEffect(() => {
     const loadStrategies = async () => {
       setLoading(true);
@@ -58,7 +69,6 @@ export function useStrategies(): UseStrategiesReturn {
       
       try {
         // For now, just use default strategies
-        // Later we'll replace this with Supabase query when the table is available
         setStrategies(defaultStrategies);
       } catch (err) {
         console.error("Error loading strategies:", err);
@@ -81,6 +91,7 @@ export function useStrategies(): UseStrategiesReturn {
   
   const saveStrategy = useCallback(async (strategy: Omit<Strategy, "id" | "user_id">): Promise<Strategy | null> => {
     try {
+      setIsLoading(true);
       // Create new strategy with generated ID
       const newStrategy: Strategy = {
         ...strategy,
@@ -91,6 +102,11 @@ export function useStrategies(): UseStrategiesReturn {
       // Add to local state
       setStrategies(prev => [...prev, newStrategy]);
       
+      toast({
+        title: "Strategy saved",
+        description: "Your strategy has been added",
+      });
+      
       return newStrategy;
     } catch (err) {
       console.error("Error saving strategy:", err);
@@ -100,11 +116,14 @@ export function useStrategies(): UseStrategiesReturn {
         variant: "destructive"
       });
       return null;
+    } finally {
+      setIsLoading(false);
     }
   }, [user, toast]);
   
   const deleteStrategy = useCallback(async (id: string) => {
     try {
+      setIsLoading(true);
       // Remove from local state
       setStrategies(prev => prev.filter(s => s.id !== id));
       
@@ -119,11 +138,14 @@ export function useStrategies(): UseStrategiesReturn {
         description: "Failed to delete strategy",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   }, [toast]);
   
   const updateEffectiveness = useCallback(async (id: string, rating: number) => {
     try {
+      setIsLoading(true);
       // Update effectiveness in local state
       setStrategies(prev => 
         prev.map(strategy => 
@@ -144,6 +166,8 @@ export function useStrategies(): UseStrategiesReturn {
         description: "Failed to update rating",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   }, [toast]);
   
@@ -152,6 +176,7 @@ export function useStrategies(): UseStrategiesReturn {
     strategies,
     loading,
     error,
+    isLoading,
     handleShowStrategies,
     handleHideStrategies,
     saveStrategy,

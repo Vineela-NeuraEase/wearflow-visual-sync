@@ -1,3 +1,4 @@
+
 // Import necessary dependencies
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
@@ -30,6 +31,7 @@ import DataCollectionHub from "./pages/DataCollectionHub";
 import Auth from "./pages/Auth";
 import MeltdownHistory from "./pages/MeltdownHistory";
 import Insights from "./pages/Insights";
+import Index from "./pages/Index";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -51,73 +53,94 @@ function App() {
               <Router>
                 <Routes>
                   {/* Public routes */}
+                  <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/welcome" element={<MinimalLayout children={<Welcome />} />} />
-                  <Route path="/welcome/personalize" element={<MinimalLayout children={<PersonalizeExperience />} />} />
-                  <Route path="/welcome/wearable" element={<MinimalLayout children={<WearablePairing />} />} />
-                  <Route path="/welcome/add-ons" element={<MinimalLayout children={<AddOns />} />} />
+                  <Route path="/welcome" element={<MinimalLayout><Welcome /></MinimalLayout>} />
+                  <Route path="/welcome/personalize" element={<MinimalLayout><PersonalizeExperience /></MinimalLayout>} />
+                  <Route path="/welcome/wearable" element={<MinimalLayout><WearablePairing /></MinimalLayout>} />
+                  <Route path="/welcome/add-ons" element={<MinimalLayout><AddOns /></MinimalLayout>} />
                   
                   {/* Protected routes */}
-                  <Route path="/" element={
+                  <Route path="/home" element={
                     <AuthGuard>
                       <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<Home />} />
+                  </Route>
                   <Route path="/settings" element={
                     <AuthGuard>
-                      <Layout children={<Settings />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<Settings />} />
+                  </Route>
                   <Route path="/settings/accessibility" element={
                     <AuthGuard>
-                      <Layout children={<Accessibility />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<Accessibility />} />
+                  </Route>
                   <Route path="/emotion-logger" element={
                     <AuthGuard>
-                      <MinimalLayout children={<EmotionLogger />} />
+                      <MinimalLayout><EmotionLogger /></MinimalLayout>
                     </AuthGuard>
                   } />
                   <Route path="/meltdown-logger" element={
                     <AuthGuard>
-                      <MinimalLayout children={<MeltdownLogger />} />
+                      <MinimalLayout><MeltdownLogger /></MinimalLayout>
                     </AuthGuard>
                   } />
                   <Route path="/meltdown-history" element={
                     <AuthGuard>
-                      <Layout children={<MeltdownHistory />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<MeltdownHistory />} />
+                  </Route>
                   <Route path="/emotion-hub" element={
                     <AuthGuard>
-                      <Layout children={<EmotionHub />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<EmotionHub />} />
+                  </Route>
                   <Route path="/warning-system" element={
                     <AuthGuard>
-                      <Layout children={<WarningSystem />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<WarningSystem />} />
+                  </Route>
                   <Route path="/data-collection" element={
                     <AuthGuard>
-                      <Layout children={<DataCollectionHub />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<DataCollectionHub />} />
+                  </Route>
                   <Route path="/insights" element={
                     <AuthGuard>
-                      <Layout children={<Insights />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<Insights />} />
+                  </Route>
                   <Route path="/learn" element={
                     <AuthGuard>
-                      <Layout children={<Learn />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<Learn />} />
+                  </Route>
                   <Route path="/learn/:resourceId" element={
                     <AuthGuard>
-                      <Layout children={<ResourceDetail />} />
+                      <Layout />
                     </AuthGuard>
-                  } />
+                  }>
+                    <Route index element={<ResourceDetail />} />
+                  </Route>
                 </Routes>
               </Router>
               <Toaster />
