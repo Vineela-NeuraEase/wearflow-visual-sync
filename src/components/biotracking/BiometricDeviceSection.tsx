@@ -1,5 +1,5 @@
 
-import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
+import { BluetoothDeviceManager } from "@/domains/biometrics/components";
 
 interface BiometricDeviceSectionProps {
   onDeviceConnected: (device: any) => void;

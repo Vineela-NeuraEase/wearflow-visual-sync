@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useBiometricData } from "@/hooks/useBiometricData";
+import { useBiometricData } from "@/domains/biometrics/hooks";
 
 // Mock data for demonstration
 const dailyData = [

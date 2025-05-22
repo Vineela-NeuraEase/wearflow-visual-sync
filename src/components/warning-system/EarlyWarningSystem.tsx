@@ -1,13 +1,12 @@
-
 import { Card } from "@/components/ui/card";
-import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
+import { BluetoothDeviceManager } from "@/domains/biometrics/components";
 import { WarningLevelDisplay } from "./early-warning/WarningLevelDisplay";
 import { WarningActiveContent } from "./early-warning/WarningActiveContent";
 import { StableStatusContent } from "./early-warning/StableStatusContent";
 import { DeviceConnectionPrompt } from "./early-warning/DeviceConnectionPrompt";
 import { useDataCollection } from "./early-warning/useDataCollection";
 import { useWarningAnalysis } from "./early-warning/useWarningAnalysis";
-import { BiometricData } from "./early-warning/types";
+import { BiometricData } from "@/domains/early-warning/types";
 
 interface EarlyWarningProps {
   userId?: string;
