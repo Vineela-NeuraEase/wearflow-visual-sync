@@ -9,6 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      behavioral_data: {
+        Row: {
+          communication_difficulty: number
+          created_at: string
+          id: string
+          irritability_level: number
+          self_reported_mood: number
+          social_withdrawal: number
+          stimming: number
+          timestamp: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          communication_difficulty: number
+          created_at?: string
+          id?: string
+          irritability_level: number
+          self_reported_mood: number
+          social_withdrawal: number
+          stimming: number
+          timestamp?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          communication_difficulty?: number
+          created_at?: string
+          id?: string
+          irritability_level?: number
+          self_reported_mood?: number
+          social_withdrawal?: number
+          stimming?: number
+          timestamp?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      behavioral_meltdown_relation: {
+        Row: {
+          behavioral_data_id: string
+          correlation_strength: number
+          id: string
+          meltdown_event_id: string
+        }
+        Insert: {
+          behavioral_data_id: string
+          correlation_strength: number
+          id?: string
+          meltdown_event_id: string
+        }
+        Update: {
+          behavioral_data_id?: string
+          correlation_strength?: number
+          id?: string
+          meltdown_event_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "behavioral_meltdown_relation_behavioral_data_id_fkey"
+            columns: ["behavioral_data_id"]
+            isOneToOne: false
+            referencedRelation: "behavioral_data"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "behavioral_meltdown_relation_meltdown_event_id_fkey"
+            columns: ["meltdown_event_id"]
+            isOneToOne: false
+            referencedRelation: "meltdown_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookmarks: {
         Row: {
           created_at: string
@@ -44,6 +119,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      meltdown_events: {
+        Row: {
+          coping_strategies: string[] | null
+          created_at: string
+          duration: number
+          id: string
+          intensity: number
+          notes: string | null
+          timestamp: string
+          triggers: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coping_strategies?: string[] | null
+          created_at?: string
+          duration: number
+          id?: string
+          intensity: number
+          notes?: string | null
+          timestamp?: string
+          triggers?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coping_strategies?: string[] | null
+          created_at?: string
+          duration?: number
+          id?: string
+          intensity?: number
+          notes?: string | null
+          timestamp?: string
+          triggers?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -111,6 +225,81 @@ export type Database = {
         }
         Relationships: []
       }
+      routine_data: {
+        Row: {
+          actual_activity: string
+          created_at: string
+          deviation_score: number
+          expected_activity: string
+          id: string
+          is_unexpected_change: boolean
+          location: string
+          timestamp: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_activity: string
+          created_at?: string
+          deviation_score: number
+          expected_activity: string
+          id?: string
+          is_unexpected_change?: boolean
+          location: string
+          timestamp?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_activity?: string
+          created_at?: string
+          deviation_score?: number
+          expected_activity?: string
+          id?: string
+          is_unexpected_change?: boolean
+          location?: string
+          timestamp?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      routine_meltdown_relation: {
+        Row: {
+          correlation_strength: number
+          id: string
+          meltdown_event_id: string
+          routine_data_id: string
+        }
+        Insert: {
+          correlation_strength: number
+          id?: string
+          meltdown_event_id: string
+          routine_data_id: string
+        }
+        Update: {
+          correlation_strength?: number
+          id?: string
+          meltdown_event_id?: string
+          routine_data_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_meltdown_relation_meltdown_event_id_fkey"
+            columns: ["meltdown_event_id"]
+            isOneToOne: false
+            referencedRelation: "meltdown_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routine_meltdown_relation_routine_data_id_fkey"
+            columns: ["routine_data_id"]
+            isOneToOne: false
+            referencedRelation: "routine_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sensor_data: {
         Row: {
           data_type: string
@@ -134,6 +323,159 @@ export type Database = {
           value?: number
         }
         Relationships: []
+      }
+      sensory_data: {
+        Row: {
+          created_at: string
+          crowding: number
+          id: string
+          light_intensity: number
+          noise_level: number
+          smell_sensitivity: number | null
+          temperature: number
+          texture_sensitivity: number | null
+          timestamp: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          crowding: number
+          id?: string
+          light_intensity: number
+          noise_level: number
+          smell_sensitivity?: number | null
+          temperature: number
+          texture_sensitivity?: number | null
+          timestamp?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          crowding?: number
+          id?: string
+          light_intensity?: number
+          noise_level?: number
+          smell_sensitivity?: number | null
+          temperature?: number
+          texture_sensitivity?: number | null
+          timestamp?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sensory_meltdown_relation: {
+        Row: {
+          correlation_strength: number
+          id: string
+          meltdown_event_id: string
+          sensory_data_id: string
+        }
+        Insert: {
+          correlation_strength: number
+          id?: string
+          meltdown_event_id: string
+          sensory_data_id: string
+        }
+        Update: {
+          correlation_strength?: number
+          id?: string
+          meltdown_event_id?: string
+          sensory_data_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sensory_meltdown_relation_meltdown_event_id_fkey"
+            columns: ["meltdown_event_id"]
+            isOneToOne: false
+            referencedRelation: "meltdown_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sensory_meltdown_relation_sensory_data_id_fkey"
+            columns: ["sensory_data_id"]
+            isOneToOne: false
+            referencedRelation: "sensory_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_data: {
+        Row: {
+          awakenings: number
+          created_at: string
+          date: string
+          deep_sleep_percentage: number
+          duration: number
+          id: string
+          quality: number
+          rem_sleep_percentage: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          awakenings: number
+          created_at?: string
+          date: string
+          deep_sleep_percentage: number
+          duration: number
+          id?: string
+          quality: number
+          rem_sleep_percentage: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          awakenings?: number
+          created_at?: string
+          date?: string
+          deep_sleep_percentage?: number
+          duration?: number
+          id?: string
+          quality?: number
+          rem_sleep_percentage?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sleep_meltdown_relation: {
+        Row: {
+          correlation_strength: number
+          id: string
+          meltdown_event_id: string
+          sleep_data_id: string
+        }
+        Insert: {
+          correlation_strength: number
+          id?: string
+          meltdown_event_id: string
+          sleep_data_id: string
+        }
+        Update: {
+          correlation_strength?: number
+          id?: string
+          meltdown_event_id?: string
+          sleep_data_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_meltdown_relation_meltdown_event_id_fkey"
+            columns: ["meltdown_event_id"]
+            isOneToOne: false
+            referencedRelation: "meltdown_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sleep_meltdown_relation_sleep_data_id_fkey"
+            columns: ["sleep_data_id"]
+            isOneToOne: false
+            referencedRelation: "sleep_data"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
