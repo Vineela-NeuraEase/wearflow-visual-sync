@@ -19,7 +19,7 @@ export interface SensoryData {
   user_id?: string;
   timestamp?: string;
   noise_level: number;
-  light_level: number;
+  light_level: number; // Changed from light_intensity to match components
   temperature: number;
   crowding: number;
   texture_sensitivity?: number;

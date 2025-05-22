@@ -1,4 +1,3 @@
-
 import { useCallback, useState, useEffect } from 'react';
 import { BiometricData, SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +18,12 @@ export const useDataCollection = ({
   const { toast } = useToast();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Function to collect data - this was missing and causing the error
+  const collectData = useCallback(() => {
+    console.log("Collecting data...");
+    // This could be expanded to fetch historical data, process offline data, etc.
+  }, []);
   
   // Listen for data from the Bluetooth device
   useEffect(() => {
@@ -83,12 +88,6 @@ export const useDataCollection = ({
     }
   }, [user]);
   
-  // Function to collect and process data, for use by BluetoothDeviceManager
-  const collectData = useCallback(() => {
-    console.log("Collecting data...");
-    // This could be expanded to fetch historical data, process offline data, etc.
-  }, []);
-  
   // Function to save sleep data
   const saveSleepData = useCallback(async (data: Omit<SleepData, "user_id">) => {
     if (!user) {
@@ -141,10 +140,17 @@ export const useDataCollection = ({
     
     try {
       setIsLoading(true);
-      const { data: result, error } = await supabase.from('sensory_data').insert({
+      // Convert light_level to light_intensity for database compatibility
+      const dbData = {
         ...data,
+        light_intensity: data.light_level,
         user_id: user.id
-      }).select().single();
+      };
+      
+      // Remove light_level as it's not in the DB schema
+      delete (dbData as any).light_level;
+      
+      const { data: result, error } = await supabase.from('sensory_data').insert(dbData).select().single();
       
       if (error) throw error;
       
@@ -180,10 +186,19 @@ export const useDataCollection = ({
     
     try {
       setIsLoading(true);
-      const { data: result, error } = await supabase.from('routine_data').insert({
+      
+      // Ensure all required fields are present
+      const completeData = {
         ...data,
+        expected_activity: data.expected_activity || data.routine_change || 'Unspecified',
+        actual_activity: data.actual_activity || data.routine_change || 'Unspecified',
+        location: data.location || 'Not specified',
+        is_unexpected_change: data.is_unexpected_change || !data.is_planned,
+        deviation_score: data.deviation_score || data.disruption_level || 5,
         user_id: user.id
-      }).select().single();
+      };
+      
+      const { data: result, error } = await supabase.from('routine_data').insert(completeData).select().single();
       
       if (error) throw error;
       
@@ -219,10 +234,18 @@ export const useDataCollection = ({
     
     try {
       setIsLoading(true);
-      const { data: result, error } = await supabase.from('behavioral_data').insert({
+      
+      // Ensure required fields are present
+      const completeData = {
         ...data,
+        communication_difficulty: data.communication_difficulty || 0,
+        social_withdrawal: data.social_withdrawal || 0,
+        self_reported_mood: data.self_reported_mood || 5,
+        stimming: data.stimming || 0,
         user_id: user.id
-      }).select().single();
+      };
+      
+      const { data: result, error } = await supabase.from('behavioral_data').insert(completeData).select().single();
       
       if (error) throw error;
       
@@ -245,12 +268,112 @@ export const useDataCollection = ({
     }
   }, [user, toast]);
   
+  // Fetch sleep data for user
+  const fetchSleepData = useCallback(async (limit = 10) => {
+    if (!user) return [];
+    
+    try {
+      const { data, error } = await supabase
+        .from('sleep_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(limit);
+      
+      if (error) {
+        console.error("Error fetching sleep data:", error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error("Error in fetchSleepData:", err);
+      return [];
+    }
+  }, [user]);
+  
+  // Fetch sensory data for user
+  const fetchSensoryData = useCallback(async (limit = 10) => {
+    if (!user) return [];
+    
+    try {
+      const { data, error } = await supabase
+        .from('sensory_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('timestamp', { ascending: false })
+        .limit(limit);
+      
+      if (error) {
+        console.error("Error fetching sensory data:", error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error("Error in fetchSensoryData:", err);
+      return [];
+    }
+  }, [user]);
+  
+  // Fetch routine data for user
+  const fetchRoutineData = useCallback(async (limit = 10) => {
+    if (!user) return [];
+    
+    try {
+      const { data, error } = await supabase
+        .from('routine_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('timestamp', { ascending: false })
+        .limit(limit);
+      
+      if (error) {
+        console.error("Error fetching routine data:", error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error("Error in fetchRoutineData:", err);
+      return [];
+    }
+  }, [user]);
+  
+  // Fetch behavioral data for user
+  const fetchBehavioralData = useCallback(async (limit = 10) => {
+    if (!user) return [];
+    
+    try {
+      const { data, error } = await supabase
+        .from('behavioral_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('timestamp', { ascending: false })
+        .limit(limit);
+      
+      if (error) {
+        console.error("Error fetching behavioral data:", error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
+      console.error("Error in fetchBehavioralData:", err);
+      return [];
+    }
+  }, [user]);
+
   return {
     isLoading,
-    collectData,
+    collectData, // Add this missing method
     saveSleepData,
     saveSensoryData,
     saveRoutineData,
-    saveBehavioralData
+    saveBehavioralData,
+    fetchSleepData,
+    fetchSensoryData,
+    fetchRoutineData,
+    fetchBehavioralData
   };
 };

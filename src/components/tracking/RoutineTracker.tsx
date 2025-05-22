@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { RoutineTrackerProps } from './TrackerProps';
 import { Card } from "@/components/ui/card";
@@ -17,10 +18,13 @@ import { cn } from "@/lib/utils";
 
 export const RoutineTracker = ({ onSave, isLoading }: RoutineTrackerProps) => {
   const [date, setDate] = useState<Date>(new Date());
+  const [location, setLocation] = useState<string>("Home");
   const [routineChange, setRoutineChange] = useState("");
   const [routineType, setRoutineType] = useState("schedule");
   const [disruptionLevel, setDisruptionLevel] = useState(5);
   const [isPlanned, setIsPlanned] = useState(false);
+  const [expectedActivity, setExpectedActivity] = useState("");
+  const [actualActivity, setActualActivity] = useState("");
   const [notes, setNotes] = useState("");
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,10 +33,15 @@ export const RoutineTracker = ({ onSave, isLoading }: RoutineTrackerProps) => {
     await onSave({
       date: format(date, "yyyy-MM-dd"),
       timestamp: new Date().toISOString(),
+      location: location,
       routine_change: routineChange,
       routine_type: routineType,
       disruption_level: disruptionLevel,
       is_planned: isPlanned,
+      expected_activity: expectedActivity || routineChange,
+      actual_activity: actualActivity || routineChange,
+      deviation_score: disruptionLevel,
+      is_unexpected_change: !isPlanned,
       notes: notes
     });
     
@@ -41,6 +50,8 @@ export const RoutineTracker = ({ onSave, isLoading }: RoutineTrackerProps) => {
     setRoutineType("schedule");
     setDisruptionLevel(5);
     setIsPlanned(false);
+    setExpectedActivity("");
+    setActualActivity("");
     setNotes("");
   };
   
@@ -79,12 +90,45 @@ export const RoutineTracker = ({ onSave, isLoading }: RoutineTrackerProps) => {
         </div>
         
         <div className="space-y-2">
+          <Label htmlFor="location">Location</Label>
+          <Input
+            id="location"
+            placeholder="e.g., Home, School, Work"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="space-y-2">
           <Label htmlFor="routineChange">What changed?</Label>
           <Input
             id="routineChange"
             placeholder="e.g., School schedule change, new caregiver"
             value={routineChange}
             onChange={(e) => setRoutineChange(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="expectedActivity">Expected Activity</Label>
+          <Input
+            id="expectedActivity"
+            placeholder="What was supposed to happen?"
+            value={expectedActivity}
+            onChange={(e) => setExpectedActivity(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="actualActivity">Actual Activity</Label>
+          <Input
+            id="actualActivity"
+            placeholder="What actually happened?"
+            value={actualActivity}
+            onChange={(e) => setActualActivity(e.target.value)}
             required
           />
         </div>

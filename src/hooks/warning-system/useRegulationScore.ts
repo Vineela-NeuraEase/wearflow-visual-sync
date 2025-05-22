@@ -38,7 +38,7 @@ export function useRegulationScore(
     
     // Sensory load factor
     if (sensoryData) {
-      const avgSensory = (sensoryData.noise_level + sensoryData.light_intensity + sensoryData.crowding) / 3;
+      const avgSensory = (sensoryData.noise_level + sensoryData.light_level + sensoryData.crowding) / 3;
       if (avgSensory > 70) newScore -= 15;
       else if (avgSensory > 50) newScore -= 10;
     }
@@ -50,10 +50,10 @@ export function useRegulationScore(
     // Behavioral state factor
     if (behavioralData) {
       if (behavioralData.irritability_level > 60) newScore -= 15;
-      if (behavioralData.stimming > 70) newScore -= 10;
-      if (behavioralData.communication_difficulty > 50) newScore -= 10;
-      if (behavioralData.social_withdrawal > 70) newScore -= 10;
-      if (behavioralData.self_reported_mood < 40) newScore -= 10;
+      if (behavioralData.stimming && behavioralData.stimming > 70) newScore -= 10;
+      if (behavioralData.communication_difficulty && behavioralData.communication_difficulty > 50) newScore -= 10;
+      if (behavioralData.social_withdrawal && behavioralData.social_withdrawal > 70) newScore -= 10;
+      if (behavioralData.self_reported_mood && behavioralData.self_reported_mood < 40) newScore -= 10;
     }
     
     // Ensure score stays within bounds

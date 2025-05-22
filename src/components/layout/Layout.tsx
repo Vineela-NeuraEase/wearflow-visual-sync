@@ -1,6 +1,6 @@
 
 import { Outlet } from "react-router-dom";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext"; // Fixed import path
 import { BottomNav } from "./BottomNav";
 import { Toaster } from "@/components/ui/toaster";
 

@@ -2,14 +2,25 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
-interface StrategyEffectivenessRaterProps {
+export interface StrategyEffectivenessRaterProps {
   rating: number;
   onChange: (rating: number) => void;
+  // Add strategy prop to match usage in Insights.tsx
+  strategy?: {
+    id: string;
+    name: string;
+    type: string;
+    lastUsed: string;
+  };
+  // Add onRatingSubmit prop to match usage in Insights.tsx
+  onRatingSubmit?: (rating: number, feedback: string) => void;
 }
 
 export const StrategyEffectivenessRater = ({
   rating,
-  onChange
+  onChange,
+  strategy,
+  onRatingSubmit
 }: StrategyEffectivenessRaterProps) => {
   return (
     <div className="flex space-x-1">

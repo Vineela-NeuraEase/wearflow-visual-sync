@@ -17,6 +17,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
   const [duration, setDuration] = useState<number>(8);
   const [quality, setQuality] = useState<number>(3);
   const [deepSleepPercentage, setDeepSleepPercentage] = useState<number>(25);
+  const [remSleepPercentage, setRemSleepPercentage] = useState<number>(20); // Add REM sleep percentage
   const [awakenings, setAwakenings] = useState<number>(0);
   const [sleepOnset, setSleepOnset] = useState<string>("22:30");
   const [wakeTime, setWakeTime] = useState<string>("06:30");
@@ -30,6 +31,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
       duration,
       quality,
       deep_sleep_percentage: deepSleepPercentage,
+      rem_sleep_percentage: remSleepPercentage, // Add missing rem_sleep_percentage
       awakenings,
       sleep_onset: sleepOnset,
       wake_time: wakeTime,
@@ -37,6 +39,8 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
       created_at: new Date().toISOString()
     });
   };
+  
+  // ... keep existing code for the component UI
   
   return (
     <Card className="p-4">
@@ -50,6 +54,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
         </div>
         
         <div className="space-y-4">
+          {/* Date picker */}
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Popover>
@@ -77,6 +82,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             </Popover>
           </div>
           
+          {/* Sleep and wake times */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="sleepOnset">Sleep Time</Label>
@@ -99,6 +105,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             </div>
           </div>
           
+          {/* Duration slider */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label htmlFor="duration">Sleep Duration (hours)</Label>
@@ -114,6 +121,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             />
           </div>
           
+          {/* Quality slider */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label htmlFor="quality">Sleep Quality</Label>
@@ -131,6 +139,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             />
           </div>
           
+          {/* Deep sleep slider */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label htmlFor="deepSleep">Deep Sleep %</Label>
@@ -146,6 +155,23 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             />
           </div>
           
+          {/* REM sleep slider - Added this field */}
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="remSleep">REM Sleep %</Label>
+              <span className="text-sm text-muted-foreground">{remSleepPercentage}%</span>
+            </div>
+            <Slider
+              id="remSleep"
+              min={0}
+              max={40}
+              step={5}
+              value={[remSleepPercentage]}
+              onValueChange={(value) => setRemSleepPercentage(value[0])}
+            />
+          </div>
+          
+          {/* Awakenings slider */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label htmlFor="awakenings">Night Awakenings</Label>
@@ -161,6 +187,7 @@ export const SleepTracker = ({ onSave, isLoading }: SleepTrackerProps) => {
             />
           </div>
           
+          {/* Sleep aid selector */}
           <div className="space-y-2">
             <Label htmlFor="sleepAid">Sleep Aid Used</Label>
             <Select value={sleepAid} onValueChange={setSleepAid}>

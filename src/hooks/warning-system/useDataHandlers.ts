@@ -30,7 +30,7 @@ export function useDataHandlers(
     const newSensoryData: SensoryData = {
       timestamp: new Date().toISOString(),
       noise_level: factors.find((f: any) => f.name === "Noise Level")?.value || 50,
-      light_intensity: factors.find((f: any) => f.name === "Brightness")?.value || 60,
+      light_level: factors.find((f: any) => f.name === "Brightness")?.value || 60, // Changed from light_intensity to light_level
       temperature: factors.find((f: any) => f.name === "Temperature")?.value || 72,
       crowding: factors.find((f: any) => f.name === "Crowding")?.value || 30,
     };
