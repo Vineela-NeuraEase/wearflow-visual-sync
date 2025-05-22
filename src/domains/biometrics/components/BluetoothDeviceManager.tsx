@@ -1,8 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useBluetoothDevices } from '../hooks/useBluetoothDevices';
-import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import { useOfflineStorage } from '../hooks/useOfflineStorage';
 import { ConnectedDevice } from './ConnectedDevice';
 import { ConnectDeviceButton } from './ConnectDeviceButton';
 import { DeviceList } from './DeviceList';
@@ -13,11 +13,11 @@ interface BluetoothDeviceManagerProps {
   onDataReceived?: (data: BiometricData) => void;
 }
 
-export const BluetoothDeviceManager = ({ 
+export const BluetoothDeviceManager: React.FC<BluetoothDeviceManagerProps> = ({ 
   onDeviceConnected, 
   onDataReceived 
-}: BluetoothDeviceManagerProps) => {
-  const { isOnline, syncOfflineData } = useOnlineStatus();
+}) => {
+  const { isOnline, syncOfflineData } = useOfflineStorage();
   
   const { 
     isScanning,
@@ -51,9 +51,9 @@ export const BluetoothDeviceManager = ({
   // When coming back online, sync any stored offline data
   useEffect(() => {
     if (isOnline && biometricData.length > 0) {
-      syncOfflineData(biometricData, onDataReceived);
+      syncOfflineData();
     }
-  }, [isOnline, biometricData, syncOfflineData, onDataReceived]);
+  }, [isOnline, biometricData, syncOfflineData]);
   
   return (
     <View style={styles.container}>
@@ -71,7 +71,14 @@ export const BluetoothDeviceManager = ({
             onConnect={startScan}
           />
           
-          {isScanning && devices.length > 0 && (
+          {isScanning && (
+            <View style={styles.scanningContainer}>
+              <ActivityIndicator size="large" color="#3b82f6" />
+              <Text style={styles.scanningText}>Scanning for devices...</Text>
+            </View>
+          )}
+          
+          {devices.length > 0 && (
             <DeviceList
               devices={devices}
               onSelectDevice={connectToDevice}
@@ -87,5 +94,13 @@ export const BluetoothDeviceManager = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16
+  },
+  scanningContainer: {
+    alignItems: 'center',
+    padding: 16
+  },
+  scanningText: {
+    marginTop: 8,
+    color: '#64748b'
   }
 });

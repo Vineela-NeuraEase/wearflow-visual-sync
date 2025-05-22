@@ -29,7 +29,7 @@ class BluetoothService {
       );
       
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.error('Location permission denied');
+        console.log('Location permission denied');
         return false;
       }
     }
@@ -68,7 +68,7 @@ class BluetoothService {
         { allowDuplicates: false },
         (error, device) => {
           if (error) {
-            console.error('Scan error:', error);
+            console.log('Scan error:', error);
             this.isScanning = false;
             return;
           }
@@ -97,7 +97,7 @@ class BluetoothService {
       this.device = discoveredDevice;
       return discoveredDevice;
     } catch (error) {
-      console.error('Connection error:', error);
+      console.log('Connection error:', error);
       throw error;
     }
   }
@@ -120,7 +120,7 @@ class BluetoothService {
       HEART_RATE_CHARACTERISTIC,
       (error, characteristic) => {
         if (error) {
-          console.error('Monitoring error:', error);
+          console.log('Monitoring error:', error);
           return;
         }
         
