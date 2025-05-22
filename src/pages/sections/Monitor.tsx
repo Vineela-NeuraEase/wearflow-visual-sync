@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,21 @@ import MenuDrawer from "@/components/home/MenuDrawer";
 import { motion } from "framer-motion";
 import { EarlyWarningSystem } from "@/components/warning-system/EarlyWarningSystem";
 import { PersonalizedStrategies } from "@/components/warning-system/PersonalizedStrategies";
+import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
+import { useBiometricData } from "@/hooks/useBiometricData";
 
 const Monitor = () => {
   const navigate = useNavigate();
   const [showStrategies, setShowStrategies] = useState(false);
+  const [showDeviceManager, setShowDeviceManager] = useState(false);
+  
+  // Use our biometric data hook for consistent data across components
+  const {
+    isConnected,
+    dataPoints,
+    addDataPoint,
+    connectDevice
+  } = useBiometricData();
   
   const monitorTools = [
     {
@@ -44,6 +55,17 @@ const Monitor = () => {
     }
   ];
   
+  // Handle data from BluetoothDeviceManager
+  const handleDataReceived = (data: any) => {
+    addDataPoint(data);
+  };
+  
+  // Handle device connection
+  const handleDeviceConnected = (device: any) => {
+    connectDevice(device);
+    setShowDeviceManager(false);
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-4">
@@ -61,7 +83,22 @@ const Monitor = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {showStrategies ? (
+        {showDeviceManager ? (
+          <Card className="p-5">
+            <h2 className="text-lg font-semibold mb-4">Connect Wearable Device</h2>
+            <BluetoothDeviceManager 
+              onDeviceConnected={handleDeviceConnected}
+              onDataReceived={handleDataReceived}
+            />
+            <Button 
+              variant="outline" 
+              className="w-full mt-4"
+              onClick={() => setShowDeviceManager(false)}
+            >
+              Cancel
+            </Button>
+          </Card>
+        ) : showStrategies ? (
           <PersonalizedStrategies 
             onClose={() => setShowStrategies(false)} 
             warningLevel="watch"
@@ -110,19 +147,46 @@ const Monitor = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.3 }}
       >
-        <Button
-          variant="outline"
-          className="w-full py-3 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-900/20 dark:to-amber-900/20"
-          onClick={() => navigate("/warning-system")}
-        >
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="text-red-600 dark:text-red-400"
+        {isConnected ? (
+          <Button
+            variant="outline"
+            className="w-full py-3 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20"
+            onClick={() => navigate("/warning-system")}
           >
-            Warning System
-          </motion.div>
-        </Button>
+            <motion.div
+              className="text-green-600 dark:text-green-400"
+            >
+              Device Connected - View Warning System
+            </motion.div>
+          </Button>
+        ) : (
+          <div className="space-y-2">
+            <Button
+              variant="outline"
+              className="w-full py-3 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700"
+              onClick={() => setShowDeviceManager(true)}
+            >
+              <motion.div
+                className="text-blue-600 dark:text-blue-400"
+              >
+                Connect Wearable Device
+              </motion.div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full py-3 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-900/20 dark:to-amber-900/20"
+              onClick={() => navigate("/warning-system")}
+            >
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="text-red-600 dark:text-red-400"
+              >
+                Warning System
+              </motion.div>
+            </Button>
+          </div>
+        )}
       </motion.div>
     </div>
   );

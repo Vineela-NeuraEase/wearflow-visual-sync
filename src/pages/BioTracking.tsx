@@ -2,18 +2,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, Wifi, WifiOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import refactored components
+import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
 import { CurrentMetrics } from "@/components/biotracking/CurrentMetrics";
 import { DailyTrend } from "@/components/biotracking/DailyTrend";
 import { AlertThresholds } from "@/components/biotracking/AlertThresholds";
 import { TrackingSettings } from "@/components/biotracking/TrackingSettings";
 import { WeeklyInsights } from "@/components/biotracking/WeeklyInsights";
 import { PatternRecognition } from "@/components/biotracking/PatternRecognition";
+import { PatternDetectionInsights } from "@/components/warning-system/PatternDetectionInsights";
+import { useBiometricData } from "@/hooks/useBiometricData";
 
 // Mock data for demonstration
 const dailyData = [
@@ -52,6 +55,17 @@ const BioTracking = () => {
     shareToCaregivers: false,
   });
   
+  // Use our custom hook for biometric data
+  const {
+    isConnected,
+    deviceInfo,
+    dataPoints,
+    offlineData,
+    isOnline,
+    connectDevice,
+    addDataPoint
+  } = useBiometricData();
+  
   const handleThresholdChange = (metric: keyof typeof thresholds, value: number) => {
     setThresholds(prev => ({
       ...prev,
@@ -73,6 +87,54 @@ const BioTracking = () => {
     });
   };
   
+  const handleDeviceConnected = (device: any) => {
+    connectDevice(device);
+  };
+  
+  const handleDataReceived = (data: any) => {
+    addDataPoint(data);
+  };
+  
+  // Calculate current metrics from the most recent data point
+  const getCurrentMetrics = () => {
+    if (dataPoints.length === 0) {
+      return {
+        heartRate: 72,
+        restingHeartRate: 65,
+        hrv: 48,
+        sleepQuality: 75,
+        regulationStatus: 80
+      };
+    }
+    
+    const latestDataPoint = dataPoints[0];
+    return {
+      heartRate: latestDataPoint.heartRate,
+      restingHeartRate: Math.min(65, latestDataPoint.heartRate - 5),
+      hrv: latestDataPoint.hrv,
+      sleepQuality: 75, // We don't have this in our data yet
+      regulationStatus: 100 - latestDataPoint.stressLevel
+    };
+  };
+  
+  // Format data points for the daily trend
+  const formatDailyTrendData = () => {
+    if (dataPoints.length === 0) return dailyData;
+    
+    return dataPoints.slice(0, 8).reverse().map(point => {
+      const date = new Date(point.timestamp);
+      const hours = date.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hour = hours % 12 || 12;
+      
+      return {
+        hour: `${hour}${ampm}`,
+        heartRate: point.heartRate,
+        hrv: point.hrv
+      };
+    });
+  };
+  
   return (
     <div className="space-y-6 pb-16">
       <div className="rounded-xl bg-sense-blue p-4">
@@ -81,6 +143,32 @@ const BioTracking = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-semibold ml-2">Biometric Tracking</h1>
+          
+          <div className="ml-auto flex items-center">
+            {!isOnline && (
+              <div className="mr-2 flex items-center text-amber-500 bg-amber-50 px-2 py-1 rounded text-xs">
+                <WifiOff className="h-3 w-3 mr-1" />
+                Offline
+              </div>
+            )}
+            {offlineData && offlineData.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  toast({
+                    title: "Syncing Data",
+                    description: `${offlineData.length} measurements being uploaded...`
+                  });
+                }}
+                className="mr-2 text-xs"
+                disabled={!isOnline}
+              >
+                <Upload className="h-3 w-3 mr-1" />
+                Sync ({offlineData.length})
+              </Button>
+            )}
+          </div>
         </div>
         
         <p className="text-sm px-4 text-muted-foreground">
@@ -89,6 +177,11 @@ const BioTracking = () => {
       </div>
       
       <div className="px-4 space-y-6">
+        <BluetoothDeviceManager 
+          onDeviceConnected={handleDeviceConnected}
+          onDataReceived={handleDataReceived}
+        />
+        
         <Tabs defaultValue="status" className="w-full">
           <TabsList className="grid grid-cols-3 mb-6">
             <TabsTrigger value="status" className="text-sm md:text-base py-3">Current Status</TabsTrigger>
@@ -100,16 +193,18 @@ const BioTracking = () => {
             <Card className="p-5">
               <h2 className="text-lg font-medium mb-4">Today's Metrics</h2>
               <CurrentMetrics 
-                heartRate={75}
-                restingHeartRate={68}
-                hrv={45}
-                sleepQuality={72}
-                regulationStatus={85}
+                {...getCurrentMetrics()}
               />
+              
+              {!isConnected && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800">
+                  Connect a wearable device for real-time metrics and continuous monitoring.
+                </div>
+              )}
             </Card>
             
             <Card className="p-5">
-              <DailyTrend data={dailyData} />
+              <DailyTrend data={formatDailyTrendData()} />
             </Card>
           </TabsContent>
           
@@ -136,7 +231,7 @@ const BioTracking = () => {
             </Card>
             
             <Card className="p-5">
-              <PatternRecognition />
+              <PatternDetectionInsights realtimeData={dataPoints} />
             </Card>
           </TabsContent>
         </Tabs>

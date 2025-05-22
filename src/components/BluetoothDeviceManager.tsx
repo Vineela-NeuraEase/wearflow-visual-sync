@@ -1,14 +1,19 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
-// This is a placeholder component that would handle Bluetooth connectivity
-// In a real implementation, you would use the Web Bluetooth API or a native plugin
+// In a real app, we would use a proper BLE library like react-native-ble-plx for mobile
+// This is a simulated version that mimics the behavior
+interface BiometricData {
+  heartRate: number;
+  hrv: number;
+  stressLevel: number;
+  timestamp: string;
+}
 
 interface BluetoothDeviceManagerProps {
   onDeviceConnected?: (device: any) => void;
-  onDataReceived?: (data: any) => void;
+  onDataReceived?: (data: BiometricData) => void;
 }
 
 export const BluetoothDeviceManager = ({ 
@@ -18,13 +23,72 @@ export const BluetoothDeviceManager = ({
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [deviceName, setDeviceName] = useState<string | null>(null);
+  const [offlineData, setOfflineData] = useState<BiometricData[]>([]);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
+  // Monitor online/offline status
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      syncOfflineData();
+    };
+    
+    const handleOffline = () => {
+      setIsOnline(false);
+      console.log("Device went offline. Data will be stored locally.");
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  
+  // Function to sync offline data when coming back online
+  const syncOfflineData = async () => {
+    if (offlineData.length === 0) return;
+    
+    console.log(`Syncing ${offlineData.length} offline data points`);
+    
+    try {
+      // In a real app, this would send the data to your backend/Supabase
+      // For now, we'll just process it locally
+      offlineData.forEach(data => {
+        if (onDataReceived) {
+          onDataReceived(data);
+        }
+      });
+      
+      // Clear offline data after successful sync
+      setOfflineData([]);
+      
+      toast({
+        title: "Data Synchronized",
+        description: `${offlineData.length} measurements synced successfully`,
+      });
+    } catch (error) {
+      console.error("Failed to sync offline data:", error);
+      toast({
+        variant: "destructive",
+        title: "Sync Failed",
+        description: "Could not sync offline data. Will retry later.",
+      });
+    }
+  };
   
   const connectToDevice = async () => {
     setIsConnecting(true);
     
     try {
-      // In a real app, this would use the Web Bluetooth API
-      // navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }] })
+      // In a real mobile app using react-native-ble-plx, we would:
+      // 1. Request permissions
+      // 2. Scan for devices
+      // 3. Connect to selected device
+      // 4. Discover services and characteristics
+      // 5. Subscribe to notifications
       
       // Simulating connection delay
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -32,6 +96,7 @@ export const BluetoothDeviceManager = ({
       // Simulating successful connection
       setIsConnected(true);
       setDeviceName("Wellness Tracker");
+      
       toast({
         title: "Device Connected",
         description: "Successfully connected to Wellness Tracker",
@@ -42,8 +107,8 @@ export const BluetoothDeviceManager = ({
         onDeviceConnected({ name: "Wellness Tracker", id: "12345" });
       }
       
-      // Simulate receiving data periodically
-      startDataSimulation();
+      // Start collecting data
+      startDataCollection();
       
     } catch (error) {
       console.error("Bluetooth connection failed:", error);
@@ -60,32 +125,52 @@ export const BluetoothDeviceManager = ({
   const disconnectDevice = () => {
     setIsConnected(false);
     setDeviceName(null);
-    stopDataSimulation();
+    stopDataCollection();
+    
     toast({
       title: "Device Disconnected",
       description: "Device has been disconnected",
     });
   };
   
-  const startDataSimulation = () => {
+  const startDataCollection = () => {
+    // In a real app with react-native-ble-plx, we would subscribe to notifications here
+    
+    // For simulation, we'll use an interval to generate data
     const intervalId = setInterval(() => {
-      if (onDataReceived) {
-        // Simulate heart rate and stress level data
-        const mockData = {
-          heartRate: 65 + Math.floor(Math.random() * 20),
-          stressLevel: Math.floor(Math.random() * 100),
-          timestamp: new Date().toISOString(),
-        };
-        
-        onDataReceived(mockData);
+      // Generate simulated biometric data
+      const newData: BiometricData = {
+        heartRate: 65 + Math.floor(Math.random() * 20),
+        hrv: 45 + Math.floor(Math.random() * 15),
+        stressLevel: Math.floor(Math.random() * 100),
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Store data locally regardless of online status
+      storeDataLocally(newData);
+      
+      // If online, send data immediately
+      if (isOnline && onDataReceived) {
+        onDataReceived(newData);
       }
     }, 5000); // Every 5 seconds
     
-    // Store the interval ID in a ref or state if you need to clear it later
+    // Store the interval ID to clear it later
     window.bluetoothInterval = intervalId;
   };
   
-  const stopDataSimulation = () => {
+  const storeDataLocally = (data: BiometricData) => {
+    // In a real app, we would use IndexedDB or AsyncStorage
+    // For this demo, we'll just keep it in component state
+    setOfflineData(prev => [...prev, data]);
+    
+    // In a production app, we'd persist this to device storage:
+    // localStorage.setItem('offlineData', JSON.stringify([...offlineData, data]));
+    
+    console.log("Data stored locally", data);
+  };
+  
+  const stopDataCollection = () => {
     if (window.bluetoothInterval) {
       clearInterval(window.bluetoothInterval);
     }
@@ -93,16 +178,23 @@ export const BluetoothDeviceManager = ({
   
   // Clean up on unmount
   useEffect(() => {
-    return () => stopDataSimulation();
+    return () => stopDataCollection();
   }, []);
   
   return (
     <div className="mb-6">
       {isConnected ? (
-        <div className="flex items-center justify-between bg-green-50 p-3 rounded-lg border border-green-200">
+        <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-900/30">
           <div className="flex items-center">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-            <span className="font-medium">Connected to {deviceName}</span>
+            <div>
+              <span className="font-medium">Connected to {deviceName}</span>
+              {!isOnline && (
+                <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                  Offline mode - Data stored locally ({offlineData.length})
+                </div>
+              )}
+            </div>
           </div>
           <Button 
             variant="outline" 

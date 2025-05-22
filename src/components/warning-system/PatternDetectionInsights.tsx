@@ -1,8 +1,10 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Info, TrendingDown, Activity, Brain, Calendar } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useState, useEffect } from 'react';
 
 interface Pattern {
   id: string;
@@ -14,11 +16,12 @@ interface Pattern {
 }
 
 interface PatternDetectionInsightsProps {
-  detectedPatterns: Pattern[];
+  detectedPatterns?: Pattern[];
+  realtimeData?: any[];
 }
 
 // Mock data for visualization
-const mockData = [
+const defaultMockData = [
   { day: 'Mon', heartRate: 75, hrv: 54, regulation: 90, stressScore: 25 },
   { day: 'Tue', heartRate: 72, hrv: 55, regulation: 92, stressScore: 20 },
   { day: 'Wed', heartRate: 78, hrv: 52, regulation: 88, stressScore: 30 },
@@ -54,8 +57,50 @@ export const PatternDetectionInsights = ({
       indicators: ['Time of day: 2-4 PM', 'Post-lunch energy dip', 'Before routine transition'],
       category: 'temporal'
     }
-  ]
+  ],
+  realtimeData
 }: PatternDetectionInsightsProps) => {
+  const [chartData, setChartData] = useState(defaultMockData);
+  const [offlineMode, setOfflineMode] = useState(!navigator.onLine);
+  
+  // Monitor online/offline status
+  useEffect(() => {
+    const handleOnline = () => setOfflineMode(false);
+    const handleOffline = () => setOfflineMode(true);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  
+  // Update chart data when realtimeData changes
+  useEffect(() => {
+    if (realtimeData && realtimeData.length > 0) {
+      // Process the realtime data into the format expected by the chart
+      // This is a simplified example; in a real app, you would process the
+      // data appropriately based on its structure
+      const processedData = realtimeData.map((item, index) => {
+        // Convert timestamp to readable day format
+        const date = new Date(item.timestamp);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        
+        return {
+          day: `${hours}:${minutes}`,
+          heartRate: item.heartRate || 0,
+          hrv: item.hrv || 0,
+          regulation: 100 - (item.stressLevel || 0),  // Convert stress to regulation
+          stressScore: item.stressLevel || 0
+        };
+      });
+      
+      setChartData(processedData);
+    }
+  }, [realtimeData]);
   
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -89,7 +134,7 @@ export const PatternDetectionInsights = ({
         
         <Badge variant="secondary" className="flex items-center gap-1">
           <TrendingDown className="h-3 w-3" />
-          Active Monitoring
+          {offlineMode ? "Offline Analysis" : "Active Monitoring"}
         </Badge>
       </div>
       
@@ -98,7 +143,7 @@ export const PatternDetectionInsights = ({
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={mockData}
+              data={chartData}
               margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -168,6 +213,14 @@ export const PatternDetectionInsights = ({
           View All Detected Patterns
         </Button>
       </div>
+      
+      {offlineMode && (
+        <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-sm text-amber-800">
+            You're currently in offline mode. New data is being collected locally and will sync when you're back online.
+          </p>
+        </div>
+      )}
     </Card>
   );
 };
