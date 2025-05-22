@@ -7,8 +7,12 @@ import { useChartData } from './warning-system/useChartData';
 import { useRegulationFactors } from './warning-system/useRegulationFactors';
 import { useStrategies } from './warning-system/useStrategies';
 import { useRegulationScore } from './warning-system/useRegulationScore';
+import { useDataHandlers } from './warning-system/useDataHandlers';
 import { RegulationFactor } from '@/pages/WarningSystem';
 import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 export function useWarningSystem() {
   // Get biometric data from device connection
@@ -21,6 +25,10 @@ export function useWarningSystem() {
     connectDevice,
     addDataPoint
   } = useBiometricData();
+  
+  // Auth context and toast
+  const { user } = useAuth();
+  const { toast } = useToast();
   
   // Track most recent data
   const [sleepData, setSleepData] = useState<SleepData | null>(null);
@@ -38,14 +46,14 @@ export function useWarningSystem() {
     handleSaveSensoryData,
     handleSaveRoutineData,
     handleSaveBehavioralData
-  } = useWarningSystemHandlers({
+  } = useDataHandlers(
     connectDevice,
     addDataPoint,
     setSleepData,
     setSensoryData,
     setRoutineData,
     setBehavioralData
-  });
+  );
   
   // Calculate regulation factors
   const regulationFactors = useRegulationFactors({
@@ -67,16 +75,78 @@ export function useWarningSystem() {
   
   // Warning state
   const [warningActive, setWarningActive] = useState(false);
-  const { latestPatterns } = useWarningAnalysis({ biometricData: dataPoints, sensorData: null });
+  const [warningEventId, setWarningEventId] = useState<string | null>(null);
+  const { latestPatterns, warningLevel } = useWarningAnalysis({ biometricData: dataPoints, sensorData: null });
   
-  // Check for warning condition
+  // Check for warning condition and log warning events
   useEffect(() => {
-    if (regulationScore < 70) {
-      setWarningActive(true);
-    } else {
-      setWarningActive(false);
-    }
-  }, [regulationScore]);
+    const handleWarningStateChange = async () => {
+      if (regulationScore < 70 && !warningActive) {
+        setWarningActive(true);
+        
+        // Only log warning events if the user is signed in
+        if (user) {
+          try {
+            // Create a sensor data snapshot
+            const sensorSnapshot = {
+              biometric: dataPoints.slice(0, 5),
+              sensory: sensoryData,
+              sleep: sleepData,
+              routine: routineData,
+              behavioral: behavioralData
+            };
+            
+            // Log warning event in database
+            const { data, error } = await supabase
+              .from('warning_events')
+              .insert({
+                user_id: user.id,
+                warning_level: warningLevel || 'watch',
+                regulation_score: regulationScore,
+                sensor_data_snapshot: sensorSnapshot,
+                notes: latestPatterns.join(', ')
+              })
+              .select()
+              .single();
+              
+            if (error) {
+              console.error("Error logging warning event:", error);
+            } else if (data) {
+              setWarningEventId(data.id);
+              console.log("Warning event logged with ID:", data.id);
+            }
+          } catch (err) {
+            console.error("Failed to log warning event:", err);
+          }
+        }
+      } else if (regulationScore >= 70 && warningActive) {
+        setWarningActive(false);
+        
+        // Update warning event with resolved timestamp if it exists
+        if (user && warningEventId) {
+          try {
+            const { error } = await supabase
+              .from('warning_events')
+              .update({
+                resolved_at: new Date().toISOString()
+              })
+              .eq('id', warningEventId);
+              
+            if (error) {
+              console.error("Error resolving warning event:", error);
+            } else {
+              console.log("Warning event resolved:", warningEventId);
+              setWarningEventId(null);
+            }
+          } catch (err) {
+            console.error("Failed to resolve warning event:", err);
+          }
+        }
+      }
+    };
+    
+    handleWarningStateChange();
+  }, [regulationScore, warningActive, user, dataPoints, sensoryData, sleepData, routineData, behavioralData, warningLevel, latestPatterns, warningEventId]);
   
   // Get strategies from the useStrategies hook
   const {
@@ -88,6 +158,46 @@ export function useWarningSystem() {
     deleteStrategy,
     updateEffectiveness
   } = useStrategies();
+  
+  // Mark strategy as effective when user resolves warning
+  const resolveWarningWithStrategy = async (strategyId: string) => {
+    if (!user || !warningEventId) return;
+    
+    try {
+      const { error } = await supabase
+        .from('warning_events')
+        .update({
+          resolved_at: new Date().toISOString(),
+          resolution_strategy_id: strategyId
+        })
+        .eq('id', warningEventId);
+        
+      if (error) {
+        console.error("Error updating warning event with strategy:", error);
+        toast({
+          title: "Error",
+          description: "Failed to record resolution strategy",
+          variant: "destructive"
+        });
+      } else {
+        // Increase effectiveness rating for the strategy
+        const strategy = strategies.find(s => s.id === strategyId);
+        if (strategy && strategy.effectiveness < 5) {
+          updateEffectiveness(strategyId, strategy.effectiveness + 1);
+        }
+        
+        setWarningEventId(null);
+        setWarningActive(false);
+        
+        toast({
+          title: "Warning resolved",
+          description: "Your selected strategy has been recorded",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to resolve warning with strategy:", err);
+    }
+  };
   
   // Chart data generator
   const { getChartData } = useChartData(dataPoints);
@@ -101,6 +211,7 @@ export function useWarningSystem() {
     regulationFactors,
     regulationScore,
     warningActive,
+    warningLevel,
     showStrategies,
     strategies,
     latestPatterns,
@@ -113,73 +224,7 @@ export function useWarningSystem() {
     handleHideStrategies,
     saveStrategy,
     deleteStrategy,
-    updateEffectiveness
-  };
-}
-
-// Separate hooks for warning system handlers
-function useWarningSystemHandlers({
-  connectDevice,
-  addDataPoint,
-  setSleepData,
-  setSensoryData,
-  setRoutineData,
-  setBehavioralData
-}) {
-  // Data handlers
-  const handleDeviceConnected = useCallback((device) => {
-    connectDevice(device);
-  }, [connectDevice]);
-  
-  const handleDataReceived = useCallback((data) => {
-    addDataPoint(data);
-  }, [addDataPoint]);
-  
-  const handleSaveThresholds = useCallback((settings) => {
-    console.log("Saving threshold settings:", settings);
-    // In a real app, this would save to a database or local storage
-  }, []);
-  
-  const handleSaveEnvironment = useCallback((factors) => {
-    console.log("Environment tracked:", factors);
-    
-    // Update sensory data based on environmental factors
-    const newSensoryData: SensoryData = {
-      timestamp: new Date().toISOString(),
-      noise_level: factors.find((f) => f.name === "Noise Level")?.value || 50,
-      light_level: factors.find((f) => f.name === "Brightness")?.value || 60,
-      temperature: factors.find((f) => f.name === "Temperature")?.value || 72,
-      crowding: factors.find((f) => f.name === "Crowding")?.value || 30,
-    };
-    
-    setSensoryData(newSensoryData);
-  }, [setSensoryData]);
-  
-  // Additional data type handlers
-  const handleSaveSleepData = useCallback((data: SleepData) => {
-    setSleepData(data);
-  }, [setSleepData]);
-  
-  const handleSaveSensoryData = useCallback((data: SensoryData) => {
-    setSensoryData(data);
-  }, [setSensoryData]);
-  
-  const handleSaveRoutineData = useCallback((data: RoutineData) => {
-    setRoutineData(data);
-  }, [setRoutineData]);
-  
-  const handleSaveBehavioralData = useCallback((data: BehavioralData) => {
-    setBehavioralData(data);
-  }, [setBehavioralData]);
-
-  return {
-    handleDeviceConnected,
-    handleDataReceived,
-    handleSaveThresholds,
-    handleSaveEnvironment,
-    handleSaveSleepData,
-    handleSaveSensoryData,
-    handleSaveRoutineData,
-    handleSaveBehavioralData
+    updateEffectiveness,
+    resolveWarningWithStrategy
   };
 }
