@@ -39,6 +39,7 @@ import MeltdownHistory from "./pages/MeltdownHistory";
 // Learn tools
 import Insights from "./pages/Insights";
 import ResourceLibrary from "./pages/ResourceLibrary";
+import ResourceDetail from "./pages/ResourceDetail";
 import EmotionInsights from "./pages/EmotionInsights";
 
 // New section components
@@ -134,6 +135,7 @@ const App = () => (
                 <Route path="insights" element={<Insights />} />
                 <Route path="emotion-insights" element={<EmotionInsights />} />
                 <Route path="resource-library" element={<ResourceLibrary />} />
+                <Route path="resource-library/:id" element={<ResourceDetail />} />
                 
                 {/* Settings routes */}
                 <Route path="settings" element={<Settings />} />
