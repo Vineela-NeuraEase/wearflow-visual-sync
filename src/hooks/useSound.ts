@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from "react";
 
 type SoundType = 
@@ -43,10 +42,13 @@ export const useSound = () => {
         
         audio.addEventListener('error', (e) => {
           console.warn(`Error loading audio: ${path}`, e);
+          // Even with an error, keep a reference to avoid null reference issues
+          audioRefs.current[key as SoundType] = audio;
         });
       } catch (error) {
         console.warn(`Failed to create audio for ${key}:`, error);
-        audioRefs.current[key as SoundType] = null;
+        // Create a dummy audio element as a fallback
+        audioRefs.current[key as SoundType] = new Audio();
       }
     });
 

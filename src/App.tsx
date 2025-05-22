@@ -15,6 +15,7 @@ import SOSCalm from "@/pages/SOSCalm";
 import CalmingTools from "@/pages/CalmingTools";
 import Visual from "@/pages/Visual";
 import Sounds from "@/pages/Sounds";
+import GentleBuzz from "@/pages/GentleBuzz";
 
 // Components
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -35,6 +36,7 @@ function App() {
             <Route path="/breathing" element={<BreathingExercise />} />
             <Route path="/visual" element={<Visual />} />
             <Route path="/sounds" element={<Sounds />} />
+            <Route path="/gentle-buzz" element={<GentleBuzz />} />
             <Route path="/sos" element={<SOSCalm />} />
             <Route path="/tools" element={<CalmingTools />} />
             

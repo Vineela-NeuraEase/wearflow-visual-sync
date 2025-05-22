@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 // Define the shape of our context
@@ -19,9 +20,9 @@ const AudioContext = createContext<AudioContextType>({
 // Custom hook to use the audio context
 export const useAudio = () => useContext(AudioContext);
 
-type AudioProviderProps = {
+interface AudioProviderProps {
   children: React.ReactNode;
-};
+}
 
 // Sound paths mapping
 const soundPaths: Record<string, string> = {
