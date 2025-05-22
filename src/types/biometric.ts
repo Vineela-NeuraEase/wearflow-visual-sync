@@ -9,17 +9,23 @@ export interface SleepData {
   deep_sleep_percentage: number;
   rem_sleep_percentage: number;
   awakenings: number;
+  sleep_onset?: string;
+  wake_time?: string;
+  sleep_aid?: string;
+  created_at?: string;
 }
 
 export interface SensoryData {
   user_id?: string;
   timestamp?: string;
   noise_level: number;
-  light_intensity: number;
+  light_level: number;
   temperature: number;
   crowding: number;
   texture_sensitivity?: number;
   smell_sensitivity?: number;
+  sensory_triggers?: string[];
+  notes?: string;
 }
 
 export interface RoutineData {
@@ -30,16 +36,25 @@ export interface RoutineData {
   deviation_score: number;
   location: string;
   is_unexpected_change: boolean;
+  date?: string;
+  routine_change?: string;
+  routine_type?: string;
+  disruption_level?: number;
+  is_planned?: boolean;
+  notes?: string;
 }
 
 export interface BehavioralData {
   user_id?: string;
   timestamp?: string;
-  self_reported_mood: number;
-  stimming: number;
-  communication_difficulty: number;
-  social_withdrawal: number;
+  anxiety_level?: number;
   irritability_level: number;
+  stimming_behavior?: string;
+  notes?: string;
+  self_reported_mood?: number;
+  stimming?: number;
+  communication_difficulty?: number;
+  social_withdrawal?: number;
 }
 
 export interface BiometricData {

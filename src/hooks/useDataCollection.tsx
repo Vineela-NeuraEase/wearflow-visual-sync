@@ -1,6 +1,6 @@
 
 import { useCallback, useState, useEffect } from 'react';
-import { BiometricData } from '@/types/biometric';
+import { BiometricData, SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "./use-toast";
@@ -86,11 +86,11 @@ export const useDataCollection = ({
   // Function to collect and process data, for use by BluetoothDeviceManager
   const collectData = useCallback(() => {
     console.log("Collecting data...");
-    // This could be expanded to fetch historical data, process offlined data, etc.
+    // This could be expanded to fetch historical data, process offline data, etc.
   }, []);
   
   // Function to save sleep data
-  const saveSleepData = useCallback(async (data: Omit<BiometricData["SleepData"], "user_id">) => {
+  const saveSleepData = useCallback(async (data: Omit<SleepData, "user_id">) => {
     if (!user) {
       toast({
         title: "Not logged in",
@@ -128,12 +128,129 @@ export const useDataCollection = ({
     }
   }, [user, toast]);
   
-  // Similar functions for other data types
+  // Function to save sensory data
+  const saveSensoryData = useCallback(async (data: Omit<SensoryData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return Promise.reject("Not logged in");
+    }
+    
+    try {
+      setIsLoading(true);
+      const { data: result, error } = await supabase.from('sensory_data').insert({
+        ...data,
+        user_id: user.id
+      }).select().single();
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Sensory data saved",
+        description: "Your sensory environment data has been recorded",
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Error saving sensory data:', error);
+      toast({
+        title: "Error saving data",
+        description: "There was a problem saving your sensory data",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
+  
+  // Function to save routine data
+  const saveRoutineData = useCallback(async (data: Omit<RoutineData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return Promise.reject("Not logged in");
+    }
+    
+    try {
+      setIsLoading(true);
+      const { data: result, error } = await supabase.from('routine_data').insert({
+        ...data,
+        user_id: user.id
+      }).select().single();
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Routine data saved",
+        description: "Your routine change data has been recorded",
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Error saving routine data:', error);
+      toast({
+        title: "Error saving data",
+        description: "There was a problem saving your routine data",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
+  
+  // Function to save behavioral data
+  const saveBehavioralData = useCallback(async (data: Omit<BehavioralData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return Promise.reject("Not logged in");
+    }
+    
+    try {
+      setIsLoading(true);
+      const { data: result, error } = await supabase.from('behavioral_data').insert({
+        ...data,
+        user_id: user.id
+      }).select().single();
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Behavioral data saved",
+        description: "Your behavioral data has been recorded",
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Error saving behavioral data:', error);
+      toast({
+        title: "Error saving data",
+        description: "There was a problem saving your behavioral data",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
   
   return {
     isLoading,
     collectData,
     saveSleepData,
-    // Add other data handling functions here
+    saveSensoryData,
+    saveRoutineData,
+    saveBehavioralData
   };
 };

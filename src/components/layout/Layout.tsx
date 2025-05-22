@@ -1,6 +1,6 @@
 
 import { Outlet } from "react-router-dom";
-import { useTheme } from "../theme-provider";
+import { useTheme } from "@/context/ThemeContext";
 import { BottomNav } from "./BottomNav";
 import { Toaster } from "@/components/ui/toaster";
 

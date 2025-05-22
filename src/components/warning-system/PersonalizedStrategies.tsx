@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Check, CircleAlert } from "lucide-react";
 import { StrategyEffectivenessRater } from "@/components/feedback/StrategyEffectivenessRater";
-import { useStrategies, Strategy } from "@/hooks/warning-system/useStrategies";
+import { useStrategies } from "@/hooks/warning-system/useStrategies";
 
 interface StrategyProps {
   warningLevel: "alert" | "warning" | "watch" | "stable";
@@ -31,19 +31,17 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
   const handleAddStrategy = async () => {
     if (!name || !description) return;
     
-    const success = await saveStrategy({
+    await saveStrategy({
       name,
       description,
       category,
       effectiveness: 3, // Default middle rating
     });
     
-    if (success) {
-      setName("");
-      setDescription("");
-      setCategory("breathing");
-      setAddingNew(false);
-    }
+    setName("");
+    setDescription("");
+    setCategory("breathing");
+    setAddingNew(false);
   };
   
   const headerColor = () => {
