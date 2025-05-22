@@ -6,6 +6,8 @@ interface AudioContextType {
   toggleSound: () => void;
   playSound: (soundName: string) => void;
   stopSound: (soundName: string) => void;
+  // Add play as an alias for backward compatibility
+  play: (soundName: string) => void;
 }
 
 const initialAudioContext: AudioContextType = {
@@ -13,6 +15,7 @@ const initialAudioContext: AudioContextType = {
   toggleSound: () => {},
   playSound: () => {},
   stopSound: () => {},
+  play: () => {},
 };
 
 const AudioContext = createContext<AudioContextType>(initialAudioContext);
@@ -72,6 +75,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     toggleSound,
     playSound,
     stopSound,
+    // Add play as an alias for playSound for backward compatibility
+    play: playSound
   };
 
   return (
