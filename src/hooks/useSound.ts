@@ -32,6 +32,7 @@ export const useSound = () => {
 
   useEffect(() => {
     console.log("useSound hook initializing");
+    
     // Preload audio files
     Object.entries(soundPaths).forEach(([key, path]) => {
       try {
@@ -41,10 +42,10 @@ export const useSound = () => {
         audioRefs.current[key as SoundType] = audio;
         
         audio.addEventListener('error', (e) => {
-          console.log(`Error loading audio: ${path}`, e);
+          console.warn(`Error loading audio: ${path}`, e);
         });
       } catch (error) {
-        console.log(`Failed to create audio for ${key}:`, error);
+        console.warn(`Failed to create audio for ${key}:`, error);
         audioRefs.current[key as SoundType] = null;
       }
     });
@@ -72,13 +73,13 @@ export const useSound = () => {
         
         // Play the sound
         audio.play().catch(error => {
-          console.log("Audio play failed:", error);
+          console.warn("Audio play failed:", error);
         });
       } catch (error) {
-        console.log(`Error playing sound ${sound}:`, error);
+        console.warn(`Error playing sound ${sound}:`, error);
       }
     } else {
-      console.log(`Audio not found for sound: ${sound}`);
+      console.warn(`Audio not found for sound: ${sound}`);
     }
   };
 

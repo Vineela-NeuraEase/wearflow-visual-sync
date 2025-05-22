@@ -1,6 +1,6 @@
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-
+// Define the shape of our context
 interface AudioContextType {
   play: (sound: string) => void;
   soundEnabled: boolean;
@@ -8,21 +8,22 @@ interface AudioContextType {
   setVolume: (volume: number) => void;
 }
 
-const defaultContext: AudioContextType = {
+// Create context with default values
+const AudioContext = createContext<AudioContextType>({
   play: () => {},
   soundEnabled: true,
   toggleSound: () => {},
   setVolume: () => {},
-};
+});
 
-const AudioContext = createContext<AudioContextType>(defaultContext);
-
+// Custom hook to use the audio context
 export const useAudio = () => useContext(AudioContext);
 
 type AudioProviderProps = {
   children: React.ReactNode;
 };
 
+// Sound paths mapping
 const soundPaths: Record<string, string> = {
   click: "/sounds/click.mp3",
   success: "/sounds/success.mp3",
@@ -32,65 +33,40 @@ const soundPaths: Record<string, string> = {
   breathing: "/sounds/breathing.mp3"
 };
 
-export const AudioProvider = ({ children }: AudioProviderProps) => {
+export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [volume, setVolume] = useState<number>(0.7);
-  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
+  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const [audioLoaded, setAudioLoaded] = useState<boolean>(false);
   
+  // Initialize audio files
   useEffect(() => {
     console.log("AudioProvider initialized");
-    // Preload audio files
-    let loadedCount = 0;
-    const totalFiles = Object.keys(soundPaths).length;
     
+    // Create references to audio elements
     Object.entries(soundPaths).forEach(([key, path]) => {
       try {
         const audio = new Audio();
         audio.src = path;
         audio.preload = "auto";
         audio.volume = volume;
+        
+        // Store reference
         audioRefs.current[key] = audio;
         
         // Handle errors silently
-        audio.addEventListener('error', () => {
-          console.log(`Audio file not found: ${path} - using silent fallback`);
-          loadedCount++;
-          if (loadedCount >= totalFiles) {
-            setAudioLoaded(true);
-          }
+        audio.addEventListener('error', (e) => {
+          console.warn(`Audio file issue for ${path}:`, e);
+          // Keep the reference but mark as having an error
+          audioRefs.current[key] = audio;
         });
-        
-        audio.addEventListener('canplaythrough', () => {
-          console.log(`Audio loaded: ${path}`);
-          loadedCount++;
-          if (loadedCount >= totalFiles) {
-            setAudioLoaded(true);
-          }
-        });
-        
-        // Force load attempt
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              // Successfully started playing
-              audio.pause();
-              audio.currentTime = 0;
-            })
-            .catch(error => {
-              // Auto-play was prevented
-              console.log(`Auto-play prevented for ${key}: ${error}`);
-            });
-        }
       } catch (error) {
-        console.log(`Failed to create audio for ${key}: ${error}`);
-        loadedCount++;
-        if (loadedCount >= totalFiles) {
-          setAudioLoaded(true);
-        }
+        console.warn(`Failed to create audio for ${key}:`, error);
+        audioRefs.current[key] = null;
       }
     });
+    
+    setAudioLoaded(true);
     
     // Cleanup function
     return () => {
@@ -112,6 +88,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
     });
   }, [volume]);
   
+  // Play sound function
   const play = (soundName: string) => {
     if (!soundEnabled) return;
     
@@ -126,34 +103,35 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => {
-            console.log(`Audio play failed: ${error}`);
+            console.warn(`Audio play failed for ${soundName}:`, error);
           });
         }
       } else {
-        console.log(`Audio not loaded for sound: ${soundName}`);
+        console.warn(`Audio not loaded for sound: ${soundName}`);
       }
     } catch (error) {
-      console.log(`Error playing sound ${soundName}: ${error}`);
+      console.warn(`Error playing sound ${soundName}:`, error);
     }
   };
   
+  // Toggle sound function
   const toggleSound = () => {
     setSoundEnabled(prev => !prev);
     console.log("Sound toggled:", !soundEnabled);
   };
   
-  const value = {
+  const contextValue = {
     play,
     soundEnabled,
     toggleSound,
     setVolume,
   };
   
-  console.log("AudioProvider rendering, soundEnabled:", soundEnabled);
-  
   return (
-    <AudioContext.Provider value={value}>
+    <AudioContext.Provider value={contextValue}>
       {children}
     </AudioContext.Provider>
   );
 };
+
+export default AudioContext;
