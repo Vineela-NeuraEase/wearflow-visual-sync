@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 interface ConnectDeviceButtonProps {
   isConnecting: boolean;
@@ -12,12 +12,34 @@ export function ConnectDeviceButton({
   onConnect 
 }: ConnectDeviceButtonProps) {
   return (
-    <Button
-      className="w-full"
-      onClick={onConnect}
+    <TouchableOpacity
+      style={styles.button}
+      onPress={onConnect}
       disabled={isConnecting}
     >
-      {isConnecting ? "Connecting..." : "Connect Wearable Device"}
-    </Button>
+      {isConnecting ? (
+        <ActivityIndicator size="small" color="#ffffff" />
+      ) : (
+        <Text style={styles.buttonText}>
+          Connect Wearable Device
+        </Text>
+      )}
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: 14
+  }
+});

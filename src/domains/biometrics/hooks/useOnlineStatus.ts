@@ -1,36 +1,50 @@
 
 import { useState, useEffect, useCallback } from 'react';
+import { AppState, NetInfo } from 'react-native';
 import { useToast } from '@/hooks/use-toast';
 import { BiometricData } from '../types';
 
 export function useOnlineStatus() {
   const { toast } = useToast();
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [offlineData, setOfflineData] = useState<BiometricData[]>([]);
+  const [isOnline, setIsOnline] = useState(true);
   
   // Monitor online/offline status
   useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
+    const handleConnectivityChange = (state: { isConnected: boolean }) => {
+      setIsOnline(state.isConnected);
+      
+      if (state.isConnected) {
+        console.log('Device is now online');
+      } else {
+        console.log('Device went offline. Data will be stored locally.');
+      }
     };
     
-    const handleOffline = () => {
-      setIsOnline(false);
-      console.log("Device went offline. Data will be stored locally.");
-    };
+    const unsubscribe = NetInfo.addEventListener(handleConnectivityChange);
     
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    // Check initial connectivity state
+    NetInfo.fetch().then(state => {
+      setIsOnline(state.isConnected || false);
+    });
+    
+    // Also listen for app state changes to check connectivity when app comes to foreground
+    const appStateSubscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'active') {
+        NetInfo.fetch().then(state => {
+          setIsOnline(state.isConnected || false);
+        });
+      }
+    });
     
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      unsubscribe();
+      appStateSubscription.remove();
     };
   }, []);
   
   // Function to sync offline data when coming back online
   const syncOfflineData = useCallback(async (data: BiometricData[], onDataReceived?: (data: BiometricData) => void) => {
-    if (data.length === 0) return;
+    if (!isOnline || data.length === 0) return;
     
     console.log(`Syncing ${data.length} offline data points`);
     
@@ -43,15 +57,11 @@ export function useOnlineStatus() {
         });
       }
       
-      // Clear offline data after successful sync
-      setOfflineData([]);
-      
       toast({
         title: "Data Synchronized",
         description: `${data.length} measurements synced successfully`,
       });
       
-      return [];
     } catch (error) {
       console.error("Failed to sync offline data:", error);
       toast({
@@ -59,10 +69,8 @@ export function useOnlineStatus() {
         title: "Sync Failed",
         description: "Could not sync offline data. Will retry later.",
       });
-      
-      return data;
     }
-  }, [toast]);
+  }, [isOnline, toast]);
   
   return {
     isOnline,
