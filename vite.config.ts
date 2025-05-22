@@ -23,8 +23,12 @@ export default defineConfig(({ mode }) => ({
       '@react-native-async-storage/async-storage': 'react-native-web/dist/exports/AsyncStorage',
       '@react-native-community/netinfo': path.resolve(__dirname, './src/polyfills/netinfo-polyfill.js'),
       'react-native-ble-plx': path.resolve(__dirname, './src/polyfills/ble-plx-polyfill.js'),
-      // Add polyfill for missing codegenNativeComponent - use a more direct path match
+      // Make sure to catch all possible import paths for codegenNativeComponent
       'react-native-web/Libraries/Utilities/codegenNativeComponent': 
+        path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
+      'react-native-web/dist/vendor/react-native/Libraries/Utilities/codegenNativeComponent':
+        path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
+      'react-native-web/dist/cjs/vendor/react-native/Libraries/Utilities/codegenNativeComponent':
         path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
     },
   },
@@ -34,6 +38,14 @@ export default defineConfig(({ mode }) => ({
       define: {
         global: 'globalThis',
       },
+    },
+    include: [
+      'react-native-web',
+    ],
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
 }));
