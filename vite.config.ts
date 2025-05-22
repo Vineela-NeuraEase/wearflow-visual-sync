@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"] // Add this line to dedupe React
   },
   // Add external modules that should not be bundled by Vite
   build: {
