@@ -33,8 +33,8 @@ const soundPaths: Record<string, string> = {
 };
 
 export const AudioProvider = ({ children }: AudioProviderProps) => {
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const [volume, setVolume] = useState<number>(0.7);
+  const [soundEnabled, setSoundEnabled] = React.useState<boolean>(true);
+  const [volume, setVolume] = React.useState<number>(0.7);
   const audioRefs = React.useRef<Record<string, HTMLAudioElement>>({});
   
   useEffect(() => {
