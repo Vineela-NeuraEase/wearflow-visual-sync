@@ -1,15 +1,11 @@
 
 import { BiometricDataPoint } from '@/hooks/biometrics/types';
 import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
+import { Strategy } from '@/types/strategy';
 
-export interface WarningStrategy {
-  id: string;
-  name: string;
-  description: string;
-  effectiveness: number;
+export type WarningStrategy = Strategy & {
   tags: string[];
-  created_at: string;
-}
+};
 
 export type WarningLevel = 'normal' | 'notice' | 'watch' | 'alert';
 

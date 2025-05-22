@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { BiometricDataPoint } from '@/hooks/biometrics/types';
 import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
+import { Strategy } from '@/types/strategy';
 import { WarningStrategy } from './types';
 
 interface UseWarningEventsProps {
@@ -104,7 +105,8 @@ export function useWarningEvents({
     handleWarningStateChange();
   }, [regulationScore, warningActive, user, dataPoints, sensoryData, sleepData, routineData, behavioralData, warningLevel, latestPatterns, warningEventId]);
 
-  const resolveWarningWithStrategy = async (strategyId: string, strategies: WarningStrategy[]) => {
+  // Update to accept Strategy[] instead of WarningStrategy[]
+  const resolveWarningWithStrategy = async (strategyId: string, strategies: Strategy[]) => {
     if (!user || !warningEventId) return false;
     
     try {

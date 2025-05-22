@@ -106,6 +106,7 @@ export function useWarningSystem() {
   
   // Wrap the resolveWarningWithStrategy to include strategy effectiveness update
   const resolveWarningWithStrategy = async (strategyId: string) => {
+    // Pass the strategies array directly without type conversion
     const success = await resolveWarning(strategyId, strategies);
     
     if (success) {
