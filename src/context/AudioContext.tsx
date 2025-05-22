@@ -24,8 +24,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const value = {
+    soundEnabled,
+    toggleSound,
+    play
+  };
+
   return (
-    <AudioContext.Provider value={{ soundEnabled, toggleSound, play }}>
+    <AudioContext.Provider value={value}>
       {children}
     </AudioContext.Provider>
   );
