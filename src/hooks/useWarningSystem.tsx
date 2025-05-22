@@ -1,37 +1,176 @@
 
-import { useState } from "react";
-import { useBiometricData } from "@/hooks/useBiometricData";
-import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/biometric";
-import { useRegulationFactors } from "./warning-system/useRegulationFactors";
-import { useRegulationScore } from "./warning-system/useRegulationScore";
-import { useChartData } from "./warning-system/useChartData";
-import { useStrategies } from "./warning-system/useStrategies";
-import { useDataHandlers } from "./warning-system/useDataHandlers";
+import { useState, useCallback, useEffect } from 'react';
+import { useBiometricData } from './useBiometricData';
+import { useDataCollection } from './useDataCollection';
+import { useWarningAnalysis } from './warning-system/useWarningAnalysis';
+import { useChartData } from './warning-system/useChartData';
+import { useRegulationFactors } from './warning-system/useRegulationFactors';
+import { useStrategies } from './warning-system/useStrategies';
+import { useRegulationScore } from './warning-system/useRegulationScore';
+import { RegulationFactor } from '@/pages/WarningSystem';
+import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
 
 export function useWarningSystem() {
-  // Use our biometric data hook
-  const { 
-    isConnected, 
-    dataPoints, 
+  // Get biometric data from device connection
+  const {
+    isConnected,
+    deviceInfo,
+    dataPoints,
     isOnline,
     offlineData,
     connectDevice,
     addDataPoint
-  } = useBiometricData({ maxDataPoints: 50 });
+  } = useBiometricData();
   
-  // Add state for new tracking metrics
+  // Track most recent data
   const [sleepData, setSleepData] = useState<SleepData | null>(null);
   const [sensoryData, setSensoryData] = useState<SensoryData | null>(null);
   const [routineData, setRoutineData] = useState<RoutineData | null>(null);
   const [behavioralData, setBehavioralData] = useState<BehavioralData | null>(null);
   
-  // Use our extracted hooks
-  const { regulationFactors } = useRegulationFactors(dataPoints, sleepData, sensoryData, routineData);
-  const { regulationScore, warningActive } = useRegulationScore(dataPoints, sleepData, sensoryData, routineData, behavioralData);
-  const { getChartData } = useChartData(dataPoints);
-  const { showStrategies, handleShowStrategies, handleHideStrategies } = useStrategies();
-  
+  // Access data handlers and collection methods
   const { 
+    handleDeviceConnected, 
+    handleDataReceived, 
+    handleSaveThresholds, 
+    handleSaveEnvironment,
+    handleSaveSleepData,
+    handleSaveSensoryData,
+    handleSaveRoutineData,
+    handleSaveBehavioralData
+  } = useWarningSystemHandlers({
+    connectDevice,
+    addDataPoint,
+    setSleepData,
+    setSensoryData,
+    setRoutineData,
+    setBehavioralData
+  });
+  
+  // Calculate regulation factors
+  const regulationFactors = useRegulationFactors({
+    biometricData: dataPoints,
+    sleepData,
+    sensoryData,
+    routineData,
+    behavioralData
+  });
+  
+  // Calculate overall regulation score
+  const regulationScore = useRegulationScore({
+    biometricData: dataPoints,
+    sleepData,
+    sensoryData,
+    routineData,
+    behavioralData
+  });
+  
+  // Warning state
+  const [warningActive, setWarningActive] = useState(false);
+  const { latestPatterns } = useWarningAnalysis({ biometricData: dataPoints, sensorData: null });
+  
+  // Check for warning condition
+  useEffect(() => {
+    if (regulationScore < 70) {
+      setWarningActive(true);
+    } else {
+      setWarningActive(false);
+    }
+  }, [regulationScore]);
+  
+  // Strategy recommendations
+  const [showStrategies, setShowStrategies] = useState(false);
+  const { strategies } = useStrategies(regulationScore, regulationFactors);
+  
+  const handleShowStrategies = useCallback(() => {
+    setShowStrategies(true);
+  }, []);
+  
+  const handleHideStrategies = useCallback(() => {
+    setShowStrategies(false);
+  }, []);
+  
+  // Chart data generator
+  const getChartData = useChartData(dataPoints);
+
+  return {
+    isConnected,
+    deviceInfo,
+    dataPoints,
+    isOnline,
+    offlineData,
+    regulationFactors,
+    regulationScore,
+    warningActive,
+    showStrategies,
+    strategies,
+    latestPatterns,
+    getChartData,
+    handleDeviceConnected,
+    handleDataReceived,
+    handleSaveThresholds,
+    handleSaveEnvironment,
+    handleShowStrategies,
+    handleHideStrategies
+  };
+}
+
+// Separate hooks for warning system handlers
+function useWarningSystemHandlers({
+  connectDevice,
+  addDataPoint,
+  setSleepData,
+  setSensoryData,
+  setRoutineData,
+  setBehavioralData
+}) {
+  // Data handlers
+  const handleDeviceConnected = useCallback((device) => {
+    connectDevice(device);
+  }, [connectDevice]);
+  
+  const handleDataReceived = useCallback((data) => {
+    addDataPoint(data);
+  }, [addDataPoint]);
+  
+  const handleSaveThresholds = useCallback((settings) => {
+    console.log("Saving threshold settings:", settings);
+    // In a real app, this would save to a database or local storage
+  }, []);
+  
+  const handleSaveEnvironment = useCallback((factors) => {
+    console.log("Environment tracked:", factors);
+    
+    // Update sensory data based on environmental factors
+    const newSensoryData: SensoryData = {
+      timestamp: new Date().toISOString(),
+      noise_level: factors.find((f) => f.name === "Noise Level")?.value || 50,
+      light_level: factors.find((f) => f.name === "Brightness")?.value || 60,
+      temperature: factors.find((f) => f.name === "Temperature")?.value || 72,
+      crowding: factors.find((f) => f.name === "Crowding")?.value || 30,
+    };
+    
+    setSensoryData(newSensoryData);
+  }, [setSensoryData]);
+  
+  // Additional data type handlers
+  const handleSaveSleepData = useCallback((data: SleepData) => {
+    setSleepData(data);
+  }, [setSleepData]);
+  
+  const handleSaveSensoryData = useCallback((data: SensoryData) => {
+    setSensoryData(data);
+  }, [setSensoryData]);
+  
+  const handleSaveRoutineData = useCallback((data: RoutineData) => {
+    setRoutineData(data);
+  }, [setRoutineData]);
+  
+  const handleSaveBehavioralData = useCallback((data: BehavioralData) => {
+    setBehavioralData(data);
+  }, [setBehavioralData]);
+
+  return {
     handleDeviceConnected,
     handleDataReceived,
     handleSaveThresholds,
@@ -40,38 +179,5 @@ export function useWarningSystem() {
     handleSaveSensoryData,
     handleSaveRoutineData,
     handleSaveBehavioralData
-  } = useDataHandlers(
-    connectDevice, 
-    addDataPoint,
-    setSleepData,
-    setSensoryData,
-    setRoutineData,
-    setBehavioralData
-  );
-
-  return {
-    isConnected,
-    dataPoints,
-    isOnline,
-    offlineData,
-    regulationFactors,
-    regulationScore,
-    warningActive,
-    showStrategies,
-    sleepData,
-    sensoryData,
-    routineData,
-    behavioralData,
-    getChartData,
-    handleDeviceConnected,
-    handleDataReceived,
-    handleSaveThresholds,
-    handleSaveEnvironment,
-    handleSaveSleepData,
-    handleSaveSensoryData,
-    handleSaveRoutineData,
-    handleSaveBehavioralData,
-    handleShowStrategies,
-    handleHideStrategies
   };
 }
