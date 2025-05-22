@@ -37,6 +37,15 @@ export const useSound = () => {
       audioRefs.current[key as SoundType] = audio;
     });
 
+    // Handle errors
+    Object.values(audioRefs.current).forEach(audio => {
+      if (audio) {
+        audio.addEventListener('error', (e) => {
+          console.warn(`Error loading audio: ${(e.target as HTMLAudioElement).src}`, e);
+        });
+      }
+    });
+
     return () => {
       // Cleanup
       Object.values(audioRefs.current).forEach(audio => {
@@ -57,8 +66,10 @@ export const useSound = () => {
       
       // Play the sound
       audio.play().catch(error => {
-        console.log("Audio play failed:", error);
+        console.warn("Audio play failed:", error);
       });
+    } else {
+      console.warn(`Audio not found for sound: ${sound}`);
     }
   };
 
