@@ -1,6 +1,5 @@
-
 import { useState, useCallback } from 'react';
-import { BiometricData } from '../types';
+import { BiometricDataPoint } from '../types';
 
 interface UseDataStreamProps {
   isConnected: boolean;
@@ -8,10 +7,10 @@ interface UseDataStreamProps {
 }
 
 export function useDataStream({ isConnected, maxDataPoints }: UseDataStreamProps) {
-  const [dataPoints, setDataPoints] = useState<BiometricData[]>([]);
+  const [dataPoints, setDataPoints] = useState<BiometricDataPoint[]>([]);
   
   // Add a new data point to the stream
-  const addDataPoint = useCallback((data: BiometricData) => {
+  const addDataPoint = useCallback((data: BiometricDataPoint) => {
     setDataPoints(prev => {
       const newData = [data, ...prev];
       // Keep only the most recent points up to the maximum

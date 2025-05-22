@@ -12,6 +12,8 @@ export interface DeviceInfo {
   [key: string]: any;
 }
 
+export type BiometricDataPoint = BiometricData;
+
 export interface UseBiometricDataProps {
   maxDataPoints?: number;
 }
@@ -19,11 +21,11 @@ export interface UseBiometricDataProps {
 export interface UseBiometricDataReturn {
   isConnected: boolean;
   deviceInfo: DeviceInfo | null;
-  dataPoints: BiometricData[];
-  offlineData: BiometricData[];
+  dataPoints: BiometricDataPoint[];
+  offlineData: BiometricDataPoint[];
   isOnline: boolean;
-  connectDevice: (device: DeviceInfo) => void;
+  connectDevice: (device: any) => void;
   disconnectDevice: () => void;
-  addDataPoint: (data: BiometricData) => void;
-  syncOfflineData: () => Promise<void>;
+  addDataPoint: (data: BiometricDataPoint) => void;
+  syncOfflineData: () => void;
 }

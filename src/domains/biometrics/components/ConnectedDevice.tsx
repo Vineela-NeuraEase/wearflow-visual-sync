@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Button } from '@/components/ui/button';
 
 interface ConnectedDeviceProps {
   deviceName: string;
@@ -16,75 +16,25 @@ export function ConnectedDevice({
   onDisconnect
 }: ConnectedDeviceProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.infoContainer}>
-        <View style={styles.indicatorContainer}>
-          <View style={[styles.indicator, styles.activeIndicator]} />
-        </View>
-        <View>
-          <Text style={styles.deviceName}>Connected to {deviceName}</Text>
+    <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-900/30">
+      <div className="flex items-center">
+        <div className="h-3 w-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+        <div>
+          <span className="font-medium">Connected to {deviceName}</span>
           {!isOnline && (
-            <Text style={styles.offlineText}>
+            <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
               Offline mode - Data stored locally ({offlineDataCount})
-            </Text>
+            </div>
           )}
-        </View>
-      </View>
-      <TouchableOpacity 
-        style={styles.disconnectButton}
-        onPress={onDisconnect}
+        </div>
+      </div>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={onDisconnect}
       >
-        <Text style={styles.disconnectText}>Disconnect</Text>
-      </TouchableOpacity>
-    </View>
+        Disconnect
+      </Button>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#ecfdf5',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#a7f3d0'
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  indicatorContainer: {
-    marginRight: 8
-  },
-  indicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5
-  },
-  activeIndicator: {
-    backgroundColor: '#10b981',
-  },
-  deviceName: {
-    fontSize: 14,
-    fontWeight: '500'
-  },
-  offlineText: {
-    fontSize: 12,
-    color: '#d97706',
-    marginTop: 2
-  },
-  disconnectButton: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12
-  },
-  disconnectText: {
-    fontSize: 12,
-    color: '#374151',
-    fontWeight: '500'
-  }
-});
