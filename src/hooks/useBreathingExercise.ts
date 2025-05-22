@@ -37,11 +37,11 @@ export function useBreathingExercise() {
     
     if (breathState === "inhale") {
       setCounter(selectedTechnique.timing.inhale);
-      play("breathing");
+      if (soundEnabled) play("breathing.mp3");
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
-            play("pop");
+            if (soundEnabled) play("pop.mp3");
             return selectedTechnique.timing.hold1
               ? (() => { setBreathState("hold"); return selectedTechnique.timing.hold1 || 0; })()
               : (() => { setBreathState("exhale"); return selectedTechnique.timing.exhale; })();
@@ -53,7 +53,7 @@ export function useBreathingExercise() {
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
-            play("pop");
+            if (soundEnabled) play("pop.mp3");
             setBreathState("exhale");
             return selectedTechnique.timing.exhale;
           }
@@ -64,7 +64,7 @@ export function useBreathingExercise() {
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
-            play("pop");
+            if (soundEnabled) play("pop.mp3");
             return selectedTechnique.timing.hold2 
               ? (() => { setBreathState("rest"); return selectedTechnique.timing.hold2 || 0; })()
               : (() => { setBreathState("inhale"); return selectedTechnique.timing.inhale; })();
@@ -76,7 +76,7 @@ export function useBreathingExercise() {
       interval = setInterval(() => {
         setCounter(prev => {
           if (prev <= 1) {
-            play("pop");
+            if (soundEnabled) play("pop.mp3");
             setBreathState("inhale");
             return selectedTechnique.timing.inhale;
           }
@@ -86,7 +86,7 @@ export function useBreathingExercise() {
     }
     
     return () => clearInterval(interval);
-  }, [breathState, isStarted, play, selectedTechnique]);
+  }, [breathState, isStarted, play, selectedTechnique, soundEnabled]);
   
   // Track session time
   useEffect(() => {
@@ -95,7 +95,7 @@ export function useBreathingExercise() {
     const interval = setInterval(() => {
       setElapsedTime(prev => {
         if (prev >= totalSessionTime) {
-          play("complete");
+          if (soundEnabled) play("complete.mp3");
           setIsStarted(false);
           return prev;
         }
@@ -104,10 +104,10 @@ export function useBreathingExercise() {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [isStarted, play]);
+  }, [isStarted, play, soundEnabled]);
   
   const handleStart = () => {
-    play("whoosh");
+    if (soundEnabled) play("whoosh.mp3");
     setIsStarted(true);
     setBreathState("inhale");
     setCounter(selectedTechnique.timing.inhale);
@@ -115,7 +115,7 @@ export function useBreathingExercise() {
   };
   
   const handleStop = () => {
-    play("click");
+    if (soundEnabled) play("click.mp3");
     setIsStarted(false);
     setBreathState("idle");
     navigate("/tools");

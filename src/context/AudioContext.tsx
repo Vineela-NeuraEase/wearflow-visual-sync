@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AudioContextType {
   soundEnabled: boolean;
@@ -25,7 +25,7 @@ interface AudioProviderProps {
   children: ReactNode;
 }
 
-export const AudioProvider = ({ children }: AudioProviderProps) => {
+export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
 

@@ -33,14 +33,14 @@ export function TechniqueSelector({
   return (
     <div className="w-full max-w-md mb-8">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-indigo-700">Choose Technique</h2>
+        <h2 className="text-lg font-medium text-indigo-700 dark:text-indigo-300">Choose Technique</h2>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
-                    <Info className="h-4 w-4 text-indigo-600" />
+                    <Info className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-4">
@@ -68,7 +68,7 @@ export function TechniqueSelector({
         value={selectedTechnique.id}
         onValueChange={(value) => onTechniqueChange(value)}
       >
-        <SelectTrigger className="w-full bg-white border-indigo-200">
+        <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-indigo-200 dark:border-indigo-800">
           <SelectValue placeholder="Select a breathing technique" />
         </SelectTrigger>
         <SelectContent>

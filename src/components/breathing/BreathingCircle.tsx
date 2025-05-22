@@ -62,16 +62,16 @@ export function BreathingCircle({
         variants={circleVariants}
       />
       <motion.div 
-        className="absolute inset-2 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center"
+        className="absolute inset-2 rounded-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm flex items-center justify-center"
         style={{
           boxShadow: "inset 0 0 20px rgba(255, 255, 255, 0.8)",
         }}
       >
         <div className="z-10 text-center">
-          <span className="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
             {counter}
           </span>
-          <p className="text-xl mt-2 font-medium text-indigo-800">
+          <p className="text-xl mt-2 font-medium text-indigo-800 dark:text-indigo-300">
             {getStateMessage()}
           </p>
         </div>

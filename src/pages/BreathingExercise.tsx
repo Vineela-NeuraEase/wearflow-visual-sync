@@ -24,7 +24,7 @@ const BreathingExercise = () => {
   } = useBreathingExercise();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-blue-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-blue-100 dark:from-indigo-950 dark:to-blue-950 flex flex-col">
       <BreathingHeader 
         onExit={handleStop} 
         soundEnabled={soundEnabled} 
