@@ -1,5 +1,4 @@
-
-import { BleClient, BleDevice, numberToUUID } from '@capacitor-community/bluetooth-le';
+import { BleClient, BleDevice, numberToUUID, ScanMode } from '@capacitor-community/bluetooth-le';
 
 // Standard Heart Rate Service UUID
 const HEART_RATE_SERVICE = '0000180d-0000-1000-8000-00805f9b34fb';
@@ -53,14 +52,16 @@ class BluetoothService {
       await this.initialize();
       
       // Start scanning for devices with heart rate service
-      const devices: BleDevice[] = await BleClient.requestDevice({
+      const device = await BleClient.requestDevice({
         services: [HEART_RATE_SERVICE],
         namePrefix: '',
-        scanMode: 'low_latency',
+        // Fixed: Changed string literal to ScanMode enum
+        scanMode: ScanMode.LOW_LATENCY,
         timeoutMs
       });
       
-      return Array.isArray(devices) ? devices : [devices];
+      // Fixed: Wrap single device in array to match expected return type
+      return device ? [device] : [];
     } catch (error) {
       console.error('Error scanning for Bluetooth devices:', error);
       return [];
