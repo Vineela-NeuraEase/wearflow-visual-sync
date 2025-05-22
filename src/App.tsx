@@ -12,34 +12,37 @@ import { SiteFooter } from './components/SiteFooter';
 import Index from './pages/Index';
 import ProfileAccount from './pages/ProfileAccount';
 import { ProfileProvider } from './context/ProfileContext';
+import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 
 function App() {
   return (
     <div className="App">
-      <ProfileProvider>
-        <Router>
-          <SiteHeader />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            
-            {/* All routes are accessible */}
-            <Route path="/home" element={<Home />} />
-            <Route path="/warning-system" element={<WarningSystem />} />
-            <Route path="/biotracking" element={<BioTracking />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/meltdown-tracking" element={<MeltdownTracking />} />
-            <Route path="/data-access" element={<DataAccess />} />
-            <Route path="/profile-account" element={<ProfileAccount />} />
+      <AuthProvider>
+        <ProfileProvider>
+          <Router>
+            <SiteHeader />
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              
+              {/* All routes are accessible */}
+              <Route path="/home" element={<Home />} />
+              <Route path="/warning-system" element={<WarningSystem />} />
+              <Route path="/biotracking" element={<BioTracking />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/meltdown-tracking" element={<MeltdownTracking />} />
+              <Route path="/data-access" element={<DataAccess />} />
+              <Route path="/profile-account" element={<ProfileAccount />} />
 
-            {/* Fallback route */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          <SiteFooter />
-          <Toaster />
-        </Router>
-      </ProfileProvider>
+              {/* Fallback route */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+            <SiteFooter />
+            <Toaster />
+          </Router>
+        </ProfileProvider>
+      </AuthProvider>
     </div>
   );
 }
