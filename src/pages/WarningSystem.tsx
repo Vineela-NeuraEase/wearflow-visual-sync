@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Bell, Settings2, History } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Import new components
+// Import components
 import { CustomThresholdEditor } from "@/components/warning-system/CustomThresholdEditor";
 import { RegulationStatus } from "@/components/warning-system/RegulationStatus";
 import { EnvironmentalTracker } from "@/components/warning-system/EnvironmentalTracker";
 import { SignalAnalysisChart } from "@/components/warning-system/SignalAnalysisChart";
+import { PatternDetectionInsights } from "@/components/warning-system/PatternDetectionInsights";
+import { PersonalizedStrategies } from "@/components/warning-system/PersonalizedStrategies";
 
 // Mock data for demonstration
 const mockChartData = [
@@ -23,6 +25,8 @@ const mockChartData = [
 
 const WarningSystem = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("analysis");
+  const [showStrategies, setShowStrategies] = useState(false);
   
   // State for current status
   const [regulationFactors, setRegulationFactors] = useState([
@@ -63,7 +67,7 @@ const WarningSystem = () => {
         </div>
         
         <p className="text-sm px-4 text-muted-foreground">
-          Monitor your regulation indicators and set personalized thresholds for early detection.
+          Monitor your regulation indicators and get personalized early warnings before meltdowns.
         </p>
       </div>
       
@@ -75,43 +79,63 @@ const WarningSystem = () => {
           isWarningActive={true}
         />
         
-        <Tabs defaultValue="analysis" className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6">
-            <TabsTrigger value="analysis" className="text-sm">Analysis</TabsTrigger>
-            <TabsTrigger value="environment" className="text-sm">Environment</TabsTrigger>
-            <TabsTrigger value="settings" className="text-sm">Thresholds</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="analysis" className="space-y-6">
-            <SignalAnalysisChart 
-              data={mockChartData} 
-              title="Today's Signals"
+        {showStrategies ? (
+          <div className="mb-6">
+            <PersonalizedStrategies 
+              onClose={() => setShowStrategies(false)} 
+              warningLevel="watch"
             />
+          </div>
+        ) : (
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-4 mb-6">
+              <TabsTrigger value="analysis" className="text-sm">Analysis</TabsTrigger>
+              <TabsTrigger value="patterns" className="text-sm">Patterns</TabsTrigger>
+              <TabsTrigger value="environment" className="text-sm">Environment</TabsTrigger>
+              <TabsTrigger value="settings" className="text-sm">Thresholds</TabsTrigger>
+            </TabsList>
             
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <h3 className="font-medium text-amber-800 flex items-center">
-                <Bell className="h-4 w-4 mr-2" />
-                Potential Early Warning
-              </h3>
-              <p className="text-sm text-amber-700 mt-1">
-                Your heart rate is increasing while HRV is decreasing. This pattern has 
-                preceded regulation challenges in the past.
-              </p>
-              <div className="mt-3 flex gap-2">
-                <Button size="sm" variant="outline">Suggest Strategies</Button>
-                <Button size="sm" variant="outline">Dismiss</Button>
+            <TabsContent value="analysis" className="space-y-6">
+              <SignalAnalysisChart 
+                data={mockChartData} 
+                title="Today's Signals"
+              />
+              
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <h3 className="font-medium text-amber-800 flex items-center">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Potential Early Warning
+                </h3>
+                <p className="text-sm text-amber-700 mt-1">
+                  Your heart rate is increasing while HRV is decreasing. This pattern has 
+                  preceded regulation challenges in the past.
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setShowStrategies(true)}
+                  >
+                    Suggest Strategies
+                  </Button>
+                  <Button size="sm" variant="outline">Dismiss</Button>
+                </div>
               </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="environment" className="space-y-6">
-            <EnvironmentalTracker onSave={handleSaveEnvironment} />
-          </TabsContent>
-          
-          <TabsContent value="settings" className="space-y-6">
-            <CustomThresholdEditor onSave={handleSaveThresholds} />
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+            
+            <TabsContent value="patterns" className="space-y-6">
+              <PatternDetectionInsights detectedPatterns={[]} />
+            </TabsContent>
+            
+            <TabsContent value="environment" className="space-y-6">
+              <EnvironmentalTracker onSave={handleSaveEnvironment} />
+            </TabsContent>
+            
+            <TabsContent value="settings" className="space-y-6">
+              <CustomThresholdEditor onSave={handleSaveThresholds} />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </div>
   );

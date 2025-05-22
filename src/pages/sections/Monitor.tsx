@@ -1,13 +1,17 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Activity, Heart, BarChart2, AlertTriangle } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
 import { motion } from "framer-motion";
+import { EarlyWarningSystem } from "@/components/warning-system/EarlyWarningSystem";
+import { PersonalizedStrategies } from "@/components/warning-system/PersonalizedStrategies";
 
 const Monitor = () => {
   const navigate = useNavigate();
+  const [showStrategies, setShowStrategies] = useState(false);
   
   const monitorTools = [
     {
@@ -51,6 +55,23 @@ const Monitor = () => {
           </div>
         </div>
       </div>
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {showStrategies ? (
+          <PersonalizedStrategies 
+            onClose={() => setShowStrategies(false)} 
+            warningLevel="watch"
+          />
+        ) : (
+          <EarlyWarningSystem 
+            onShowStrategies={() => setShowStrategies(true)}
+          />
+        )}
+      </motion.div>
       
       <motion.div 
         className="grid grid-cols-2 gap-3"
