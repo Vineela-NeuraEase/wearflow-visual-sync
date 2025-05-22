@@ -1,6 +1,6 @@
 
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,64 +9,141 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Home, Activity, Heart, Book, PieChart, Settings, BellRing, UserRound } from "lucide-react";
-import { ThemeToggle } from "../ThemeToggle";
+import {
+  Home,
+  Menu,
+  Settings,
+  AlertTriangle,
+  LogOut,
+  Database,
+  BookOpen,
+  BrainCircuit,
+  User
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const MenuDrawer = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const menuItems = [
-    { name: "Home", icon: <Home className="h-5 w-5" />, path: "/" },
-    { name: "Plan", icon: <Activity className="h-5 w-5" />, path: "/plan" },
-    { name: "Support", icon: <Heart className="h-5 w-5" />, path: "/support" },
-    { name: "Monitor", icon: <PieChart className="h-5 w-5" />, path: "/monitor" },
-    { name: "Learn", icon: <Book className="h-5 w-5" />, path: "/learn" },
-    { name: "Data", icon: <Activity className="h-5 w-5" />, path: "/data" },
-    { name: "Settings", icon: <Settings className="h-5 w-5" />, path: "/settings" },
-    { name: "Notifications", icon: <BellRing className="h-5 w-5" />, path: "/notification-center" },
-    { name: "Profile", icon: <UserRound className="h-5 w-5" />, path: "/profile-account" },
-  ];
-
+  const { user, signOut } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  
   const handleNavigation = (path: string) => {
     navigate(path);
-    setOpen(false);
+    setIsOpen(false);
   };
-
+  
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      navigate('/');
+      setIsOpen(false);
+    }
+  };
+  
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="mr-3">
-          <Menu className="h-6 w-6" />
+        <Button variant="ghost" size="icon" className="mr-2">
+          <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="bg-white dark:bg-gray-900 dark:text-white">
+      <SheetContent side="left">
         <SheetHeader>
-          <SheetTitle className="text-primary text-xl">Hana</SheetTitle>
+          <SheetTitle>Autism Meltdown Tracker</SheetTitle>
         </SheetHeader>
-        <div className="flex justify-between items-center my-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Explore</span>
-          {mounted && <ThemeToggle />}
-        </div>
-        <nav className="flex flex-col space-y-1">
-          {menuItems.map((item) => (
+        <div className="py-6">
+          {user && (
+            <div className="border-b pb-4 mb-4">
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                  <User className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium">{user.email}</div>
+                  <div className="text-xs text-gray-500">Logged in</div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-3">
             <Button
-              key={item.name}
-              variant={location.pathname === item.path ? "secondary" : "ghost"}
-              className={`justify-start ${location.pathname === item.path ? "bg-primary/10 dark:bg-primary/20" : ""}`}
-              onClick={() => handleNavigation(item.path)}
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/")}
             >
-              <span className="mr-2">{item.icon}</span>
-              {item.name}
+              <Home className="h-5 w-5 mr-3" />
+              Home
             </Button>
-          ))}
-        </nav>
+            
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/warning-system")}
+            >
+              <AlertTriangle className="h-5 w-5 mr-3" />
+              Warning System
+            </Button>
+            
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/data-collection")}
+            >
+              <Database className="h-5 w-5 mr-3" />
+              Data Collection
+            </Button>
+            
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/resource-library")}
+            >
+              <BookOpen className="h-5 w-5 mr-3" />
+              Resource Library
+            </Button>
+            
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/ai-assistant")}
+            >
+              <BrainCircuit className="h-5 w-5 mr-3" />
+              AI Assistant
+            </Button>
+            
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => handleNavigation("/settings")}
+            >
+              <Settings className="h-5 w-5 mr-3" />
+              Settings
+            </Button>
+          </div>
+          
+          {user && (
+            <Button
+              variant="ghost"
+              className="w-full justify-start mt-6 text-red-600 dark:text-red-400"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-5 w-5 mr-3" />
+              Sign Out
+            </Button>
+          )}
+          
+          {!user && (
+            <Button
+              variant="ghost"
+              className="w-full justify-start mt-6 text-blue-600 dark:text-blue-400"
+              onClick={() => handleNavigation("/auth")}
+            >
+              <User className="h-5 w-5 mr-3" />
+              Sign In / Sign Up
+            </Button>
+          )}
+        </div>
       </SheetContent>
     </Sheet>
   );
