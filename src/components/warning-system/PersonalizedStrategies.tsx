@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Check, CircleAlert } from "lucide-react";
-import { useStrategies } from "@/hooks/warning-system/useStrategies";
+import { useStrategies } from "@/hooks/warning-system/strategy/useStrategies";
 import { useAuth } from "@/context/AuthContext";
 import { StrategyForm } from "./strategies/StrategyForm";
 import { StrategiesList } from "./strategies/StrategiesList";
