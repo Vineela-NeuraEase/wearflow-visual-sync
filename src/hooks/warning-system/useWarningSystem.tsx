@@ -3,7 +3,7 @@ import { useWarningCore } from './useWarningCore';
 import { useWarningAnalysis } from './useWarningAnalysis';
 import { useChartData } from './useChartData';
 import { useRegulationFactors } from './useRegulationFactors';
-import { useStrategies } from './useStrategies';
+import { useStrategies } from './strategy/useStrategies';
 import { useRegulationScore } from './useRegulationScore';
 import { useDataHandlers } from './useDataHandlers';
 import { useWarningDetection } from './useWarningDetection';
