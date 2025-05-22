@@ -12,12 +12,10 @@ if (!rootElement) {
 }
 
 // Create root using the proper React 18 API
-const root = ReactDOM.createRoot(rootElement);
-
-root.render(
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // Register service worker for PWA support
