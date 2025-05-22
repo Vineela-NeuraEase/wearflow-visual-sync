@@ -1,10 +1,21 @@
 
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 const Index = () => {
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (user) {
+        navigate("/home");
+      }
+    }
+  }, [user, isLoading, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
@@ -25,11 +36,11 @@ const Index = () => {
         
         <div className="flex flex-col space-y-4">
           <Button 
-            onClick={() => navigate("/home")} 
+            onClick={() => navigate("/auth")} 
             className="py-6 text-lg bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
             size="lg"
           >
-            Enter Application
+            Sign In / Sign Up
           </Button>
           
           <Button 
