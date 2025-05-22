@@ -1,8 +1,7 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { InfoCircle, TrendingDown, Activity, Brain, Calendar } from "lucide-react";
+import { Info, TrendingDown, Activity, Brain, Calendar } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface Pattern {
@@ -61,10 +60,10 @@ export const PatternDetectionInsights = ({
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'physiological': return <Activity className="h-4 w-4" />;
-      case 'environmental': return <InfoCircle className="h-4 w-4" />;
+      case 'environmental': return <Info className="h-4 w-4" />;
       case 'behavioral': return <Brain className="h-4 w-4" />;
       case 'temporal': return <Calendar className="h-4 w-4" />;
-      default: return <InfoCircle className="h-4 w-4" />;
+      default: return <Info className="h-4 w-4" />;
     }
   };
   
