@@ -1,8 +1,6 @@
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface DataAccessToken {
   id: string;
@@ -24,32 +22,27 @@ export function useDataAccessTokens() {
   const [tokens, setTokens] = useState<DataAccessToken[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
   const { toast } = useToast();
 
   const fetchTokens = async () => {
-    if (!user) {
-      setError("You must be logged in to manage data access tokens");
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
       
-      // Cast the supabase client to any to bypass type checking for this call
-      const { data, error: fetchError } = await (supabase as any)
-        .from('data_access_tokens')
-        .select('*')
-        .order('created_at', { ascending: false });
-        
-      if (fetchError) {
-        console.error("Error fetching tokens:", fetchError);
-        setError(`Failed to load tokens: ${fetchError.message}`);
-        return;
-      }
+      // Mock data for development
+      const mockTokens: DataAccessToken[] = [
+        {
+          id: "1",
+          token: "mock-token-1",
+          created_at: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          last_used_at: null,
+          scopes: ["read"],
+          description: "Mock Token 1"
+        }
+      ];
       
-      setTokens(data || []);
+      setTokens(mockTokens);
     } catch (err: any) {
       console.error("Error in fetchTokens:", err);
       setError("An unexpected error occurred while fetching tokens");
@@ -59,15 +52,10 @@ export function useDataAccessTokens() {
   };
 
   const createToken = async ({ description, scopes, expirationDays }: CreateTokenParams) => {
-    if (!user) {
-      setError("You must be logged in to create tokens");
-      return null;
-    }
-
     try {
       setLoading(true);
       
-      // Generate a secure random token
+      // Generate a mock token
       const tokenBytes = new Uint8Array(32);
       window.crypto.getRandomValues(tokenBytes);
       const token = Array.from(tokenBytes)
@@ -78,31 +66,17 @@ export function useDataAccessTokens() {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + expirationDays);
       
-      // Cast the supabase client to any to bypass type checking for this call
-      const { data, error: createError } = await (supabase as any)
-        .from('data_access_tokens')
-        .insert({
-          user_id: user.id,
-          token,
-          expires_at: expiresAt.toISOString(),
-          scopes,
-          description
-        })
-        .select()
-        .single();
-      
-      if (createError) {
-        console.error("Error creating token:", createError);
-        toast({
-          title: "Error",
-          description: `Failed to create token: ${createError.message}`,
-          variant: "destructive"
-        });
-        return null;
-      }
+      const newToken: DataAccessToken = {
+        id: Math.random().toString(36).substring(2, 11),
+        token,
+        created_at: new Date().toISOString(),
+        expires_at: expiresAt.toISOString(),
+        last_used_at: null,
+        scopes,
+        description
+      };
       
       // Update local state
-      const newToken = data;
       setTokens(prev => [newToken, ...prev]);
       
       toast({
@@ -125,29 +99,8 @@ export function useDataAccessTokens() {
   };
 
   const revokeToken = async (id: string) => {
-    if (!user) {
-      setError("You must be logged in to revoke tokens");
-      return false;
-    }
-
     try {
       setLoading(true);
-      
-      // Cast the supabase client to any to bypass type checking for this call
-      const { error: deleteError } = await (supabase as any)
-        .from('data_access_tokens')
-        .delete()
-        .eq('id', id);
-      
-      if (deleteError) {
-        console.error("Error revoking token:", deleteError);
-        toast({
-          title: "Error",
-          description: `Failed to revoke token: ${deleteError.message}`,
-          variant: "destructive"
-        });
-        return false;
-      }
       
       // Update local state
       setTokens(prev => prev.filter(token => token.id !== id));
