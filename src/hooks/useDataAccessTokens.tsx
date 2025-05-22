@@ -37,8 +37,8 @@ export function useDataAccessTokens() {
       setLoading(true);
       setError(null);
       
-      // Using generic query syntax to work around type issues
-      const { data, error: fetchError } = await supabase
+      // Cast the supabase client to any to bypass type checking for this call
+      const { data, error: fetchError } = await (supabase as any)
         .from('data_access_tokens')
         .select('*')
         .order('created_at', { ascending: false });
@@ -49,9 +49,8 @@ export function useDataAccessTokens() {
         return;
       }
       
-      // Cast data to the correct type
-      setTokens(data as unknown as DataAccessToken[]);
-    } catch (err) {
+      setTokens(data || []);
+    } catch (err: any) {
       console.error("Error in fetchTokens:", err);
       setError("An unexpected error occurred while fetching tokens");
     } finally {
@@ -79,8 +78,8 @@ export function useDataAccessTokens() {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + expirationDays);
       
-      // Using generic query syntax to work around type issues
-      const { data, error: createError } = await supabase
+      // Cast the supabase client to any to bypass type checking for this call
+      const { data, error: createError } = await (supabase as any)
         .from('data_access_tokens')
         .insert({
           user_id: user.id,
@@ -103,7 +102,7 @@ export function useDataAccessTokens() {
       }
       
       // Update local state
-      const newToken = data as unknown as DataAccessToken;
+      const newToken = data;
       setTokens(prev => [newToken, ...prev]);
       
       toast({
@@ -112,7 +111,7 @@ export function useDataAccessTokens() {
       });
       
       return { ...newToken, tokenValue: token }; // Return with clear text token
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error in createToken:", err);
       toast({
         title: "Error",
@@ -134,8 +133,8 @@ export function useDataAccessTokens() {
     try {
       setLoading(true);
       
-      // Using generic query syntax to work around type issues
-      const { error: deleteError } = await supabase
+      // Cast the supabase client to any to bypass type checking for this call
+      const { error: deleteError } = await (supabase as any)
         .from('data_access_tokens')
         .delete()
         .eq('id', id);
@@ -159,7 +158,7 @@ export function useDataAccessTokens() {
       });
       
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error in revokeToken:", err);
       toast({
         title: "Error",
