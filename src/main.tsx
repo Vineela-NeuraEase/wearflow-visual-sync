@@ -4,8 +4,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// Make sure we're using createRoot API
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+// Make sure React is properly imported and used
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error('Root element not found. Make sure there is a div with id "root" in your HTML.');
+}
+
+// Create root using the non-null assertion since we've already checked
+const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>

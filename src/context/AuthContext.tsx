@@ -14,7 +14,7 @@ interface AuthContextProps {
   resetPassword: (email: string) => Promise<{ error: any }>;
 }
 
-const AuthContext = createContext<AuthContextProps>({
+const initialAuthContext: AuthContextProps = {
   user: null,
   session: null,
   isLoading: true,
@@ -22,7 +22,9 @@ const AuthContext = createContext<AuthContextProps>({
   signUp: async () => ({ error: null, data: null }),
   signOut: async () => ({ error: null }),
   resetPassword: async () => ({ error: null }),
-});
+};
+
+const AuthContext = createContext<AuthContextProps>(initialAuthContext);
 
 export const useAuth = () => useContext(AuthContext);
 

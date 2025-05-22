@@ -8,10 +8,17 @@ type AudioContextType = {
   play: (sound: "click" | "success" | "pop" | "whoosh" | "complete" | "breathing") => void;
 };
 
-const AudioContext = createContext<AudioContextType | undefined>(undefined);
+// Create a default value for the context
+const defaultAudioContext: AudioContextType = {
+  soundEnabled: true,
+  toggleSound: () => {},
+  play: () => {},
+};
+
+const AudioContext = createContext<AudioContextType>(defaultAudioContext);
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const { play: playSound } = useSound();
 
   const toggleSound = () => {
