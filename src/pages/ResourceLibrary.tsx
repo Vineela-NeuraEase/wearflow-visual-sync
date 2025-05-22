@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Search, BookmarkPlus, Clock } from "lucide-react";
+import { ArrowLeft, Search, BookmarkPlus, Clock, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,9 +47,24 @@ const ResourceLibrary = () => {
     event.stopPropagation(); // Prevent navigation
     
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to bookmark resources",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('bookmarks')
-        .insert({ resource_id: resourceId });
+        .insert({ 
+          resource_id: resourceId,
+          user_id: user.id
+        });
       
       if (error) {
         console.error("Error bookmarking resource:", error);

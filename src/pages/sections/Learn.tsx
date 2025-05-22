@@ -66,9 +66,24 @@ const Learn = () => {
   // Function to bookmark a resource
   const bookmarkResource = async (resourceId: string) => {
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to bookmark resources",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('bookmarks')
-        .insert({ resource_id: resourceId });
+        .insert({ 
+          resource_id: resourceId,
+          user_id: user.id
+        });
       
       if (error) {
         console.error("Error bookmarking resource:", error);
