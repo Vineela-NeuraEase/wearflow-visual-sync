@@ -2,17 +2,19 @@
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Strategy } from "@/types/strategy";
-import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-interface UseStrategiesReturn {
+// Export the interface for the hook return type
+export interface UseStrategiesReturn {
   showStrategies: boolean;
   strategies: Strategy[];
   loading: boolean;
   error: string | null;
   handleShowStrategies: () => void;
   handleHideStrategies: () => void;
-  saveStrategy: (strategy: Omit<Strategy, "id" | "user_id">) => Promise<void>;
+  saveStrategy: (strategy: Omit<Strategy, "id" | "user_id">) => Promise<Strategy | null>;
   deleteStrategy: (id: string) => Promise<void>;
+  updateEffectiveness: (id: string, rating: number) => Promise<void>;
 }
 
 export function useStrategies(): UseStrategiesReturn {
@@ -21,77 +23,50 @@ export function useStrategies(): UseStrategiesReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const { toast } = useToast();
 
-  // Load strategies from database when user changes
+  // Load default strategies to use regardless of user login status
+  const defaultStrategies: Strategy[] = [
+    {
+      id: "default-1",
+      name: "Deep Breathing",
+      description: "4-7-8 breathing technique",
+      category: "breathing",
+      effectiveness: 4
+    },
+    {
+      id: "default-2",
+      name: "Sensory Break",
+      description: "Take 10 minutes in a quiet space",
+      category: "sensory", 
+      effectiveness: 5
+    },
+    {
+      id: "default-3",
+      name: "Weighted Blanket",
+      description: "Use weighted blanket for deep pressure",
+      category: "sensory",
+      effectiveness: 5
+    }
+  ];
+  
+  // Load strategies from local storage (for now, until we have the Supabase table)
   useEffect(() => {
-    async function loadStrategies() {
-      if (!user) {
-        // Use default strategies if no user
-        setStrategies([
-          {
-            id: "default-1",
-            name: "Deep Breathing",
-            description: "4-7-8 breathing technique",
-            category: "breathing",
-            effectiveness: 4
-          },
-          {
-            id: "default-2",
-            name: "Sensory Break",
-            description: "Take 10 minutes in a quiet space",
-            category: "sensory",
-            effectiveness: 5
-          },
-          {
-            id: "default-3",
-            name: "Weighted Blanket",
-            description: "Use weighted blanket for deep pressure",
-            category: "sensory",
-            effectiveness: 5
-          }
-        ]);
-        return;
-      }
-
+    const loadStrategies = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        const { data, error } = await supabase
-          .from('strategies')
-          .select('*')
-          .eq('user_id', user.id);
-          
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-          setStrategies(data as Strategy[]);
-        } else {
-          // Set default strategies
-          setStrategies([
-            {
-              id: "default-1",
-              name: "Deep Breathing",
-              description: "4-7-8 breathing technique",
-              category: "breathing",
-              effectiveness: 4
-            },
-            {
-              id: "default-2",
-              name: "Sensory Break",
-              description: "Take 10 minutes in a quiet space",
-              category: "sensory", 
-              effectiveness: 5
-            }
-          ]);
-        }
+        // For now, just use default strategies
+        // Later we'll replace this with Supabase query when the table is available
+        setStrategies(defaultStrategies);
       } catch (err) {
         console.error("Error loading strategies:", err);
         setError("Failed to load strategies");
       } finally {
         setLoading(false);
       }
-    }
+    };
     
     loadStrategies();
   }, [user]);
@@ -104,56 +79,73 @@ export function useStrategies(): UseStrategiesReturn {
     setShowStrategies(false);
   }, []);
   
-  const saveStrategy = useCallback(async (strategy: Omit<Strategy, "id" | "user_id">) => {
-    if (!user) {
-      console.log("Cannot save strategy: Not logged in");
-      return;
-    }
-    
+  const saveStrategy = useCallback(async (strategy: Omit<Strategy, "id" | "user_id">): Promise<Strategy | null> => {
     try {
-      const { data, error } = await supabase
-        .from('strategies')
-        .insert([
-          { 
-            ...strategy,
-            user_id: user.id
-          }
-        ])
-        .select();
-        
-      if (error) throw error;
+      // Create new strategy with generated ID
+      const newStrategy: Strategy = {
+        ...strategy,
+        id: crypto.randomUUID(),
+        user_id: user?.id
+      };
       
-      if (data) {
-        setStrategies(prev => [...prev, data[0] as Strategy]);
-      }
+      // Add to local state
+      setStrategies(prev => [...prev, newStrategy]);
+      
+      return newStrategy;
     } catch (err) {
       console.error("Error saving strategy:", err);
-      throw err;
+      toast({
+        title: "Error",
+        description: "Failed to save strategy",
+        variant: "destructive"
+      });
+      return null;
     }
-  }, [user]);
+  }, [user, toast]);
   
   const deleteStrategy = useCallback(async (id: string) => {
-    if (!user) {
-      console.log("Cannot delete strategy: Not logged in");
-      return;
-    }
-    
     try {
-      const { error } = await supabase
-        .from('strategies')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-        
-      if (error) throw error;
-      
       // Remove from local state
       setStrategies(prev => prev.filter(s => s.id !== id));
+      
+      toast({
+        title: "Strategy deleted",
+        description: "Your strategy has been removed",
+      });
     } catch (err) {
       console.error("Error deleting strategy:", err);
-      throw err;
+      toast({
+        title: "Error",
+        description: "Failed to delete strategy",
+        variant: "destructive"
+      });
     }
-  }, [user]);
+  }, [toast]);
+  
+  const updateEffectiveness = useCallback(async (id: string, rating: number) => {
+    try {
+      // Update effectiveness in local state
+      setStrategies(prev => 
+        prev.map(strategy => 
+          strategy.id === id 
+            ? { ...strategy, effectiveness: rating } 
+            : strategy
+        )
+      );
+      
+      toast({
+        title: "Rating updated",
+        description: "Strategy effectiveness updated",
+      });
+    } catch (err) {
+      console.error("Error updating effectiveness:", err);
+      toast({
+        title: "Error",
+        description: "Failed to update rating",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
   
   return {
     showStrategies,
@@ -163,6 +155,7 @@ export function useStrategies(): UseStrategiesReturn {
     handleShowStrategies,
     handleHideStrategies,
     saveStrategy,
-    deleteStrategy
+    deleteStrategy,
+    updateEffectiveness
   };
 }

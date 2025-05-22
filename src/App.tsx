@@ -1,4 +1,3 @@
-
 // Import necessary dependencies
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
@@ -10,7 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 
 // Import layouts
-import Layout from "./components/layout/Layout";
+import { Layout } from "./components/layout/Layout";
 import MinimalLayout from "./components/layout/MinimalLayout";
 
 // Import pages
@@ -61,7 +60,7 @@ function App() {
                   {/* Protected routes */}
                   <Route path="/" element={
                     <AuthGuard>
-                      <Layout children={<Home />} />
+                      <Layout />
                     </AuthGuard>
                   } />
                   <Route path="/settings" element={

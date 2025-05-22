@@ -36,10 +36,10 @@ export const BluetoothDeviceManager = ({
   
   // When coming back online, sync any stored offline data
   useEffect(() => {
-    if (isOnline && collectData) {
+    if (isOnline && isConnected) {
       collectData();
     }
-  }, [isOnline, collectData]);
+  }, [isOnline, isConnected, collectData]);
   
   return (
     <div className="mb-6">

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useStrategies, Strategy } from "@/hooks/warning-system/useStrategies";
+import { useStrategies } from "@/hooks/warning-system/useStrategies";
+import { Strategy } from "@/types/strategy";
 
 interface PersonalizedStrategiesProps {
   onClose: () => void;
@@ -26,7 +26,7 @@ export const PersonalizedStrategies = ({
 }: PersonalizedStrategiesProps) => {
   const { 
     strategies,
-    isLoading,
+    loading,
     saveStrategy,
     deleteStrategy,
     updateEffectiveness
@@ -86,8 +86,7 @@ export const PersonalizedStrategies = ({
     if (!newStrategy.name) return;
     
     const strategyToSave = {
-      id: crypto.randomUUID(),
-      name: newStrategy.name!,
+      name: newStrategy.name,
       description: newStrategy.description || "",
       category: newStrategy.category || "other",
       effectiveness: newStrategy.effectiveness || 0
@@ -132,7 +131,7 @@ export const PersonalizedStrategies = ({
         </Button>
       </div>
       
-      {isLoading ? (
+      {loading ? (
         <div className="flex justify-center p-8">
           <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
         </div>
@@ -240,7 +239,7 @@ export const PersonalizedStrategies = ({
                                     variant="ghost"
                                     size="sm"
                                     className="p-0 w-6 h-6"
-                                    onClick={() => handleRateStrategy(strategy.id, star)}
+                                    onClick={() => handleRateStrategy(strategy.id!, star)}
                                   >
                                     <Star 
                                       className="h-5 w-5" 
@@ -256,7 +255,7 @@ export const PersonalizedStrategies = ({
                               variant="ghost"
                               size="sm"
                               className="text-gray-400 hover:text-red-500"
-                              onClick={() => deleteStrategy(strategy.id)}
+                              onClick={() => deleteStrategy(strategy.id!)}
                             >
                               <XCircle className="h-4 w-4" />
                             </Button>
