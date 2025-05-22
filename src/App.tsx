@@ -19,7 +19,10 @@ const App = () => (
   <SafeAreaProvider>
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator 
+          id="app-navigator"
+          initialRouteName="Home"
+        >
           <Stack.Screen 
             name="Home" 
             component={HomeScreen} 

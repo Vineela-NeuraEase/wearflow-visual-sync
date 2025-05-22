@@ -13,7 +13,7 @@ export function useBiometricData({
     isOnline, 
     offlineData, 
     addOfflineDataPoint, 
-    syncOfflineData 
+    syncOfflineData: originalSyncOfflineData 
   } = useOfflineStorage();
   
   const { 
@@ -38,6 +38,13 @@ export function useBiometricData({
       addOfflineDataPoint(data);
     }
   }, [isOnline, addStreamDataPoint, addOfflineDataPoint]);
+  
+  // Create a wrapper for syncOfflineData that returns void
+  const syncOfflineData = useCallback(async () => {
+    if (offlineData.length > 0) {
+      await originalSyncOfflineData();
+    }
+  }, [offlineData.length, originalSyncOfflineData]);
   
   // Sync offline data when online status changes
   useEffect(() => {
