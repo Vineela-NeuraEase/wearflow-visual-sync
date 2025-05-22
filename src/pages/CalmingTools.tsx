@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Wind, Music } from "lucide-react";
@@ -42,6 +43,11 @@ const CalmingTools = () => {
         initial="hidden"
         animate="visible"
       >
+        <div className="flex items-center mb-2">
+          <ArrowLeft className="h-5 w-5 text-primary cursor-pointer" onClick={() => navigate('/')} />
+          <h2 className="text-2xl font-semibold ml-4">Calming Tools</h2>
+        </div>
+        
         <h3 className="text-xl font-medium mt-6 mb-4">Activities</h3>
         
         <motion.div className="space-y-4" variants={containerVariants}>
@@ -56,11 +62,11 @@ const CalmingTools = () => {
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <Wind className="h-6 w-6 text-blue-500" />
+                <Wind className="h-6 w-6 text-tool-blue" />
               </motion.div>
               <div>
                 <h3 className="font-medium text-lg">Breathing Exercise</h3>
-                <p className="text-gray-500">Guided breathing patterns</p>
+                <p className="text-muted-foreground">Guided breathing patterns</p>
               </div>
             </Card>
           </motion.div>
@@ -86,7 +92,7 @@ const CalmingTools = () => {
               </motion.div>
               <div>
                 <h3 className="font-medium text-lg">Visual Stimming</h3>
-                <p className="text-gray-500">Calming visual patterns</p>
+                <p className="text-muted-foreground">Calming visual patterns</p>
               </div>
             </Card>
           </motion.div>
@@ -107,7 +113,7 @@ const CalmingTools = () => {
               </motion.div>
               <div>
                 <h3 className="font-medium text-lg">Soothing Sounds</h3>
-                <p className="text-gray-500">White noise and nature sounds</p>
+                <p className="text-muted-foreground">White noise and nature sounds</p>
               </div>
             </Card>
           </motion.div>
@@ -146,7 +152,7 @@ const CalmingTools = () => {
                 transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 0.5, delay: 1 }}
               />
             </motion.div>
-            <p className="mt-4 text-center text-gray-500">
+            <p className="mt-4 text-center text-muted-foreground">
               A calming activity to help reduce stress through interactive bubble popping
             </p>
           </Card>
