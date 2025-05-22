@@ -1,3 +1,4 @@
+
 import { BleClient, BleDevice, numberToUUID, ScanMode } from '@capacitor-community/bluetooth-le';
 
 // Standard Heart Rate Service UUID
@@ -52,12 +53,12 @@ class BluetoothService {
       await this.initialize();
       
       // Start scanning for devices with heart rate service
+      // Using the correct ScanMode enum value and removing timeoutMs which isn't supported
       const device = await BleClient.requestDevice({
         services: [HEART_RATE_SERVICE],
         namePrefix: '',
-        // Fixed: Changed string literal to ScanMode enum
-        scanMode: ScanMode.LOW_LATENCY,
-        timeoutMs
+        // Use ScanMode enum correctly based on available values
+        scanMode: ScanMode.SCAN_MODE_LOW_LATENCY,
       });
       
       // Fixed: Wrap single device in array to match expected return type
