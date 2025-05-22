@@ -93,15 +93,15 @@ export function useWarningSystem() {
               behavioral: behavioralData
             };
             
-            // Cast the supabase client to any to bypass type checking for this call
+            // Use the meltdown_events table instead of warning_events
             const { data, error } = await supabase
-              .from('warning_events')
+              .from('meltdown_events')
               .insert({
                 user_id: user.id,
-                warning_level: warningLevel || 'watch',
-                regulation_score: regulationScore,
-                sensor_data_snapshot: sensorSnapshot,
-                notes: latestPatterns.join(', ')
+                intensity: 100 - regulationScore, // Convert regulation score to intensity
+                duration: 0, // Set initial duration to 0
+                notes: latestPatterns.join(', '),
+                triggers: ["early warning detected"], // Add this as a trigger
               })
               .select()
               .single();
@@ -122,10 +122,12 @@ export function useWarningSystem() {
         // Update warning event with resolved timestamp if it exists
         if (user && warningEventId) {
           try {
+            // Update the meltdown_events entry with a duration to indicate it's resolved
             const { error } = await supabase
-              .from('warning_events')
+              .from('meltdown_events')
               .update({
-                resolved_at: new Date().toISOString()
+                duration: 15, // Set a nominal duration in minutes
+                notes: (latestPatterns.join(', ') + " - Automatically resolved")
               })
               .eq('id', warningEventId);
               
@@ -161,11 +163,13 @@ export function useWarningSystem() {
     if (!user || !warningEventId) return;
     
     try {
+      // Update the meltdown_events entry to include the strategy used
       const { error } = await supabase
-        .from('warning_events')
+        .from('meltdown_events')
         .update({
-          resolved_at: new Date().toISOString(),
-          resolution_strategy_id: strategyId
+          duration: 15, // Set a nominal duration in minutes
+          coping_strategies: [strategyId], // Store as an array of strategy IDs
+          notes: "Resolved with strategy"
         })
         .eq('id', warningEventId);
         
