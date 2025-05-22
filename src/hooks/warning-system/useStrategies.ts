@@ -2,16 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-
-// Define Strategy type and export it
-export interface Strategy {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  effectiveness: number;
-  user_id?: string;
-}
+import { Strategy } from '@/types/strategy';
 
 // Export the interface for the hook return type
 export interface UseStrategiesReturn {

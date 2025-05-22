@@ -80,7 +80,7 @@ export function useWarningSystem() {
   
   // Strategy recommendations
   const [showStrategies, setShowStrategies] = useState(false);
-  const { strategies } = useStrategies(regulationScore, regulationFactors);
+  const { strategies } = useStrategies();
   
   const handleShowStrategies = useCallback(() => {
     setShowStrategies(true);
@@ -91,7 +91,7 @@ export function useWarningSystem() {
   }, []);
   
   // Chart data generator
-  const getChartData = useChartData(dataPoints);
+  const { getChartData } = useChartData(dataPoints);
 
   return {
     isConnected,
