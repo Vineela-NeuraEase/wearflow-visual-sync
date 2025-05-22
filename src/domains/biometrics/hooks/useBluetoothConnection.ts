@@ -1,8 +1,7 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { BiometricData } from '../types';
-import { bluetoothService } from '@/services/BluetoothService';
+import { getBiometricService } from '@/services/BluetoothServiceFactory';
 
 interface UseBluetoothConnectionProps {
   onDeviceConnected?: (device: any) => void;
@@ -17,6 +16,9 @@ export function useBluetoothConnection({
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [deviceName, setDeviceName] = useState<string | null>(null);
+  
+  // Get the appropriate Bluetooth service for the platform
+  const bluetoothService = getBiometricService();
   
   // Initialize Bluetooth and set up listeners
   useEffect(() => {
