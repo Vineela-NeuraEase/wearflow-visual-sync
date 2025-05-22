@@ -1,27 +1,14 @@
 
-import { BleClient, BleDevice, numberToUUID, ScanMode } from '@capacitor-community/bluetooth-le';
+import { BleClient, BleDevice, ScanMode } from '@capacitor-community/bluetooth-le';
+import { HEART_RATE_SERVICE, HEART_RATE_CHARACTERISTIC } from './constants';
+import { parseHeartRateValue, calculateStressLevel, generateSimulatedHrv } from './utils';
+import { BiometricReading, BluetoothServiceInterface, ConnectionListener, DataListener } from './types';
 
-// Standard Heart Rate Service UUID
-const HEART_RATE_SERVICE = '0000180d-0000-1000-8000-00805f9b34fb';
-// Standard Heart Rate Measurement characteristic
-const HEART_RATE_CHARACTERISTIC = '00002a37-0000-1000-8000-00805f9b34fb';
-
-// Optional HRV Service - proprietary or using standard battery service as example
-const HRV_SERVICE = '0000180f-0000-1000-8000-00805f9b34fb';
-const HRV_CHARACTERISTIC = '00002a19-0000-1000-8000-00805f9b34fb';
-
-export interface BiometricReading {
-  heartRate: number;
-  hrv?: number;
-  stressLevel?: number;
-  timestamp: string;
-}
-
-class BluetoothService {
+class NativeBluetoothService implements BluetoothServiceInterface {
   private initialized: boolean = false;
   private connectedDevice: BleDevice | null = null;
-  private dataListeners: ((data: BiometricReading) => void)[] = [];
-  private connectionListeners: ((connected: boolean, device?: BleDevice) => void)[] = [];
+  private dataListeners: DataListener[] = [];
+  private connectionListeners: ConnectionListener[] = [];
   
   async initialize(): Promise<boolean> {
     if (this.initialized) return true;
@@ -53,15 +40,13 @@ class BluetoothService {
       await this.initialize();
       
       // Start scanning for devices with heart rate service
-      // Using the correct ScanMode enum value and removing timeoutMs which isn't supported
       const device = await BleClient.requestDevice({
         services: [HEART_RATE_SERVICE],
         namePrefix: '',
-        // Use ScanMode enum correctly based on available values
         scanMode: ScanMode.SCAN_MODE_LOW_LATENCY,
       });
       
-      // Fixed: Wrap single device in array to match expected return type
+      // Wrap single device in array to match expected return type
       return device ? [device] : [];
     } catch (error) {
       console.error('Error scanning for Bluetooth devices:', error);
@@ -91,16 +76,15 @@ class BluetoothService {
           HEART_RATE_SERVICE,
           HEART_RATE_CHARACTERISTIC,
           (value) => {
-            const heartRate = this.parseHeartRateValue(value);
+            const heartRate = parseHeartRateValue(value);
             
             // Generate a biometric reading with the heart rate
             const reading: BiometricReading = {
               heartRate,
               // Calculate an hrv value based on the heart rate (simulated)
-              hrv: Math.round(50 + (Math.random() * 10 - 5)),
-              // Calculate a stress level based on heart rate and HRV (simulated)
-              stressLevel: Math.round(Math.max(30, Math.min(90, 
-                100 - (heartRate < 70 ? 70 : 100 - heartRate)))),
+              hrv: generateSimulatedHrv(),
+              // Calculate a stress level based on heart rate
+              stressLevel: calculateStressLevel(heartRate),
               timestamp: new Date().toISOString()
             };
             
@@ -145,22 +129,22 @@ class BluetoothService {
     return this.connectedDevice;
   }
   
-  addDataListener(listener: (data: BiometricReading) => void): void {
+  addDataListener(listener: DataListener): void {
     this.dataListeners.push(listener);
   }
   
-  removeDataListener(listener: (data: BiometricReading) => void): void {
+  removeDataListener(listener: DataListener): void {
     const index = this.dataListeners.indexOf(listener);
     if (index > -1) {
       this.dataListeners.splice(index, 1);
     }
   }
   
-  addConnectionListener(listener: (connected: boolean, device?: BleDevice) => void): void {
+  addConnectionListener(listener: ConnectionListener): void {
     this.connectionListeners.push(listener);
   }
   
-  removeConnectionListener(listener: (connected: boolean, device?: BleDevice) => void): void {
+  removeConnectionListener(listener: ConnectionListener): void {
     const index = this.connectionListeners.indexOf(listener);
     if (index > -1) {
       this.connectionListeners.splice(index, 1);
@@ -186,22 +170,7 @@ class BluetoothService {
       }
     });
   }
-  
-  // Parse heart rate value from DataView according to Bluetooth GATT spec
-  private parseHeartRateValue(value: DataView): number {
-    const flags = value.getUint8(0);
-    const rate16Bits = flags & 0x1;
-    let heartRate: number;
-    
-    if (rate16Bits) {
-      heartRate = value.getUint16(1, true);
-    } else {
-      heartRate = value.getUint8(1);
-    }
-    
-    return heartRate;
-  }
 }
 
 // Export singleton instance
-export const bluetoothService = new BluetoothService();
+export const nativeBluetoothService = new NativeBluetoothService();
