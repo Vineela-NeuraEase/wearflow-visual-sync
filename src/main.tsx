@@ -12,7 +12,9 @@ if (!rootElement) {
 }
 
 // Create root using the proper React 18 API
-ReactDOM.createRoot(rootElement).render(
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

@@ -19,48 +19,46 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 function App() {
   return (
-    <React.StrictMode>
-      <Router>
-        <AuthProvider>
-          <AudioProvider>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/breathing" element={<BreathingExercise />} />
-              <Route path="/tools" element={<CalmingTools />} />
-              
-              {/* Protected routes */}
-              <Route
-                path="/warning-system"
-                element={
-                  <ProtectedRoute>
-                    <WarningSystem />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/data-collection"
-                element={
-                  <ProtectedRoute>
-                    <DataCollectionHub />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/resource-library"
-                element={
-                  <ProtectedRoute>
-                    <ResourceLibrary />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-            <Toaster />
-          </AudioProvider>
-        </AuthProvider>
-      </Router>
-    </React.StrictMode>
+    <Router>
+      <AuthProvider>
+        <AudioProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/breathing" element={<BreathingExercise />} />
+            <Route path="/tools" element={<CalmingTools />} />
+            
+            {/* Protected routes */}
+            <Route
+              path="/warning-system"
+              element={
+                <ProtectedRoute>
+                  <WarningSystem />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/data-collection"
+              element={
+                <ProtectedRoute>
+                  <DataCollectionHub />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/resource-library"
+              element={
+                <ProtectedRoute>
+                  <ResourceLibrary />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+          <Toaster />
+        </AudioProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
