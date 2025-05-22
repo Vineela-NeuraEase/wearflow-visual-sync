@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Info, Plus, Bluetooth, Check, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { bluetoothService } from "@/services/BluetoothService";
+import { getBiometricService } from "@/services/BluetoothServiceFactory";
 
 // Define device interface
 interface BluetoothDeviceItem {
@@ -20,6 +20,9 @@ const WearablePairing = () => {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [bluetoothAvailable, setBluetoothAvailable] = useState(false);
+  
+  // Get the appropriate Bluetooth service for the platform
+  const bluetoothService = getBiometricService();
   
   // Check if Bluetooth is available on component mount
   useEffect(() => {

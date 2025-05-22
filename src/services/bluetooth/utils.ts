@@ -1,5 +1,5 @@
-
-import { DataView } from '@capacitor-community/bluetooth-le';
+// DataView is a standard built-in JavaScript object, not a Capacitor import
+import { BleDevice } from '@capacitor-community/bluetooth-le';
 
 /**
  * Parse heart rate value from DataView according to Bluetooth GATT spec
