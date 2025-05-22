@@ -1,107 +1,162 @@
 
-import { useState, useEffect } from "react";
-import { BiometricDataPoint } from "@/hooks/biometrics/types";
-import { SleepData, SensoryData, RoutineData } from "@/types/biometric";
-import { RegulationFactor, RegulationFactorImpact, RegulationFactorTrend } from '@/pages/WarningSystem';
+import { useState, useEffect, useMemo } from 'react';
+import { BiometricDataPoint } from '@/hooks/biometrics/types';
+import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
+import { RegulationFactor } from '@/pages/WarningSystem';
 
-export function useRegulationFactors(
-  dataPoints: BiometricDataPoint[],
-  sleepData: SleepData | null,
-  sensoryData: SensoryData | null,
-  routineData: RoutineData | null
-) {
-  const [regulationFactors, setRegulationFactors] = useState<RegulationFactor[]>([
-    { name: "Heart Rate", value: 70, impact: "medium", trend: "stable" },
-    { name: "HRV", value: 60, impact: "high", trend: "stable" },
-    { name: "Stress Level", value: 40, impact: "high", trend: "stable" },
-    { name: "Sleep Quality", value: 70, impact: "high", trend: "stable" },
-    { name: "Sensory Load", value: 30, impact: "medium", trend: "stable" },
-    { name: "Routine Stability", value: 80, impact: "low", trend: "stable" }
-  ]);
+export interface UseRegulationFactorsProps {
+  biometricData: BiometricDataPoint[];
+  sleepData?: SleepData | null;
+  sensoryData?: SensoryData | null;
+  routineData?: RoutineData | null;
+  behavioralData?: BehavioralData | null;
+}
+
+export const useRegulationFactors = ({
+  biometricData,
+  sleepData,
+  sensoryData,
+  routineData,
+  behavioralData
+}: UseRegulationFactorsProps) => {
+  const [factors, setFactors] = useState<RegulationFactor[]>([]);
   
-  // Update regulation factors based on biometric data
+  const latestBiometricData = useMemo(() => {
+    return biometricData?.[0];
+  }, [biometricData]);
+  
+  // Calculate factors based on available data
   useEffect(() => {
-    if (dataPoints.length === 0) return;
+    const newFactors: RegulationFactor[] = [];
     
-    const latestData = dataPoints[0];
-    const updatedFactors = [...regulationFactors];
-    
-    // Find and update heart rate factor
-    const heartRateIndex = updatedFactors.findIndex(f => f.name === "Heart Rate");
-    if (heartRateIndex !== -1 && latestData.heartRate) {
-      const prevValue = updatedFactors[heartRateIndex].value;
-      updatedFactors[heartRateIndex] = {
-        ...updatedFactors[heartRateIndex],
-        value: latestData.heartRate,
-        trend: latestData.heartRate > prevValue ? "increasing" : 
-               latestData.heartRate < prevValue ? "decreasing" : "stable"
-      };
+    // Heart rate factor
+    if (latestBiometricData?.heartRate) {
+      const heartRate = latestBiometricData.heartRate;
+      let impact: "high" | "medium" | "low" = "low";
+      if (heartRate > 90) impact = "high";
+      else if (heartRate > 80) impact = "medium";
+      
+      newFactors.push({
+        name: "Heart Rate",
+        value: heartRate,
+        impact,
+        trend: getTrend(biometricData.slice(0, 5).map(d => d.heartRate || 0))
+      });
     }
     
-    // Find and update HRV factor
-    const hrvIndex = updatedFactors.findIndex(f => f.name === "HRV");
-    if (hrvIndex !== -1 && latestData.hrv) {
-      const prevValue = updatedFactors[hrvIndex].value;
-      updatedFactors[hrvIndex] = {
-        ...updatedFactors[hrvIndex],
-        value: latestData.hrv,
-        trend: latestData.hrv > prevValue ? "increasing" : 
-               latestData.hrv < prevValue ? "decreasing" : "stable"
-      };
+    // HRV factor
+    if (latestBiometricData?.hrv) {
+      const hrv = latestBiometricData.hrv;
+      let impact: "high" | "medium" | "low" = "low";
+      if (hrv < 40) impact = "high";
+      else if (hrv < 55) impact = "medium";
+      
+      newFactors.push({
+        name: "Heart Rate Variability",
+        value: hrv,
+        impact, 
+        trend: getTrend(biometricData.slice(0, 5).map(d => d.hrv || 0))
+      });
     }
     
-    // Find and update stress level factor
-    const stressIndex = updatedFactors.findIndex(f => f.name === "Stress Level");
-    if (stressIndex !== -1 && latestData.stressLevel) {
-      const prevValue = updatedFactors[stressIndex].value;
-      updatedFactors[stressIndex] = {
-        ...updatedFactors[stressIndex],
-        value: latestData.stressLevel,
-        trend: latestData.stressLevel > prevValue ? "increasing" : 
-               latestData.stressLevel < prevValue ? "decreasing" : "stable"
-      };
-    }
-    
-    // Update sleep quality factor if sleep data is available
-    if (sleepData) {
-      const sleepIndex = updatedFactors.findIndex(f => f.name === "Sleep Quality");
-      if (sleepIndex !== -1) {
-        updatedFactors[sleepIndex] = {
-          ...updatedFactors[sleepIndex],
-          value: sleepData.quality
-        };
-      }
-    }
-    
-    // Update sensory load factor if sensory data is available
+    // Sensory factors
     if (sensoryData) {
-      const sensoryIndex = updatedFactors.findIndex(f => f.name === "Sensory Load");
-      if (sensoryIndex !== -1) {
-        const avgSensory = (sensoryData.noise_level + sensoryData.light_level + sensoryData.crowding) / 3;
-        updatedFactors[sensoryIndex] = {
-          ...updatedFactors[sensoryIndex],
-          value: avgSensory
-        };
+      // Noise level
+      if (sensoryData.noise_level > 40) {
+        const impact = sensoryData.noise_level > 70 ? "high" : "medium";
+        
+        newFactors.push({
+          name: "Noise Level",
+          value: sensoryData.noise_level,
+          impact,
+          trend: "stable" // No historical data to determine trend
+        });
+      }
+      
+      // Light level
+      if (sensoryData.light_level > 60) {
+        const impact = sensoryData.light_level > 80 ? "high" : "medium";
+        
+        newFactors.push({
+          name: "Light Level",
+          value: sensoryData.light_level,
+          impact,
+          trend: "stable" // No historical data to determine trend
+        });
       }
     }
     
-    // Update routine stability factor if routine data is available
-    if (routineData) {
-      const routineIndex = updatedFactors.findIndex(f => f.name === "Routine Stability");
-      if (routineIndex !== -1) {
-        const stabilityValue = routineData.is_unexpected_change ? 
-          30 + Math.max(0, 50 - routineData.deviation_score) : 
-          80;
-        updatedFactors[routineIndex] = {
-          ...updatedFactors[routineIndex],
-          value: stabilityValue,
-          impact: routineData.is_unexpected_change ? "high" as RegulationFactorImpact : "low" as RegulationFactorImpact
-        };
+    // Routine factors
+    if (routineData && routineData.is_unexpected_change) {
+      newFactors.push({
+        name: "Routine Change",
+        value: routineData.deviation_score,
+        impact: routineData.deviation_score > 7 ? "high" : "medium",
+        trend: "increasing" // A change just happened
+      });
+    }
+    
+    // Sleep factors
+    if (sleepData) {
+      if (sleepData.quality < 7) {
+        newFactors.push({
+          name: "Sleep Quality",
+          value: sleepData.quality,
+          impact: sleepData.quality < 4 ? "high" : "medium",
+          trend: "stable" // No historical data to determine trend
+        });
+      }
+      
+      if (sleepData.duration < 7) {
+        newFactors.push({
+          name: "Sleep Duration",
+          value: sleepData.duration,
+          impact: sleepData.duration < 5 ? "high" : "medium",
+          trend: "stable" // No historical data to determine trend
+        });
       }
     }
     
-    setRegulationFactors(updatedFactors);
-  }, [dataPoints, sleepData, sensoryData, routineData]);
+    // Behavioral factors
+    if (behavioralData) {
+      if (behavioralData.irritability_level > 5) {
+        newFactors.push({
+          name: "Irritability",
+          value: behavioralData.irritability_level,
+          impact: behavioralData.irritability_level > 7 ? "high" : "medium",
+          trend: "stable" // No historical data to determine trend
+        });
+      }
+      
+      if (behavioralData.stimming > 5) {
+        newFactors.push({
+          name: "Stimming",
+          value: behavioralData.stimming,
+          impact: behavioralData.stimming > 7 ? "high" : "medium",
+          trend: "increasing" // Assume increasing if high enough to be a factor
+        });
+      }
+    }
+    
+    setFactors(newFactors);
+  }, [biometricData, latestBiometricData, sleepData, sensoryData, routineData, behavioralData]);
+
+  return factors;
+};
+
+// Determine trend based on a series of values
+function getTrend(values: number[]): "increasing" | "decreasing" | "stable" {
+  if (values.length < 2) return "stable";
   
-  return { regulationFactors };
+  let increasing = 0;
+  let decreasing = 0;
+  
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] > values[i-1]) increasing++;
+    else if (values[i] < values[i-1]) decreasing++;
+  }
+  
+  if (increasing > decreasing + 1) return "increasing";
+  if (decreasing > increasing + 1) return "decreasing";
+  return "stable";
 }

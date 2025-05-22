@@ -1,69 +1,105 @@
 
-import { useState, useEffect } from "react";
-import { BiometricDataPoint } from "@/hooks/biometrics/types";
-import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/biometric";
+import { useState, useEffect, useMemo } from 'react';
+import { BiometricDataPoint } from '@/hooks/biometrics/types';
+import { SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
 
-export function useRegulationScore(
-  dataPoints: BiometricDataPoint[],
-  sleepData: SleepData | null,
-  sensoryData: SensoryData | null,
-  routineData: RoutineData | null,
-  behavioralData: BehavioralData | null
-) {
-  const [regulationScore, setRegulationScore] = useState(72);
-  const [warningActive, setWarningActive] = useState(true);
+export interface UseRegulationScoreProps {
+  biometricData: BiometricDataPoint[];
+  sleepData?: SleepData | null;
+  sensoryData?: SensoryData | null;
+  routineData?: RoutineData | null;
+  behavioralData?: BehavioralData | null;
+}
+
+export const useRegulationScore = ({
+  biometricData,
+  sleepData,
+  sensoryData,
+  routineData,
+  behavioralData
+}: UseRegulationScoreProps) => {
+  const [score, setScore] = useState(100);
   
-  // Calculate regulation score based on all factors
+  const latestBiometricData = useMemo(() => {
+    return biometricData?.[0];
+  }, [biometricData]);
+  
+  // Calculate regulation score based on all available metrics
   useEffect(() => {
-    if (dataPoints.length === 0) return;
+    let newScore = 100; // Start with perfect score
     
-    const latestData = dataPoints[0];
-    
-    // This is a simplified algorithm - a real system would have a more sophisticated model
-    let newScore = 100;
-    
-    // Heart rate factor
-    if (latestData.heartRate > 90) newScore -= 15;
-    else if (latestData.heartRate > 80) newScore -= 10;
-    else if (latestData.heartRate > 70) newScore -= 5;
-    
-    // HRV factor
-    if (latestData.hrv < 40) newScore -= 15;
-    else if (latestData.hrv < 50) newScore -= 10;
-    else if (latestData.hrv < 60) newScore -= 5;
-    
-    // Sleep quality factor
-    if (sleepData && sleepData.quality < 50) newScore -= 15;
-    else if (sleepData && sleepData.quality < 70) newScore -= 10;
-    
-    // Sensory load factor
-    if (sensoryData) {
-      const avgSensory = (sensoryData.noise_level + sensoryData.light_level + sensoryData.crowding) / 3;
-      if (avgSensory > 70) newScore -= 15;
-      else if (avgSensory > 50) newScore -= 10;
+    // Adjust based on biometric data
+    if (latestBiometricData) {
+      if (latestBiometricData.stressLevel) {
+        newScore -= latestBiometricData.stressLevel / 2; // Reduce score by half of stress level (0-50)
+      }
+      
+      if (latestBiometricData.heartRate && latestBiometricData.heartRate > 85) {
+        newScore -= (latestBiometricData.heartRate - 85) / 2; // Reduce for high heart rate
+      }
+      
+      if (latestBiometricData.hrv && latestBiometricData.hrv < 50) {
+        newScore -= (50 - latestBiometricData.hrv) / 2; // Reduce for low HRV
+      }
     }
     
-    // Routine deviation factor
-    if (routineData && routineData.is_unexpected_change) newScore -= 15;
-    else if (routineData && routineData.deviation_score > 50) newScore -= 10;
+    // Adjust based on sensory data
+    if (sensoryData) {
+      if (sensoryData.noise_level > 60) {
+        newScore -= (sensoryData.noise_level - 60) / 3; // Reduce for high noise
+      }
+      
+      if (sensoryData.light_level > 70) {
+        newScore -= (sensoryData.light_level - 70) / 3; // Reduce for high light levels
+      }
+      
+      if (sensoryData.crowding > 50) {
+        newScore -= (sensoryData.crowding - 50) / 3; // Reduce for high crowding
+      }
+    }
     
-    // Behavioral state factor
+    // Adjust based on routine data
+    if (routineData) {
+      if (routineData.is_unexpected_change) {
+        newScore -= 10; // Significant reduction for unexpected change
+        
+        if (routineData.deviation_score > 5) {
+          newScore -= (routineData.deviation_score - 5) * 2; // More reduction for higher deviation
+        }
+      }
+    }
+    
+    // Adjust based on sleep data
+    if (sleepData) {
+      if (sleepData.quality < 7) {
+        newScore -= (7 - sleepData.quality) * 2; // Reduce for poor sleep quality
+      }
+      
+      if (sleepData.duration < 7) {
+        newScore -= (7 - sleepData.duration) * 2; // Reduce for insufficient sleep
+      }
+    }
+    
+    // Adjust based on behavioral data
     if (behavioralData) {
-      if (behavioralData.irritability_level > 60) newScore -= 15;
-      if (behavioralData.stimming && behavioralData.stimming > 70) newScore -= 10;
-      if (behavioralData.communication_difficulty && behavioralData.communication_difficulty > 50) newScore -= 10;
-      if (behavioralData.social_withdrawal && behavioralData.social_withdrawal > 70) newScore -= 10;
-      if (behavioralData.self_reported_mood && behavioralData.self_reported_mood < 40) newScore -= 10;
+      if (behavioralData.irritability_level > 5) {
+        newScore -= (behavioralData.irritability_level - 5) * 2; // Reduce for high irritability
+      }
+      
+      if (behavioralData.stimming > 6) {
+        newScore -= (behavioralData.stimming - 6) * 1.5; // Reduce for increased stimming
+      }
+      
+      if (behavioralData.social_withdrawal > 6) {
+        newScore -= (behavioralData.social_withdrawal - 6) * 1.5; // Reduce for social withdrawal
+      }
     }
     
     // Ensure score stays within bounds
     newScore = Math.max(0, Math.min(100, newScore));
     
-    setRegulationScore(newScore);
-    
-    // Set warning state based on regulation score
-    setWarningActive(newScore < 80);
-  }, [dataPoints, sleepData, sensoryData, routineData, behavioralData]);
-
-  return { regulationScore, warningActive };
-}
+    setScore(Math.round(newScore));
+  }, [latestBiometricData, sleepData, sensoryData, routineData, behavioralData]);
+  
+  return score;
+};

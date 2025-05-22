@@ -15,11 +15,13 @@ const mockStrategy = {
   id: "breath-1",
   name: "4-7-8 Breathing",
   type: "breathing",
-  lastUsed: "Today, 2:30 PM"
+  lastUsed: "Today, 2:30 PM",
+  effectiveness: 4
 };
 
 const Insights = () => {
   const navigate = useNavigate();
+  const [rating, setRating] = useState<number>(mockStrategy.effectiveness || 0);
   
   const handleRatingSubmit = (rating: number, feedback: string) => {
     console.log("Strategy rated:", { rating, feedback });
@@ -76,6 +78,8 @@ const Insights = () => {
           <TabsContent value="feedback" className="space-y-6">
             <StrategyEffectivenessRater 
               strategy={mockStrategy}
+              rating={rating}
+              onChange={setRating}
               onRatingSubmit={handleRatingSubmit}
             />
             

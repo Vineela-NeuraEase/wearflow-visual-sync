@@ -19,7 +19,8 @@ export interface SensoryData {
   user_id?: string;
   timestamp?: string;
   noise_level: number;
-  light_level: number; // Changed from light_intensity to match components
+  light_level: number; // Main property for UI components
+  light_intensity?: number; // For database compatibility
   temperature: number;
   crowding: number;
   texture_sensitivity?: number;
@@ -51,10 +52,10 @@ export interface BehavioralData {
   irritability_level: number;
   stimming_behavior?: string;
   notes?: string;
-  self_reported_mood?: number;
-  stimming?: number;
-  communication_difficulty?: number;
-  social_withdrawal?: number;
+  self_reported_mood: number; // Made required to match DB schema
+  stimming: number; // Made required to match DB schema
+  communication_difficulty: number; // Made required to match DB schema
+  social_withdrawal: number; // Made required to match DB schema
 }
 
 export interface BiometricData {

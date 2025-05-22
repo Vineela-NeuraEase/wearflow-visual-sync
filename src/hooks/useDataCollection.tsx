@@ -1,3 +1,4 @@
+
 import { useCallback, useState, useEffect } from 'react';
 import { BiometricData, SleepData, SensoryData, RoutineData, BehavioralData } from '@/types/biometric';
 import { supabase } from "@/integrations/supabase/client";
@@ -19,7 +20,7 @@ export const useDataCollection = ({
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Function to collect data - this was missing and causing the error
+  // Function to collect data - needed for BluetoothDeviceManager
   const collectData = useCallback(() => {
     console.log("Collecting data...");
     // This could be expanded to fetch historical data, process offline data, etc.
@@ -101,10 +102,16 @@ export const useDataCollection = ({
     
     try {
       setIsLoading(true);
-      const { data: result, error } = await supabase.from('sleep_data').insert({
+      
+      // Ensure all required fields are present
+      const completeData = {
         ...data,
+        // If rem_sleep_percentage is missing, add a default value
+        rem_sleep_percentage: data.rem_sleep_percentage || Math.floor(data.duration * 0.25),
         user_id: user.id
-      }).select().single();
+      };
+      
+      const { data: result, error } = await supabase.from('sleep_data').insert(completeData).select().single();
       
       if (error) throw error;
       
@@ -140,15 +147,18 @@ export const useDataCollection = ({
     
     try {
       setIsLoading(true);
+      
       // Convert light_level to light_intensity for database compatibility
       const dbData = {
-        ...data,
-        light_intensity: data.light_level,
+        noise_level: data.noise_level,
+        temperature: data.temperature,
+        crowding: data.crowding,
+        texture_sensitivity: data.texture_sensitivity,
+        smell_sensitivity: data.smell_sensitivity,
+        timestamp: data.timestamp,
+        light_intensity: data.light_intensity || data.light_level, // Use light_intensity if available, otherwise light_level
         user_id: user.id
       };
-      
-      // Remove light_level as it's not in the DB schema
-      delete (dbData as any).light_level;
       
       const { data: result, error } = await supabase.from('sensory_data').insert(dbData).select().single();
       
@@ -189,12 +199,12 @@ export const useDataCollection = ({
       
       // Ensure all required fields are present
       const completeData = {
-        ...data,
         expected_activity: data.expected_activity || data.routine_change || 'Unspecified',
         actual_activity: data.actual_activity || data.routine_change || 'Unspecified',
         location: data.location || 'Not specified',
-        is_unexpected_change: data.is_unexpected_change || !data.is_planned,
+        is_unexpected_change: data.is_unexpected_change !== undefined ? data.is_unexpected_change : !data.is_planned,
         deviation_score: data.deviation_score || data.disruption_level || 5,
+        timestamp: data.timestamp || new Date().toISOString(),
         user_id: user.id
       };
       
@@ -237,7 +247,9 @@ export const useDataCollection = ({
       
       // Ensure required fields are present
       const completeData = {
-        ...data,
+        irritability_level: data.irritability_level,
+        notes: data.notes,
+        timestamp: data.timestamp || new Date().toISOString(),
         communication_difficulty: data.communication_difficulty || 0,
         social_withdrawal: data.social_withdrawal || 0,
         self_reported_mood: data.self_reported_mood || 5,
@@ -366,7 +378,7 @@ export const useDataCollection = ({
 
   return {
     isLoading,
-    collectData, // Add this missing method
+    collectData, // Fix: Include collectData in the return object
     saveSleepData,
     saveSensoryData,
     saveRoutineData,

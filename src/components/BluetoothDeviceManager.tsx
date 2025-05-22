@@ -28,7 +28,9 @@ export const BluetoothDeviceManager = ({
     onDeviceConnected 
   });
   
-  const { collectData } = useDataCollection({ 
+  const { 
+    collectData 
+  } = useDataCollection({ 
     isConnected, 
     isOnline, 
     onDataReceived 
@@ -37,7 +39,7 @@ export const BluetoothDeviceManager = ({
   // When coming back online, sync any stored offline data
   useEffect(() => {
     if (isOnline && isConnected) {
-      // Call collectData with no arguments since we modified it to not require any
+      // Call collectData with no arguments
       collectData();
     }
   }, [isOnline, isConnected, collectData]);
