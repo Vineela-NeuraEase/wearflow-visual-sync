@@ -1,18 +1,22 @@
 
 import React from "react";
-import FeaturedResourceCard from "@/components/learn/FeaturedResourceCard";
 import LearnHeader from "@/components/learn/LearnHeader";
 import LearnToolsGrid from "@/components/learn/LearnToolsGrid";
+import FeaturedResourceCard from "@/components/learn/FeaturedResourceCard";
+import useFeaturedResource from "@/hooks/useFeaturedResource";
 
 const Learn = () => {
+  // Use the custom hook to fetch the featured resource
+  const { featuredResource, isLoading: isFeaturedLoading } = useFeaturedResource();
+  
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-16">
       <LearnHeader />
-      <FeaturedResourceCard 
-        featuredResource={null} 
-        isLoading={false} 
-      />
       <LearnToolsGrid />
+      <FeaturedResourceCard 
+        featuredResource={featuredResource} 
+        isLoading={isFeaturedLoading} 
+      />
     </div>
   );
 };
