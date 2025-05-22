@@ -25,7 +25,7 @@ interface AudioProviderProps {
   children: ReactNode;
 }
 
-export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
+export const AudioProvider = ({ children }: AudioProviderProps) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
 
