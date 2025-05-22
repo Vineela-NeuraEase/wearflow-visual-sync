@@ -1,40 +1,77 @@
 
-import React, { createContext, useContext, useState } from "react";
-import { useSound } from "@/hooks/useSound";
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type AudioContextType = {
+interface AudioContextType {
   soundEnabled: boolean;
   toggleSound: () => void;
-  play: (sound: "click" | "success" | "pop" | "whoosh" | "complete" | "breathing") => void;
-};
+  playSound: (soundName: string) => void;
+  stopSound: (soundName: string) => void;
+}
 
-// Create a default value for the context
-const defaultAudioContext: AudioContextType = {
+const initialAudioContext: AudioContextType = {
   soundEnabled: true,
   toggleSound: () => {},
-  play: () => {},
+  playSound: () => {},
+  stopSound: () => {},
 };
 
-const AudioContext = createContext<AudioContextType>(defaultAudioContext);
+const AudioContext = createContext<AudioContextType>(initialAudioContext);
 
-export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const useAudio = () => useContext(AudioContext);
+
+interface AudioProviderProps {
+  children: ReactNode;
+}
+
+export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const { play: playSound } = useSound();
+  const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
 
   const toggleSound = () => {
     setSoundEnabled(prev => !prev);
   };
 
-  const play = (sound: "click" | "success" | "pop" | "whoosh" | "complete" | "breathing") => {
-    if (soundEnabled) {
-      playSound(sound);
+  const playSound = (soundName: string) => {
+    if (!soundEnabled) return;
+    
+    try {
+      // Check if we already have this audio element
+      if (audioElements[soundName]) {
+        audioElements[soundName].currentTime = 0;
+        audioElements[soundName].play().catch(error => {
+          console.error(`Error playing sound ${soundName}:`, error);
+        });
+        return;
+      }
+
+      // Create and play a new audio element
+      const audio = new Audio(`/sounds/${soundName}`);
+      audio.play().catch(error => {
+        console.error(`Error playing sound ${soundName}:`, error);
+      });
+      
+      // Store it for reuse
+      setAudioElements(prev => ({
+        ...prev,
+        [soundName]: audio
+      }));
+    } catch (error) {
+      console.error(`Error loading or playing sound ${soundName}:`, error);
+    }
+  };
+
+  const stopSound = (soundName: string) => {
+    if (audioElements[soundName]) {
+      audioElements[soundName].pause();
+      audioElements[soundName].currentTime = 0;
     }
   };
 
   const value = {
     soundEnabled,
     toggleSound,
-    play
+    playSound,
+    stopSound,
   };
 
   return (
@@ -42,12 +79,4 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
     </AudioContext.Provider>
   );
-};
-
-export const useAudio = () => {
-  const context = useContext(AudioContext);
-  if (context === undefined) {
-    throw new Error("useAudio must be used within an AudioProvider");
-  }
-  return context;
 };

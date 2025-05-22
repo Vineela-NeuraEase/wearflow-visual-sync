@@ -11,7 +11,7 @@ if (!rootElement) {
   throw new Error('Root element not found. Make sure there is a div with id "root" in your HTML.');
 }
 
-// Create root using the non-null assertion since we've already checked
+// Create root using the proper React 18 API
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
