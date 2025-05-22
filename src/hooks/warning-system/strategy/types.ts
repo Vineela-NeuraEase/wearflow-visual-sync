@@ -18,6 +18,9 @@ export interface UseStrategyUIReturn {
   getCategoryName: (category: string) => string;
   getCategoryIcon: (category: string) => JSX.Element;
   getEffectivenessLabel: (rating: number) => string;
+  showStrategies: boolean;
+  handleShowStrategies: () => void;
+  handleHideStrategies: () => void;
 }
 
 export interface UseStrategyOperationsReturn {

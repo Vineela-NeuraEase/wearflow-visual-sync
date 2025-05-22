@@ -1,66 +1,117 @@
 
-import { useCallback } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "../use-toast";
-import { SleepData } from '@/types/biometric';
-import { User } from '@supabase/supabase-js';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { SleepData } from '@/types/strategy';
+import { useToast } from '@/hooks/use-toast';
 
 interface UseSleepDataProps {
-  user: User | null;
-  setIsLoading: (loading: boolean) => void;
+  user: any | null;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export const useSleepData = ({ user, setIsLoading }: UseSleepDataProps) => {
   const { toast } = useToast();
   
-  // Function to save sleep data
-  const saveSleepData = useCallback(async (data: Omit<SleepData, "user_id">) => {
+  const saveSleepData = async (data: Omit<SleepData, "user_id">) => {
     if (!user) {
       toast({
-        title: "Not logged in",
-        description: "Please log in to save data",
+        title: "Authentication required",
+        description: "Please log in to save sleep data",
         variant: "destructive"
       });
-      return Promise.reject("Not logged in");
+      return null;
     }
     
+    setIsLoading(true);
+    
     try {
-      setIsLoading(true);
+      // Check if there's already data for this date
+      const { data: existingData, error: fetchError } = await supabase
+        .from('sleep_data')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('date', data.date)
+        .maybeSingle();
       
-      // Ensure all required fields are present
-      const completeData = {
-        ...data,
-        // If rem_sleep_percentage is missing, add a default value
-        rem_sleep_percentage: data.rem_sleep_percentage || Math.floor(data.duration * 0.25),
-        user_id: user.id
-      };
+      if (fetchError) {
+        console.error("Error checking existing sleep data:", fetchError);
+      }
       
-      const { data: result, error } = await supabase.from('sleep_data').insert(completeData).select().single();
+      let savedData;
       
-      if (error) throw error;
+      if (existingData) {
+        // Update existing record
+        const { data: updatedData, error } = await supabase
+          .from('sleep_data')
+          .update({
+            ...data,
+            user_id: user.id
+          })
+          .eq('id', existingData.id)
+          .select()
+          .single();
+        
+        if (error) {
+          console.error("Error updating sleep data:", error);
+          toast({
+            title: "Error",
+            description: "Failed to update sleep data",
+            variant: "destructive"
+          });
+          return null;
+        }
+        
+        savedData = updatedData;
+        toast({
+          title: "Sleep data updated",
+          description: "Your sleep data has been updated"
+        });
+      } else {
+        // Insert new record
+        const { data: insertedData, error } = await supabase
+          .from('sleep_data')
+          .insert({
+            ...data,
+            user_id: user.id
+          })
+          .select()
+          .single();
+        
+        if (error) {
+          console.error("Error saving sleep data:", error);
+          toast({
+            title: "Error",
+            description: "Failed to save sleep data",
+            variant: "destructive"
+          });
+          return null;
+        }
+        
+        savedData = insertedData;
+        toast({
+          title: "Sleep data saved",
+          description: "Your sleep data has been recorded"
+        });
+      }
       
+      return savedData;
+    } catch (err) {
+      console.error("Error in saveSleepData:", err);
       toast({
-        title: "Sleep data saved",
-        description: "Your sleep data has been recorded",
-      });
-      
-      return result;
-    } catch (error) {
-      console.error('Error saving sleep data:', error);
-      toast({
-        title: "Error saving data",
-        description: "There was a problem saving your sleep data",
+        title: "Error",
+        description: "An unexpected error occurred",
         variant: "destructive"
       });
-      throw error;
+      return null;
     } finally {
       setIsLoading(false);
     }
-  }, [user, toast, setIsLoading]);
+  };
   
-  // Fetch sleep data for user
-  const fetchSleepData = useCallback(async (limit = 10) => {
+  const fetchSleepData = async (limit = 7) => {
     if (!user) return [];
+    
+    setIsLoading(true);
     
     try {
       const { data, error } = await supabase
@@ -72,6 +123,11 @@ export const useSleepData = ({ user, setIsLoading }: UseSleepDataProps) => {
       
       if (error) {
         console.error("Error fetching sleep data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load sleep data",
+          variant: "destructive"
+        });
         return [];
       }
       
@@ -79,9 +135,11 @@ export const useSleepData = ({ user, setIsLoading }: UseSleepDataProps) => {
     } catch (err) {
       console.error("Error in fetchSleepData:", err);
       return [];
+    } finally {
+      setIsLoading(false);
     }
-  }, [user]);
-
+  };
+  
   return {
     saveSleepData,
     fetchSleepData

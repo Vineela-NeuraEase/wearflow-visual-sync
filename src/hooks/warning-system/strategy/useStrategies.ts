@@ -15,7 +15,6 @@ export function useStrategies(): UseStrategiesReturn {
   
   const { user } = useAuth();
   const { defaultStrategies } = useDefaultStrategies();
-  const { showStrategies, handleShowStrategies, handleHideStrategies } = useStrategyUI();
   const { saveStrategy: saveStrategyOp, deleteStrategy: deleteStrategyOp, updateEffectiveness: updateEffectivenessOp, isLoading } = useStrategyOperations();
   
   // Load strategies from supabase
@@ -82,13 +81,8 @@ export function useStrategies(): UseStrategiesReturn {
   };
   
   return {
-    showStrategies,
     strategies,
-    loading,
-    error,
     isLoading,
-    handleShowStrategies,
-    handleHideStrategies,
     saveStrategy,
     deleteStrategy,
     updateEffectiveness

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Strategy } from "@/types/strategy";
 import { useStrategies } from "@/hooks/warning-system/strategy";
 import { ArrowLeft, Star, Plus, AlertTriangle, XCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface PersonalizedStrategiesProps {
   onClose: () => void;
@@ -24,23 +25,40 @@ export const PersonalizedStrategies = ({
     description: "",
     category: "sensory",
   });
+  const { toast } = useToast();
   
   const { strategies, saveStrategy, isLoading, updateEffectiveness, deleteStrategy } = useStrategies();
   
   // Function to handle saving a new strategy
   const handleSaveStrategy = async () => {
-    await saveStrategy({
+    if (!newStrategy.name.trim()) {
+      toast({
+        title: "Strategy name required",
+        description: "Please enter a name for your strategy",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const result = await saveStrategy({
       ...newStrategy,
       effectiveness: 3 // Default mid-level effectiveness for new strategies
     });
     
-    // Reset form
-    setNewStrategy({
-      name: "",
-      description: "",
-      category: "sensory",
-    });
-    setShowAddForm(false);
+    if (result) {
+      toast({
+        title: "Strategy saved",
+        description: "Your new coping strategy has been added",
+      });
+      
+      // Reset form
+      setNewStrategy({
+        name: "",
+        description: "",
+        category: "sensory",
+      });
+      setShowAddForm(false);
+    }
   };
   
   // Get color class based on warning level
@@ -60,6 +78,42 @@ export const PersonalizedStrategies = ({
       case "watch": return "Recommended Regulation Strategies";
       case "notice": return "Preventative Strategies";
       default: return "Your Personalized Strategies";
+    }
+  };
+  
+  // Handle delete strategy
+  const handleDeleteStrategy = async (id: string) => {
+    try {
+      await deleteStrategy(id);
+      toast({
+        title: "Strategy deleted",
+        description: "Your strategy has been removed",
+      });
+    } catch (error) {
+      console.error("Error deleting strategy:", error);
+      toast({
+        title: "Error",
+        description: "Could not delete strategy. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Handle rating change
+  const handleRateStrategy = async (id: string, rating: number) => {
+    try {
+      await updateEffectiveness(id, rating);
+      toast({
+        title: "Rating updated",
+        description: "Strategy effectiveness updated",
+      });
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      toast({
+        title: "Error",
+        description: "Could not update rating. Please try again.",
+        variant: "destructive"
+      });
     }
   };
   
@@ -100,7 +154,7 @@ export const PersonalizedStrategies = ({
           <div className="space-y-2">
             <label className="text-sm text-gray-600 dark:text-gray-400">Description</label>
             <Textarea 
-              value={newStrategy.description}
+              value={newStrategy.description || ''}
               onChange={e => setNewStrategy({...newStrategy, description: e.target.value})}
               placeholder="Description of how to use this strategy"
               rows={3}
@@ -165,7 +219,7 @@ export const PersonalizedStrategies = ({
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-red-500"
-                    onClick={() => deleteStrategy(strategy.id)}
+                    onClick={() => handleDeleteStrategy(strategy.id)}
                   >
                     <XCircle className="h-4 w-4" />
                   </Button>
@@ -189,8 +243,8 @@ export const PersonalizedStrategies = ({
                         i < strategy.effectiveness 
                           ? "text-yellow-400 fill-yellow-400" 
                           : "text-gray-300"
-                      }`}
-                      onClick={() => updateEffectiveness(strategy.id, i + 1)}
+                      } cursor-pointer`}
+                      onClick={() => handleRateStrategy(strategy.id, i + 1)}
                     />
                   ))}
                 </div>
@@ -206,4 +260,4 @@ export const PersonalizedStrategies = ({
       )}
     </Card>
   );
-};
+}

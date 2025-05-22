@@ -1,55 +1,136 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Activity, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/biometric";
+import { SleepData, SensoryData, RoutineData, BehavioralData } from "@/types/strategy";
 import { SleepTracker } from "@/components/tracking/SleepTracker";
 import { SensoryTracker } from "@/components/tracking/SensoryTracker";
 import { RoutineTracker } from "@/components/tracking/RoutineTracker";
 import { BehavioralTracker } from "@/components/tracking/BehavioralTracker";
 import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
-import { useDataCollection } from "@/hooks/useDataCollection";
+import { useDataCollection } from "@/hooks/data-collection";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const DataCollectionHub = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("biometric");
+  const [isConnected, setIsConnected] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState<any>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
+  // Initialize network status listeners
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const { 
     isLoading,
+    collectData,
     saveSleepData,
     saveSensoryData,
     saveRoutineData,
-    saveBehavioralData
-  } = useDataCollection();
+    saveBehavioralData,
+    fetchSleepData,
+    fetchSensoryData,
+    fetchRoutineData,
+    fetchBehavioralData
+  } = useDataCollection({
+    isConnected,
+    isOnline,
+    onDataReceived: (data) => {
+      console.log("Biometric data received:", data);
+      toast({
+        title: "Data received",
+        description: "New biometric data point recorded",
+      });
+    }
+  });
+  
+  // Fetch initial data
+  useEffect(() => {
+    if (user) {
+      fetchSleepData();
+      fetchSensoryData();
+      fetchRoutineData();
+      fetchBehavioralData();
+    }
+  }, [user, fetchSleepData, fetchSensoryData, fetchRoutineData, fetchBehavioralData]);
   
   // Handlers for saving different types of data
   const handleSaveSleepData = async (data: Omit<SleepData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return;
+    }
     await saveSleepData(data);
   };
   
   const handleSaveSensoryData = async (data: Omit<SensoryData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return;
+    }
     await saveSensoryData(data);
   };
   
   const handleSaveRoutineData = async (data: Omit<RoutineData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return;
+    }
     await saveRoutineData(data);
   };
   
   const handleSaveBehavioralData = async (data: Omit<BehavioralData, "user_id">) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to save data",
+        variant: "destructive"
+      });
+      return;
+    }
     await saveBehavioralData(data);
   };
 
   const handleDeviceConnected = (device: any) => {
-    console.log("Device connected:", device);
+    setIsConnected(true);
+    setDeviceInfo(device);
+    toast({
+      title: "Device connected",
+      description: `Connected to ${device.name || 'biometric device'}`,
+    });
   };
 
   const handleDataReceived = (data: any) => {
-    console.log("Data received:", data);
-    // Process the real-time data as needed
+    collectData(data);
   };
 
   return (
@@ -97,7 +178,9 @@ const DataCollectionHub = () => {
               <Activity className="h-16 w-16 text-blue-400 opacity-70" />
             </div>
             <p className="text-center text-sm text-muted-foreground mb-6">
-              Connect a wearable device above to automatically track biometric data
+              {isConnected ? 
+                `Connected to ${deviceInfo?.name || 'device'} - collecting data automatically` :
+                'Connect a wearable device above to automatically track biometric data'}
             </p>
             <RoutineTracker onSave={handleSaveRoutineData} isLoading={isLoading} />
           </TabsContent>

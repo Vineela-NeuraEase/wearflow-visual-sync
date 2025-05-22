@@ -1,70 +1,72 @@
 
-import { useCallback } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "../use-toast";
-import { SensoryData } from '@/types/biometric';
-import { User } from '@supabase/supabase-js';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { SensoryData } from '@/types/strategy';
+import { useToast } from '@/hooks/use-toast';
 
 interface UseSensoryDataProps {
-  user: User | null;
-  setIsLoading: (loading: boolean) => void;
+  user: any | null;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export const useSensoryData = ({ user, setIsLoading }: UseSensoryDataProps) => {
   const { toast } = useToast();
   
-  // Function to save sensory data
-  const saveSensoryData = useCallback(async (data: Omit<SensoryData, "user_id">) => {
+  const saveSensoryData = async (data: Omit<SensoryData, "user_id">) => {
     if (!user) {
       toast({
-        title: "Not logged in",
-        description: "Please log in to save data",
+        title: "Authentication required",
+        description: "Please log in to save sensory data",
         variant: "destructive"
       });
-      return Promise.reject("Not logged in");
+      return null;
     }
     
+    setIsLoading(true);
+    
     try {
-      setIsLoading(true);
+      const { data: savedData, error } = await supabase
+        .from('sensory_data')
+        .insert({
+          ...data,
+          user_id: user.id
+        })
+        .select()
+        .single();
       
-      // Convert light_level to light_intensity for database compatibility
-      const dbData = {
-        noise_level: data.noise_level,
-        temperature: data.temperature,
-        crowding: data.crowding,
-        texture_sensitivity: data.texture_sensitivity,
-        smell_sensitivity: data.smell_sensitivity,
-        timestamp: data.timestamp || new Date().toISOString(),
-        light_intensity: data.light_level, // Use light_level as the required light_intensity
-        user_id: user.id
-      };
-      
-      const { data: result, error } = await supabase.from('sensory_data').insert(dbData).select().single();
-      
-      if (error) throw error;
+      if (error) {
+        console.error("Error saving sensory data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to save sensory data",
+          variant: "destructive"
+        });
+        return null;
+      }
       
       toast({
         title: "Sensory data saved",
-        description: "Your sensory environment data has been recorded",
+        description: "Your sensory data has been recorded"
       });
       
-      return result;
-    } catch (error) {
-      console.error('Error saving sensory data:', error);
+      return savedData;
+    } catch (err) {
+      console.error("Error in saveSensoryData:", err);
       toast({
-        title: "Error saving data",
-        description: "There was a problem saving your sensory data",
+        title: "Error",
+        description: "An unexpected error occurred",
         variant: "destructive"
       });
-      throw error;
+      return null;
     } finally {
       setIsLoading(false);
     }
-  }, [user, toast, setIsLoading]);
+  };
   
-  // Fetch sensory data for user
-  const fetchSensoryData = useCallback(async (limit = 10) => {
+  const fetchSensoryData = async (limit = 7) => {
     if (!user) return [];
+    
+    setIsLoading(true);
     
     try {
       const { data, error } = await supabase
@@ -76,6 +78,11 @@ export const useSensoryData = ({ user, setIsLoading }: UseSensoryDataProps) => {
       
       if (error) {
         console.error("Error fetching sensory data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load sensory data",
+          variant: "destructive"
+        });
         return [];
       }
       
@@ -83,9 +90,11 @@ export const useSensoryData = ({ user, setIsLoading }: UseSensoryDataProps) => {
     } catch (err) {
       console.error("Error in fetchSensoryData:", err);
       return [];
+    } finally {
+      setIsLoading(false);
     }
-  }, [user]);
-
+  };
+  
   return {
     saveSensoryData,
     fetchSensoryData

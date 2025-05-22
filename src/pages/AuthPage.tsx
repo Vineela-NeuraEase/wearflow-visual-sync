@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("login");
   const { signIn, signUp, user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Redirect to home if already logged in
   useEffect(() => {
@@ -25,17 +27,45 @@ const AuthPage = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (activeTab === "login") {
-      const { error } = await signIn(email, password);
-      if (!error) {
-        navigate("/warning-system");
+    try {
+      if (activeTab === "login") {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({
+            title: "Login failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Welcome back!",
+            description: "You have been successfully logged in.",
+          });
+          navigate("/warning-system");
+        }
+      } else {
+        const { error } = await signUp(email, password);
+        if (error) {
+          toast({
+            title: "Signup failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Account created",
+            description: "Please check your email to verify your account.",
+          });
+          // Stay on the login tab after successful signup
+          setActiveTab("login");
+        }
       }
-    } else {
-      const { error } = await signUp(email, password);
-      if (!error) {
-        // After signup, we show a success message in the AuthContext
-        // The user will need to verify email before logging in
-      }
+    } catch (error: any) {
+      toast({
+        title: "Authentication error",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
     }
   };
 

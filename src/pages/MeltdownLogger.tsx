@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAudio } from "@/context/AudioContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 // Import refactored components
 import { IntensitySlider } from "@/components/meltdown/IntensitySlider";
@@ -46,6 +48,7 @@ const MeltdownLogger = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { play } = useAudio();
+  const { user } = useAuth();
   
   // State for meltdown data
   const [intensity, setIntensity] = useState<number>(5);
@@ -53,6 +56,7 @@ const MeltdownLogger = () => {
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const [notes, setNotes] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Handle trigger selection
   const toggleTrigger = (trigger: string) => {
@@ -87,14 +91,58 @@ const MeltdownLogger = () => {
   };
   
   // Handle save
-  const handleSave = () => {
-    // Here you would typically save the data to your state management or database
-    toast({
-      title: "Meltdown logged",
-      description: "Your meltdown data has been saved successfully.",
-    });
-    play("success");
-    navigate("/emotion-hub");
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please login to save meltdown data.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('meltdown_events')
+        .insert({
+          user_id: user.id,
+          intensity: intensity,
+          duration: parseInt(duration),
+          triggers: selectedTriggers,
+          coping_strategies: selectedStrategies,
+          notes: notes
+        })
+        .select();
+      
+      if (error) {
+        console.error("Error saving meltdown data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to save meltdown data. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      toast({
+        title: "Meltdown logged",
+        description: "Your meltdown data has been saved successfully.",
+      });
+      play("success");
+      navigate("/emotion-hub");
+    } catch (error) {
+      console.error("Error in handleSave:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -169,9 +217,10 @@ const MeltdownLogger = () => {
         {/* Save button */}
         <Button 
           onClick={handleSave}
+          disabled={isSubmitting}
           className="w-full py-6 text-lg rounded-xl bg-amber-500 hover:bg-amber-600"
         >
-          Save Meltdown Log
+          {isSubmitting ? "Saving..." : "Save Meltdown Log"}
         </Button>
       </div>
     </div>
