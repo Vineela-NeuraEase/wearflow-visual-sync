@@ -23,6 +23,9 @@ export default defineConfig(({ mode }) => ({
       '@react-native-async-storage/async-storage': 'react-native-web/dist/exports/AsyncStorage',
       '@react-native-community/netinfo': path.resolve(__dirname, './src/polyfills/netinfo-polyfill.js'),
       'react-native-ble-plx': path.resolve(__dirname, './src/polyfills/ble-plx-polyfill.js'),
+      // Add polyfill for missing codegenNativeComponent
+      'react-native-web/Libraries/Utilities/codegenNativeComponent': 
+        path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
     },
   },
   optimizeDeps: {

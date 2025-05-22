@@ -1,5 +1,5 @@
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useOfflineStorage } from './biometrics/useOfflineStorage';
 import { useDeviceConnection } from './biometrics/useDeviceConnection';
 import { useDataStream } from './biometrics/useDataStream';
@@ -58,6 +58,3 @@ export function useBiometricData({
     syncOfflineData
   };
 }
-
-// Need to import useEffect
-import { useEffect } from 'react';
