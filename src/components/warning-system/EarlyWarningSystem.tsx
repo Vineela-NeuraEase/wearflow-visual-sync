@@ -127,9 +127,19 @@ export const EarlyWarningSystem = ({ userId, onShowStrategies }: EarlyWarningPro
     const allData = [...biometricData];
     
     if (latestSensorData && latestSensorData.length > 0) {
-      // Add any additional data from the server that we don't have locally
-      // In a real app, we'd need to deduplicate these
-      allData.push(...latestSensorData);
+      // Transform Supabase data to match BiometricData structure
+      const transformedSensorData = latestSensorData.map(item => {
+        // Convert Supabase data format to BiometricData format
+        return {
+          heartRate: item.data_type === 'heartRate' ? item.value : 70, // default value
+          hrv: item.data_type === 'hrv' ? item.value : 50, // default value
+          stressLevel: item.data_type === 'stress' ? item.value : 30, // default value
+          timestamp: item.timestamp
+        } as BiometricData;
+      });
+      
+      // Add transformed data
+      allData.push(...transformedSensorData);
     }
     
     if (allData.length === 0) return;

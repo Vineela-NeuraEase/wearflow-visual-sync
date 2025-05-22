@@ -16,6 +16,17 @@ import { PersonalizedStrategies } from "@/components/warning-system/Personalized
 import { BluetoothDeviceManager } from "@/components/BluetoothDeviceManager";
 import { useBiometricData } from "@/hooks/useBiometricData";
 
+// Define the RegulationFactor type
+export type RegulationFactorImpact = "high" | "medium" | "low";
+export type RegulationFactorTrend = "increasing" | "decreasing" | "stable";
+
+export interface RegulationFactor {
+  name: string;
+  value: number;
+  impact: RegulationFactorImpact;
+  trend: RegulationFactorTrend;
+}
+
 // Mock data for demonstration (will be replaced by real-time data)
 const mockChartData = [
   { time: '8 AM', heartRate: 65, hrv: 55, regulationScore: 90, environmentalStress: 20 },
@@ -42,11 +53,11 @@ const WarningSystem = () => {
   } = useBiometricData({ maxDataPoints: 50 });
   
   // State for current status
-  const [regulationFactors, setRegulationFactors] = useState([
-    { name: "Heart Rate", value: 78, impact: "medium" as const, trend: "increasing" as const },
-    { name: "HRV", value: 42, impact: "high" as const, trend: "decreasing" as const },
-    { name: "Sleep Quality", value: 65, impact: "medium" as const, trend: "stable" as const },
-    { name: "Environmental", value: 40, impact: "low" as const, trend: "stable" as const }
+  const [regulationFactors, setRegulationFactors] = useState<RegulationFactor[]>([
+    { name: "Heart Rate", value: 78, impact: "medium", trend: "increasing" },
+    { name: "HRV", value: 42, impact: "high", trend: "decreasing" },
+    { name: "Sleep Quality", value: 65, impact: "medium", trend: "stable" },
+    { name: "Environmental", value: 40, impact: "low", trend: "stable" }
   ]);
   
   const [regulationScore, setRegulationScore] = useState(72);
@@ -74,7 +85,7 @@ const WarningSystem = () => {
         name: "Heart Rate",
         value: latestData.heartRate,
         impact: latestData.heartRate > 85 ? "high" : latestData.heartRate > 75 ? "medium" : "low",
-        trend: hrTrend as "increasing" | "decreasing" | "stable"
+        trend: hrTrend as RegulationFactorTrend
       };
     }
     
@@ -90,7 +101,7 @@ const WarningSystem = () => {
         name: "HRV",
         value: latestData.hrv,
         impact: latestData.hrv < 45 ? "high" : latestData.hrv < 55 ? "medium" : "low",
-        trend: hrvTrend as "increasing" | "decreasing" | "stable"
+        trend: hrvTrend as RegulationFactorTrend
       };
     }
     

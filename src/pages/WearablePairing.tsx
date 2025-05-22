@@ -30,7 +30,8 @@ const WearablePairing = () => {
     // });
     
     // For this demo:
-    if (typeof navigator !== 'undefined' && navigator.bluetooth) {
+    // Use feature detection to check for Web Bluetooth API
+    if (typeof navigator !== 'undefined' && 'bluetooth' in navigator) {
       setBluetoothAvailable(true);
     } else {
       // This will happen in browsers that don't support Web Bluetooth API
