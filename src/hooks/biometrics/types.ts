@@ -4,12 +4,11 @@ export interface BiometricDataPoint {
   hrv: number;
   stressLevel: number;
   timestamp: string;
-}
-
-export interface DeviceInfo {
-  name: string;
-  id: string;
-  [key: string]: any;
+  sleepQuality?: number;
+  sleepDuration?: number;
+  sensoryLoad?: number;
+  routineDeviation?: number;
+  behavioralState?: number;
 }
 
 export interface UseBiometricDataProps {
@@ -18,26 +17,12 @@ export interface UseBiometricDataProps {
 
 export interface UseBiometricDataReturn {
   isConnected: boolean;
-  deviceInfo: DeviceInfo | null;
+  deviceInfo: any;
   dataPoints: BiometricDataPoint[];
   offlineData: BiometricDataPoint[];
   isOnline: boolean;
-  connectDevice: (device: DeviceInfo) => void;
+  connectDevice: (device: any) => void;
   disconnectDevice: () => void;
   addDataPoint: (data: BiometricDataPoint) => void;
-  syncOfflineData: () => Promise<void>;
-}
-
-export interface UseOfflineStorageReturn {
-  isOnline: boolean;
-  offlineData: BiometricDataPoint[];
-  addOfflineDataPoint: (data: BiometricDataPoint) => void;
-  syncOfflineData: () => Promise<void>;
-}
-
-export interface UseDeviceConnectionReturn {
-  isConnected: boolean;
-  deviceInfo: DeviceInfo | null;
-  connectDevice: (device: DeviceInfo) => void;
-  disconnectDevice: () => void;
+  syncOfflineData: () => void;
 }
