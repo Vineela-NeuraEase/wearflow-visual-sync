@@ -58,6 +58,3 @@ export function useBiometricData({
     syncOfflineData
   };
 }
-
-// Need to import useEffect
-import { useEffect } from 'react';
