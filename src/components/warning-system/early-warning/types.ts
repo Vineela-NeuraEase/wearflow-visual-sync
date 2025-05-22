@@ -1,9 +1,9 @@
 
+export type WarningLevel = 'normal' | 'notice' | 'watch' | 'alert';
+
 export interface BiometricData {
-  heartRate: number;
-  hrv: number;
-  stressLevel: number;
+  heartRate?: number;
+  hrv?: number;
+  stressLevel?: number;
   timestamp: string;
 }
-
-export type WarningLevel = 'normal' | 'notice' | 'watch' | 'alert';
