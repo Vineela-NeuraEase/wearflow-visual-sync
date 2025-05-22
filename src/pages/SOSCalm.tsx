@@ -8,12 +8,6 @@ import { useAccessibility } from "@/context/AccessibilityContext";
 
 const sosStrategies = [
   {
-    name: "Breathing Exercise",
-    description: "Follow a guided breathing pattern to help calm your nervous system",
-    path: "/breathing",
-    color: "bg-calm-blue"
-  },
-  {
     name: "Visual Calming",
     description: "Watch gentle visual patterns designed to soothe and recenter",
     path: "/visual",

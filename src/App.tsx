@@ -11,7 +11,6 @@ import AuthPage from "@/pages/AuthPage";
 import WarningSystem from "@/pages/WarningSystem";
 import DataCollectionHub from "@/pages/DataCollectionHub";
 import ResourceLibrary from "@/pages/ResourceLibrary";
-import BreathingExercise from "@/pages/BreathingExercise";
 import CalmingTools from "@/pages/CalmingTools";
 
 // Components
@@ -26,7 +25,6 @@ function App() {
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/breathing" element={<BreathingExercise />} />
             <Route path="/tools" element={<CalmingTools />} />
             
             {/* Protected routes */}

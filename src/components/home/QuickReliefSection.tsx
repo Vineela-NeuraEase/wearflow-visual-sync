@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Wind, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useAccessibility } from "@/context/AccessibilityContext";
 
 const QuickReliefSection = () => {
@@ -9,13 +9,6 @@ const QuickReliefSection = () => {
   const { highContrastEnabled } = useAccessibility();
   
   const reliefOptions = [
-    {
-      title: "Breathing",
-      description: "Guided patterns",
-      icon: <Wind className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-primary' : 'text-tool-blue'}`} />,
-      path: "/breathing",
-      color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-calm-purple/30'
-    },
     {
       title: "Visual",
       description: "Calming patterns",

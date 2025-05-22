@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Wind, Music } from "lucide-react";
+import { ArrowLeft, Music } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -51,26 +51,6 @@ const CalmingTools = () => {
         <h3 className="text-xl font-medium mt-6 mb-4">Activities</h3>
         
         <motion.div className="space-y-4" variants={containerVariants}>
-          <motion.div variants={itemVariants}>
-            <Card 
-              className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate('/breathing')}
-            >
-              <motion.div 
-                className="bg-calm-blue/30 rounded-full p-3 mr-4"
-                whileHover={{ rotate: 10 }}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                <Wind className="h-6 w-6 text-tool-blue" />
-              </motion.div>
-              <div>
-                <h3 className="font-medium text-lg">Breathing Exercise</h3>
-                <p className="text-muted-foreground">Guided breathing patterns</p>
-              </div>
-            </Card>
-          </motion.div>
-          
           <motion.div variants={itemVariants}>
             <Card 
               className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
