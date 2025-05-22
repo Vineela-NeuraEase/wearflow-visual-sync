@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 
 interface AudioContextType {
   play: (sound: string) => void;
@@ -37,7 +37,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
   const [volume, setVolume] = React.useState<number>(0.7);
   const audioRefs = React.useRef<Record<string, HTMLAudioElement>>({});
   
-  useEffect(() => {
+  React.useEffect(() => {
     // Preload audio files
     Object.entries(soundPaths).forEach(([key, path]) => {
       try {
@@ -68,7 +68,7 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
   }, []);
   
   // Update volume when it changes
-  useEffect(() => {
+  React.useEffect(() => {
     Object.values(audioRefs.current).forEach(audio => {
       if (audio) {
         audio.volume = volume;
