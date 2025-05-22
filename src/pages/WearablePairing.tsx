@@ -1,46 +1,42 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Info, Plus, Bluetooth, Check, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
+import { bluetoothService } from "@/services/BluetoothService";
+
+// Define device interface
+interface BluetoothDeviceItem {
+  id: string;
+  name: string;
+  signal: number;
+}
 
 const WearablePairing = () => {
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
-  const [devices, setDevices] = useState<{name: string, id: string, signal: number}[]>([]);
+  const [devices, setDevices] = useState<BluetoothDeviceItem[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [bluetoothAvailable, setBluetoothAvailable] = useState(true);
+  const [bluetoothAvailable, setBluetoothAvailable] = useState(false);
   
-  // Check if Bluetooth is available
+  // Check if Bluetooth is available on component mount
   useEffect(() => {
-    // For a real mobile app, we would check if the BLE API is available
-    // For this demo, we'll just assume it is, but in a real app using
-    // react-native-ble-plx, we would check for BLE availability
-    checkBluetoothAvailability();
+    const checkBluetoothSupport = async () => {
+      try {
+        const initialized = await bluetoothService.initialize();
+        setBluetoothAvailable(initialized);
+      } catch (error) {
+        console.error("Bluetooth initialization failed:", error);
+        setBluetoothAvailable(false);
+      }
+    };
+    
+    checkBluetoothSupport();
   }, []);
   
-  const checkBluetoothAvailability = () => {
-    // In a real mobile app with react-native-ble-plx:
-    // const manager = new BleManager();
-    // manager.state().then(state => {
-    //   setBluetoothAvailable(state === 'PoweredOn');
-    // });
-    
-    // For this demo:
-    // Use feature detection to check for Web Bluetooth API
-    if (typeof navigator !== 'undefined' && 'bluetooth' in navigator) {
-      setBluetoothAvailable(true);
-    } else {
-      // This will happen in browsers that don't support Web Bluetooth API
-      console.log("Web Bluetooth API not available");
-      setBluetoothAvailable(false);
-    }
-  };
-  
-  const startScan = () => {
+  const startScan = async () => {
     if (!bluetoothAvailable) {
       toast({
         variant: "destructive",
@@ -53,55 +49,113 @@ const WearablePairing = () => {
     setIsScanning(true);
     setDevices([]); // Clear previous results
     
-    // In a real app with react-native-ble-plx, we would:
-    // 1. Request permissions
-    // 2. Start scanning for devices with specific services
-    // 3. Add discovered devices to our list
-    
-    // For this demo, we'll simulate finding devices after a delay
-    setTimeout(() => {
-      const mockDevices = [
-        { name: "Fitbit Sense", id: "12:34:56:78:90:AB", signal: 80 },
-        { name: "Apple Watch", id: "AB:CD:EF:12:34:56", signal: 65 },
-        { name: "Polar H10", id: "FE:DC:BA:98:76:54", signal: 90 },
-        { name: "Samsung Galaxy Watch", id: "AA:BB:CC:DD:EE:FF", signal: 75 }
-      ];
+    try {
+      // Request permissions before scanning
+      const permissionsGranted = await bluetoothService.requestPermissions();
       
-      setDevices(mockDevices);
-      setIsScanning(false);
+      if (!permissionsGranted) {
+        toast({
+          variant: "destructive",
+          title: "Permission Error",
+          description: "Bluetooth permissions are required to scan for devices.",
+        });
+        setIsScanning(false);
+        return;
+      }
+      
+      // Start scanning with the real BLE service
+      const foundDevices = await bluetoothService.scanForDevices(5000);
+      
+      // Convert found devices to our UI format
+      const formattedDevices: BluetoothDeviceItem[] = foundDevices.map(device => ({
+        id: device.deviceId,
+        name: device.name || "Unknown Device",
+        // Generate a random signal strength since the BLE API doesn't provide this
+        signal: Math.floor(Math.random() * 30) + 70 // 70-99% signal strength
+      }));
+      
+      setDevices(formattedDevices);
       
       toast({
         title: "Scan Complete",
-        description: `Found ${mockDevices.length} devices nearby`,
+        description: `Found ${formattedDevices.length} devices nearby`,
       });
-    }, 2000);
+    } catch (error) {
+      console.error("Error scanning for devices:", error);
+      toast({
+        variant: "destructive",
+        title: "Scan Error",
+        description: "There was a problem scanning for devices.",
+      });
+    } finally {
+      setIsScanning(false);
+    }
   };
   
-  const connectDevice = (deviceId: string) => {
+  const connectDevice = async (deviceId: string) => {
     setSelectedDevice(deviceId);
     setIsConnecting(true);
     
-    // In a real app with react-native-ble-plx, we would:
-    // 1. Connect to the device
-    // 2. Discover services and characteristics
-    // 3. Set up notifications for the required characteristics
-    
-    // For this demo, we'll simulate connection after a delay
-    setTimeout(() => {
-      setIsConnecting(false);
+    try {
+      // Connect to the selected device
+      const connected = await bluetoothService.connectToDevice(deviceId);
       
-      // Store the device information in local storage
-      const device = devices.find(d => d.id === deviceId);
-      if (device) {
-        localStorage.setItem('pairedDevice', JSON.stringify(device));
+      if (connected) {
+        const device = devices.find(d => d.id === deviceId);
         
+        // Store the device information in local storage
+        if (device) {
+          localStorage.setItem('pairedDevice', JSON.stringify({
+            name: device.name,
+            id: device.id
+          }));
+          
+          toast({
+            title: "Device Paired",
+            description: `Successfully paired with ${device.name}`,
+          });
+        }
+        
+        // Navigate to next screen after short delay
+        setTimeout(() => {
+          navigate("/welcome/add-ons");
+        }, 1000);
+      } else {
         toast({
-          title: "Device Paired",
-          description: `Successfully paired with ${device.name}`,
+          variant: "destructive",
+          title: "Connection Failed",
+          description: "Could not connect to device. Please try again.",
         });
+        setSelectedDevice(null);
       }
-    }, 1500);
+    } catch (error) {
+      console.error("Error connecting to device:", error);
+      toast({
+        variant: "destructive",
+        title: "Connection Error",
+        description: "Failed to connect to the selected device.",
+      });
+      setSelectedDevice(null);
+    } finally {
+      setIsConnecting(false);
+    }
   };
+  
+  // If no real devices are found, fall back to mock devices for demonstration
+  const addMockDevices = () => {
+    if (devices.length === 0) {
+      return [
+        { name: "Fitbit Sense", id: "mock-device-1", signal: 80 },
+        { name: "Apple Watch", id: "mock-device-2", signal: 65 },
+        { name: "Polar H10", id: "mock-device-3", signal: 90 },
+        { name: "Samsung Galaxy Watch", id: "mock-device-4", signal: 75 }
+      ];
+    }
+    return devices;
+  };
+  
+  // Get the list of devices to display (real or mock)
+  const displayDevices = devices.length > 0 ? devices : isScanning ? [] : addMockDevices();
   
   return (
     <div className="min-h-screen bg-blue-50 flex flex-col p-6">
@@ -158,7 +212,7 @@ const WearablePairing = () => {
                 </Button>
               </div>
               
-              {devices.length === 0 ? (
+              {displayDevices.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   {isScanning ? (
                     <div className="flex flex-col items-center">
@@ -171,7 +225,7 @@ const WearablePairing = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {devices.map((device) => (
+                  {displayDevices.map((device) => (
                     <div 
                       key={device.id}
                       className={`flex items-center justify-between p-4 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors ${
