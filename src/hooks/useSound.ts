@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 type SoundType = 
   | "click" 
@@ -27,8 +27,11 @@ export const useSound = () => {
     complete: null,
     breathing: null
   });
+  
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    console.log("useSound hook initializing");
     // Preload audio files
     Object.entries(soundPaths).forEach(([key, path]) => {
       try {
@@ -36,21 +39,18 @@ export const useSound = () => {
         audio.src = path;
         audio.preload = "auto";
         audioRefs.current[key as SoundType] = audio;
+        
+        audio.addEventListener('error', (e) => {
+          console.log(`Error loading audio: ${path}`, e);
+        });
       } catch (error) {
-        console.warn(`Failed to create audio for ${key}:`, error);
+        console.log(`Failed to create audio for ${key}:`, error);
         audioRefs.current[key as SoundType] = null;
       }
     });
 
-    // Handle errors
-    Object.values(audioRefs.current).forEach(audio => {
-      if (audio) {
-        audio.addEventListener('error', (e) => {
-          console.warn(`Error loading audio: ${(e.target as HTMLAudioElement).src}`, e);
-        });
-      }
-    });
-
+    setIsLoaded(true);
+    
     return () => {
       // Cleanup
       Object.values(audioRefs.current).forEach(audio => {
@@ -72,15 +72,15 @@ export const useSound = () => {
         
         // Play the sound
         audio.play().catch(error => {
-          console.warn("Audio play failed:", error);
+          console.log("Audio play failed:", error);
         });
       } catch (error) {
-        console.warn(`Error playing sound ${sound}:`, error);
+        console.log(`Error playing sound ${sound}:`, error);
       }
     } else {
-      console.warn(`Audio not found for sound: ${sound}`);
+      console.log(`Audio not found for sound: ${sound}`);
     }
   };
 
-  return { play };
+  return { play, isLoaded };
 };

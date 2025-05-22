@@ -20,6 +20,8 @@ import Sounds from "@/pages/Sounds";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 function App() {
+  console.log("App component rendering");
+  
   return (
     <Router>
       <AuthProvider>

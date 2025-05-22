@@ -11,10 +11,17 @@ import { ControlButtons } from "@/components/breathing/ControlButtons";
 import { ProgressIndicator } from "@/components/breathing/ProgressIndicator";
 import { StartButton } from "@/components/breathing/StartButton";
 import { useBreathingExercise } from "@/components/breathing/hooks/useBreathingExercise";
+import { useEffect } from "react";
 
 const BreathingExercise = () => {
   const navigate = useNavigate();
   const { play, soundEnabled, toggleSound } = useAudio();
+  
+  useEffect(() => {
+    console.log("BreathingExercise mounted");
+  }, []);
+  
+  console.log("BreathingExercise rendering, soundEnabled:", soundEnabled);
   
   const {
     isStarted,
@@ -28,6 +35,13 @@ const BreathingExercise = () => {
     handleStop
   } = useBreathingExercise({
     onPlaySound: play
+  });
+  
+  console.log("Current breathing state:", { 
+    isStarted, 
+    breathState, 
+    counter, 
+    selectedTechnique: selectedTechnique?.name 
   });
   
   const handleStopAndNavigate = () => {

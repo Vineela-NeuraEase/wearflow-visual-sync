@@ -36,9 +36,14 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [volume, setVolume] = useState<number>(0.7);
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
+  const [audioLoaded, setAudioLoaded] = useState<boolean>(false);
   
   useEffect(() => {
+    console.log("AudioProvider initialized");
     // Preload audio files
+    let loadedCount = 0;
+    const totalFiles = Object.keys(soundPaths).length;
+    
     Object.entries(soundPaths).forEach(([key, path]) => {
       try {
         const audio = new Audio();
@@ -49,10 +54,41 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         
         // Handle errors silently
         audio.addEventListener('error', () => {
-          console.warn(`Error loading audio: ${path}`);
+          console.log(`Audio file not found: ${path} - using silent fallback`);
+          loadedCount++;
+          if (loadedCount >= totalFiles) {
+            setAudioLoaded(true);
+          }
         });
+        
+        audio.addEventListener('canplaythrough', () => {
+          console.log(`Audio loaded: ${path}`);
+          loadedCount++;
+          if (loadedCount >= totalFiles) {
+            setAudioLoaded(true);
+          }
+        });
+        
+        // Force load attempt
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Successfully started playing
+              audio.pause();
+              audio.currentTime = 0;
+            })
+            .catch(error => {
+              // Auto-play was prevented
+              console.log(`Auto-play prevented for ${key}: ${error}`);
+            });
+        }
       } catch (error) {
-        console.warn(`Failed to create audio for ${key}: ${error}`);
+        console.log(`Failed to create audio for ${key}: ${error}`);
+        loadedCount++;
+        if (loadedCount >= totalFiles) {
+          setAudioLoaded(true);
+        }
       }
     });
     
@@ -87,19 +123,23 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
         audio.currentTime = 0;
         
         // Play the sound
-        audio.play().catch(error => {
-          console.warn(`Audio play failed: ${error}`);
-        });
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.log(`Audio play failed: ${error}`);
+          });
+        }
       } else {
-        console.warn(`Audio not loaded for sound: ${soundName}`);
+        console.log(`Audio not loaded for sound: ${soundName}`);
       }
     } catch (error) {
-      console.warn(`Error playing sound ${soundName}: ${error}`);
+      console.log(`Error playing sound ${soundName}: ${error}`);
     }
   };
   
   const toggleSound = () => {
     setSoundEnabled(prev => !prev);
+    console.log("Sound toggled:", !soundEnabled);
   };
   
   const value = {
@@ -108,6 +148,8 @@ export const AudioProvider = ({ children }: AudioProviderProps) => {
     toggleSound,
     setVolume,
   };
+  
+  console.log("AudioProvider rendering, soundEnabled:", soundEnabled);
   
   return (
     <AudioContext.Provider value={value}>
