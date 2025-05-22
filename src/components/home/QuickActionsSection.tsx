@@ -1,7 +1,8 @@
+
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Timer, Smile, Music } from "lucide-react";
+import { MessageCircle, Timer, Smile, Wind, Music } from "lucide-react";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { useState } from "react";
 import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
@@ -23,6 +24,14 @@ const QuickActionsSection = () => {
       action: () => navigate('/chat'),
       color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 dark:from-blue-900/30 dark:via-blue-800/20 dark:to-blue-900/10',
       borderColor: "border-l-4 border-blue-500 dark:border-blue-700"
+    },
+    {
+      title: "Breathing",
+      description: "Guided patterns",
+      icon: <Wind className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-primary' : 'text-purple-500'}`} />,
+      action: () => navigate('/breathing'),
+      color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-purple-50 via-purple-100 to-purple-50 dark:from-purple-900/30 dark:via-purple-800/20 dark:to-purple-900/10',
+      borderColor: "border-l-4 border-purple-500 dark:border-purple-700"
     }
   ];
   
