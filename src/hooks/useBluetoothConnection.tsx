@@ -42,12 +42,18 @@ export function useBluetoothConnection({
     // Add data listener for Bluetooth readings
     const dataListener = (data: any) => {
       if (onDataReceived) {
-        // Convert to our BiometricData format
+        // Convert to our BiometricData format, including new fields if available
         const biometricData: BiometricData = {
           heartRate: data.heartRate,
           hrv: data.hrv || 0,
           stressLevel: data.stressLevel || 0,
           timestamp: data.timestamp,
+          // Include new metrics if available from device
+          sleepQuality: data.sleepQuality,
+          sleepDuration: data.sleepDuration,
+          sensoryLoad: data.sensoryLoad,
+          routineDeviation: data.routineDeviation,
+          behavioralState: data.behavioralState
         };
         onDataReceived(biometricData);
       }

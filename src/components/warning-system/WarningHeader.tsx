@@ -1,41 +1,44 @@
 
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Bell, History, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, Database, BellOff, Wifi, WifiOff } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface WarningHeaderProps {
   isOnline: boolean;
 }
 
 export const WarningHeader = ({ isOnline }: WarningHeaderProps) => {
-  const navigate = useNavigate();
-
   return (
     <div className="rounded-xl bg-blue-100 p-4">
-      <div className="flex items-center mb-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-semibold ml-2">Early Warning System</h1>
-        
-        <div className="ml-auto flex gap-2">
-          {!isOnline && (
-            <div className="flex items-center text-amber-600 bg-amber-50 px-2 py-1 rounded text-xs">
-              <WifiOff className="h-3 w-3 mr-1" />
-              Offline
-            </div>
-          )}
-          <Button variant="ghost" size="icon">
-            <History className="h-5 w-5" />
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center">
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/">
+              <ChevronLeft className="h-5 w-5" />
+            </Link>
           </Button>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
+          <h1 className="text-xl font-semibold ml-2">Warning System</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {isOnline ? (
+            <Wifi className="h-4 w-4 text-green-600" />
+          ) : (
+            <WifiOff className="h-4 w-4 text-yellow-600" />
+          )}
+          
+          <Link to="/data-collection">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Database className="h-4 w-4" />
+            </Button>
+          </Link>
+          
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <BellOff className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      
-      <p className="text-sm px-4 text-muted-foreground">
-        Monitor your regulation indicators and get personalized early warnings before meltdowns.
+      <p className="text-sm text-muted-foreground ml-9">
+        Monitoring biometric signals and patterns to predict potential meltdowns
       </p>
     </div>
   );
