@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Check, CircleAlert } from "lucide-react";
+import { X, Check, CircleAlert, Loader2 } from "lucide-react";
 import { StrategyEffectivenessRater } from "@/components/feedback/StrategyEffectivenessRater";
 import { useStrategies } from "@/hooks/warning-system/useStrategies";
+import { useAuth } from "@/context/AuthContext";
 
 interface StrategyProps {
   warningLevel: "alert" | "warning" | "watch" | "stable";
@@ -20,9 +21,13 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
   const [category, setCategory] = useState("breathing");
   const [addingNew, setAddingNew] = useState(false);
   
+  const { user } = useAuth();
+  
   const { 
     strategies, 
     isLoading, 
+    loading,
+    error,
     saveStrategy, 
     deleteStrategy, 
     updateEffectiveness 
@@ -80,7 +85,22 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
       </div>
       
       <div className="p-4 space-y-4">
-        {strategies.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">
+            <p>{error}</p>
+            <Button 
+              variant="outline" 
+              className="mt-2"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </div>
+        ) : strategies.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
             No strategies added yet. Add your first strategy below.
           </p>
@@ -98,6 +118,11 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
                     <div className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-0.5 rounded-full inline-block mt-1">
                       {strategy.category}
                     </div>
+                    {strategy.id.startsWith('default-') && !user && (
+                      <div className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full inline-block mt-1 ml-1">
+                        Default
+                      </div>
+                    )}
                   </div>
                   <Button 
                     variant="ghost" 
@@ -160,7 +185,12 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
                 disabled={!name || !description || isLoading}
                 onClick={handleAddStrategy}
               >
-                {isLoading ? "Saving..." : "Save Strategy"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : "Save Strategy"}
               </Button>
             </div>
           </div>
@@ -172,6 +202,12 @@ export const PersonalizedStrategies = ({ warningLevel, onClose }: StrategyProps)
           >
             + Add Custom Strategy
           </Button>
+        )}
+        
+        {!user && (
+          <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 rounded-md p-3 text-sm text-amber-800 dark:text-amber-300">
+            <p>Create an account to save your strategies permanently.</p>
+          </div>
         )}
       </div>
     </Card>

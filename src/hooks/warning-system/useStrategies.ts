@@ -1,8 +1,8 @@
-
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Strategy } from '@/types/strategy';
+import { supabase } from "@/integrations/supabase/client";
 
 // Export the interface for the hook return type
 export interface UseStrategiesReturn {
@@ -52,15 +52,33 @@ export function useStrategies(): UseStrategiesReturn {
     }
   ];
   
-  // Load strategies
+  // Load strategies from supabase
   useEffect(() => {
     const loadStrategies = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        // For now, just use default strategies
-        setStrategies(defaultStrategies);
+        // Start with default strategies
+        let allStrategies = [...defaultStrategies];
+        
+        // If user is logged in, fetch their custom strategies
+        if (user) {
+          const { data, error } = await supabase
+            .from('strategies')
+            .select('*')
+            .order('created_at', { ascending: false });
+          
+          if (error) {
+            console.error("Error fetching strategies:", error);
+            setError("Failed to load strategies: " + error.message);
+          } else if (data) {
+            // Add user's custom strategies
+            allStrategies = [...allStrategies, ...data];
+          }
+        }
+        
+        setStrategies(allStrategies);
       } catch (err) {
         console.error("Error loading strategies:", err);
         setError("Failed to load strategies");
@@ -83,22 +101,53 @@ export function useStrategies(): UseStrategiesReturn {
   const saveStrategy = useCallback(async (strategy: Omit<Strategy, "id" | "user_id">): Promise<Strategy | null> => {
     try {
       setIsLoading(true);
-      // Create new strategy with generated ID
-      const newStrategy: Strategy = {
-        ...strategy,
-        id: crypto.randomUUID(),
-        user_id: user?.id
-      };
+      
+      // If user is not logged in, just add to local state with a generated ID
+      if (!user) {
+        const newStrategy: Strategy = {
+          ...strategy,
+          id: crypto.randomUUID(),
+        };
+        
+        setStrategies(prev => [...prev, newStrategy]);
+        
+        toast({
+          title: "Strategy saved locally",
+          description: "Your strategy has been added but will not be saved permanently without an account",
+        });
+        
+        return newStrategy;
+      }
+      
+      // Otherwise, save to Supabase
+      const { data, error } = await supabase
+        .from('strategies')
+        .insert({
+          ...strategy,
+          user_id: user.id
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        console.error("Error saving strategy:", error);
+        toast({
+          title: "Error",
+          description: "Failed to save strategy: " + error.message,
+          variant: "destructive"
+        });
+        return null;
+      }
       
       // Add to local state
-      setStrategies(prev => [...prev, newStrategy]);
+      setStrategies(prev => [...prev, data]);
       
       toast({
         title: "Strategy saved",
-        description: "Your strategy has been added",
+        description: "Your strategy has been added to your account",
       });
       
-      return newStrategy;
+      return data;
     } catch (err) {
       console.error("Error saving strategy:", err);
       toast({
@@ -115,6 +164,39 @@ export function useStrategies(): UseStrategiesReturn {
   const deleteStrategy = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
+      
+      // If it's a default strategy (id starts with 'default-'), just remove from local state
+      if (id.startsWith('default-')) {
+        setStrategies(prev => prev.filter(s => s.id !== id));
+        toast({
+          title: "Default strategy hidden",
+          description: "This default strategy has been hidden from your view",
+        });
+        return;
+      }
+      
+      // If user is not logged in or no ID provided, just remove from local state
+      if (!user || !id) {
+        setStrategies(prev => prev.filter(s => s.id !== id));
+        return;
+      }
+      
+      // Otherwise, delete from Supabase
+      const { error } = await supabase
+        .from('strategies')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error("Error deleting strategy:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete strategy: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+      
       // Remove from local state
       setStrategies(prev => prev.filter(s => s.id !== id));
       
@@ -132,12 +214,13 @@ export function useStrategies(): UseStrategiesReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [user, toast]);
   
   const updateEffectiveness = useCallback(async (id: string, rating: number) => {
     try {
       setIsLoading(true);
-      // Update effectiveness in local state
+      
+      // Update in local state first for UI responsiveness
       setStrategies(prev => 
         prev.map(strategy => 
           strategy.id === id 
@@ -145,6 +228,27 @@ export function useStrategies(): UseStrategiesReturn {
             : strategy
         )
       );
+      
+      // If it's a default strategy or user isn't logged in, just update local state
+      if (id.startsWith('default-') || !user) {
+        return;
+      }
+      
+      // Otherwise, update in Supabase
+      const { error } = await supabase
+        .from('strategies')
+        .update({ effectiveness: rating })
+        .eq('id', id);
+      
+      if (error) {
+        console.error("Error updating effectiveness:", error);
+        toast({
+          title: "Error",
+          description: "Failed to update rating: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
       
       toast({
         title: "Rating updated",
@@ -160,7 +264,7 @@ export function useStrategies(): UseStrategiesReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [user, toast]);
   
   return {
     showStrategies,

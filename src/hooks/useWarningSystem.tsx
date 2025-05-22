@@ -78,17 +78,16 @@ export function useWarningSystem() {
     }
   }, [regulationScore]);
   
-  // Strategy recommendations
-  const [showStrategies, setShowStrategies] = useState(false);
-  const { strategies } = useStrategies();
-  
-  const handleShowStrategies = useCallback(() => {
-    setShowStrategies(true);
-  }, []);
-  
-  const handleHideStrategies = useCallback(() => {
-    setShowStrategies(false);
-  }, []);
+  // Get strategies from the useStrategies hook
+  const {
+    showStrategies,
+    strategies,
+    handleShowStrategies,
+    handleHideStrategies,
+    saveStrategy,
+    deleteStrategy,
+    updateEffectiveness
+  } = useStrategies();
   
   // Chart data generator
   const { getChartData } = useChartData(dataPoints);
@@ -111,7 +110,10 @@ export function useWarningSystem() {
     handleSaveThresholds,
     handleSaveEnvironment,
     handleShowStrategies,
-    handleHideStrategies
+    handleHideStrategies,
+    saveStrategy,
+    deleteStrategy,
+    updateEffectiveness
   };
 }
 
