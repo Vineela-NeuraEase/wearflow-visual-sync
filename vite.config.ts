@@ -23,12 +23,18 @@ export default defineConfig(({ mode }) => ({
       '@react-native-async-storage/async-storage': 'react-native-web/dist/exports/AsyncStorage',
       '@react-native-community/netinfo': path.resolve(__dirname, './src/polyfills/netinfo-polyfill.js'),
       'react-native-ble-plx': path.resolve(__dirname, './src/polyfills/ble-plx-polyfill.js'),
-      // Make sure to catch all possible import paths for codegenNativeComponent
+      
+      // Handle all possible import paths for codegenNativeComponent
       'react-native-web/Libraries/Utilities/codegenNativeComponent': 
         path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
       'react-native-web/dist/vendor/react-native/Libraries/Utilities/codegenNativeComponent':
         path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
       'react-native-web/dist/cjs/vendor/react-native/Libraries/Utilities/codegenNativeComponent':
+        path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
+      'react-native/Libraries/Utilities/codegenNativeComponent':
+        path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
+      // Handle direct import paths as well
+      'Libraries/Utilities/codegenNativeComponent':
         path.resolve(__dirname, './src/polyfills/codegenNativeComponent.js'),
     },
   },
@@ -41,11 +47,22 @@ export default defineConfig(({ mode }) => ({
     },
     include: [
       'react-native-web',
+      '@react-native-community/netinfo',
+      'react-native-safe-area-context',
     ],
+    force: true, // Force dependency pre-bundling
   },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
+      include: [/node_modules/],
+    },
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress certain warnings
+        if (warning.code === 'MISSING_EXPORT') return;
+        warn(warning);
+      },
     },
   },
 }));
