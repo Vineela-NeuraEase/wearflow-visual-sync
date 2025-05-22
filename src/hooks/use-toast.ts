@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ToastAndroid, Platform, Alert } from 'react-native';
+import { toast as showToast } from 'sonner';
 
 type ToastVariant = 'default' | 'destructive' | 'success';
 
@@ -13,21 +13,27 @@ interface ToastProps {
 
 export function useToast() {
   const toast = ({ title, description, variant = 'default', duration = 3000 }: ToastProps) => {
-    if (Platform.OS === 'android') {
-      // Android uses native toast
-      ToastAndroid.showWithGravity(
-        description ? `${title}: ${description}` : title,
-        duration > 2000 ? ToastAndroid.LONG : ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
-    } else if (Platform.OS === 'ios') {
-      // iOS uses Alert (we could use a third-party library for better toast)
-      Alert.alert(title, description);
-    } else {
-      // Web: just log for now, in a real app we'd use a proper web toast
-      console.log(`[Toast - ${variant}] ${title}${description ? `: ${description}` : ''}`);
-    }
+    const toastVariant = variant === 'destructive' ? 'error' : variant;
+    
+    showToast(title, {
+      description,
+      duration,
+      // @ts-ignore - sonner has slightly different types
+      variant: toastVariant,
+    });
   };
 
   return { toast };
 }
+
+// Export a direct toast function for ease of use
+export const toast = ({ title, description, variant = 'default', duration = 3000 }: ToastProps) => {
+  const toastVariant = variant === 'destructive' ? 'error' : variant;
+  
+  showToast(title, {
+    description,
+    duration,
+    // @ts-ignore - sonner has slightly different types
+    variant: toastVariant,
+  });
+};

@@ -1,44 +1,33 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { AppState, NetInfo } from 'react-native';
 import { useToast } from '@/hooks/use-toast';
-import { BiometricData } from '../types';
+import { BiometricData } from '../types/index';
 
 export function useOnlineStatus() {
   const { toast } = useToast();
   const [isOnline, setIsOnline] = useState(true);
   
-  // Monitor online/offline status
+  // Monitor online/offline status using browser APIs
   useEffect(() => {
-    const handleConnectivityChange = (state: { isConnected: boolean }) => {
-      setIsOnline(state.isConnected);
-      
-      if (state.isConnected) {
-        console.log('Device is now online');
-      } else {
-        console.log('Device went offline. Data will be stored locally.');
-      }
+    const handleOnline = () => {
+      setIsOnline(true);
+      console.log('Device is now online');
     };
     
-    const unsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    const handleOffline = () => {
+      setIsOnline(false);
+      console.log('Device went offline. Data will be stored locally.');
+    };
     
-    // Check initial connectivity state
-    NetInfo.fetch().then(state => {
-      setIsOnline(state.isConnected || false);
-    });
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
     
-    // Also listen for app state changes to check connectivity when app comes to foreground
-    const appStateSubscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'active') {
-        NetInfo.fetch().then(state => {
-          setIsOnline(state.isConnected || false);
-        });
-      }
-    });
+    // Set initial state
+    setIsOnline(navigator.onLine);
     
     return () => {
-      unsubscribe();
-      appStateSubscription.remove();
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, []);
   

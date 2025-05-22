@@ -1,144 +1,56 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Button } from '@/components/ui/button';
 
-type Props = {
-  navigation: NativeStackNavigationProp<any>;
-};
+const HomeScreen = () => {
+  const navigateToScreen = (screen: string) => {
+    console.log(`Navigate to ${screen} (would use navigation in a real mobile app)`);
+    // In a real app with React Navigation, we would use navigation.navigate(screen)
+  };
 
-const HomeScreen = ({ navigation }: Props) => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Wellness Monitor</Text>
-        <Text style={styles.headerSubtitle}>Track your biometrics and wellbeing</Text>
-      </View>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">Wellness Monitor</h1>
+        <p className="text-muted-foreground">Track your biometrics and wellbeing</p>
+      </div>
       
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Wearable Connection</Text>
-        <Text style={styles.cardText}>
+      <div className="bg-white rounded-lg p-4 shadow">
+        <h2 className="text-lg font-semibold mb-2">Wearable Connection</h2>
+        <p className="mb-4 text-gray-600">
           Connect to a wearable device to start tracking your biometrics in real-time.
-        </Text>
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={() => navigation.navigate('WearablePairing')}
+        </p>
+        <Button 
+          onClick={() => navigateToScreen('WearablePairing')}
+          className="w-full bg-blue-500 hover:bg-blue-600"
         >
-          <Text style={styles.buttonText}>Connect Device</Text>
-        </TouchableOpacity>
-      </View>
+          Connect Device
+        </Button>
+      </div>
       
-      <View style={styles.menuGrid}>
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('BioTracking')}
+      <div className="grid grid-cols-2 gap-4">
+        <div 
+          onClick={() => navigateToScreen('BioTracking')}
+          className="bg-white rounded-lg p-4 shadow cursor-pointer hover:bg-gray-50 transition-colors"
         >
-          <View style={[styles.menuIcon, { backgroundColor: '#e9f5fe' }]}>
-            {/* Icon would go here */}
-          </View>
-          <Text style={styles.menuLabel}>Bio Tracking</Text>
-        </TouchableOpacity>
+          <div className="h-12 w-12 rounded-full bg-blue-100 mb-3 flex items-center justify-center">
+            <span className="text-blue-500">📊</span>
+          </div>
+          <h3 className="font-medium">Bio Tracking</h3>
+        </div>
         
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('WarningSystem')}
+        <div 
+          onClick={() => navigateToScreen('WarningSystem')}
+          className="bg-white rounded-lg p-4 shadow cursor-pointer hover:bg-gray-50 transition-colors"
         >
-          <View style={[styles.menuIcon, { backgroundColor: '#fef3e9' }]}>
-            {/* Icon would go here */}
-          </View>
-          <Text style={styles.menuLabel}>Warning System</Text>
-        </TouchableOpacity>
-        
-        {/* Additional menu items would go here */}
-      </View>
-    </ScrollView>
+          <div className="h-12 w-12 rounded-full bg-amber-100 mb-3 flex items-center justify-center">
+            <span className="text-amber-500">⚠️</span>
+          </div>
+          <h3 className="font-medium">Warning System</h3>
+        </div>
+      </div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f8fafc'
-  },
-  header: {
-    marginBottom: 24
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1e293b'
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#64748b',
-    marginTop: 4
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 8
-  },
-  cardText: {
-    fontSize: 14,
-    color: '#64748b',
-    marginBottom: 16,
-    lineHeight: 20
-  },
-  button: {
-    backgroundColor: '#3b82f6',
-    borderRadius: 6,
-    paddingVertical: 12,
-    alignItems: 'center'
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-    fontSize: 14
-  },
-  menuGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  menuItem: {
-    width: '48%',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1
-  },
-  menuIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12
-  },
-  menuLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1e293b'
-  }
-});
 
 export default HomeScreen;
