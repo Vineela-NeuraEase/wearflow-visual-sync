@@ -2,17 +2,9 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
+import { LearnTool } from "@/data/learnTools";
 
-interface LearnToolCardProps {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  path: string;
-  color: string;
-  gradient: string;
-  borderGradient: string;
-}
+type LearnToolCardProps = LearnTool;
 
 const LearnToolCard = ({
   title,
