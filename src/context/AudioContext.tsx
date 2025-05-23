@@ -5,7 +5,8 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 interface AudioContextType {
   muted: boolean;
   toggleMute: () => void;
-  play: (soundFile: string) => void;  // Renamed from playSound to play
+  play: (soundFile: string) => void;
+  playSound: (soundFile: string) => void;
   stopSound: () => void;
 }
 
@@ -13,7 +14,8 @@ interface AudioContextType {
 const AudioContext = createContext<AudioContextType>({
   muted: false,
   toggleMute: () => {},
-  play: () => {},  // Renamed from playSound to play
+  play: () => {},
+  playSound: () => {},
   stopSound: () => {}
 });
 
@@ -35,8 +37,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     setMuted(prev => !prev);
   }, []);
 
-  // Play sound function that uses the basic HTML5 Audio API - renamed from playSound to play
-  const play = useCallback((soundPath: string) => {
+  // Core play sound function that uses the basic HTML5 Audio API
+  const playSoundCore = useCallback((soundPath: string) => {
     if (muted) return;
     
     try {
@@ -58,6 +60,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   }, [muted, audioElement]);
   
+  // Exposed methods that both call the core implementation
+  const play = useCallback((soundPath: string) => {
+    playSoundCore(soundPath);
+  }, [playSoundCore]);
+  
+  const playSound = useCallback((soundPath: string) => {
+    playSoundCore(soundPath);
+  }, [playSoundCore]);
+  
   // Stop sound function
   const stopSound = useCallback(() => {
     if (audioElement) {
@@ -75,11 +86,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     };
   }, [audioElement]);
   
-  // Create the context value object
+  // Create the context value object with both method names
   const contextValue = {
     muted,
     toggleMute,
-    play,  // Renamed from playSound to play
+    play,
+    playSound,
     stopSound
   };
   

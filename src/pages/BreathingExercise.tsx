@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,7 @@ const BREATHING_TECHNIQUES = [
 
 const BreathingExercise = () => {
   const navigate = useNavigate();
-  const { playSound } = useAudio();
+  const { play } = useAudio(); // Updated to use 'play' instead of 'playSound'
   const [selectedTechnique, setSelectedTechnique] = useState<string>("box");
   const [currentPhase, setCurrentPhase] = useState<number>(0);
   const [isBreathing, setIsBreathing] = useState<boolean>(false);
@@ -86,7 +85,7 @@ const BreathingExercise = () => {
             }
             
             // Play a subtle sound when transitioning phases
-            playSound("/sounds/pop.mp3");
+            play("/sounds/pop.mp3");
             return 0;
           }
           return newProgress;
@@ -98,13 +97,13 @@ const BreathingExercise = () => {
       // Skip zero-duration phases
       setCurrentPhase((currentPhase + 1) % technique.pattern.length);
     }
-  }, [currentPhase, isBreathing, technique, playSound]);
+  }, [currentPhase, isBreathing, technique, play]);
 
   const handleTechniqueChange = (value: string) => {
     setSelectedTechnique(value);
     setCurrentPhase(0);
     setProgress(0);
-    playSound("/sounds/click.mp3");
+    play("/sounds/click.mp3");
   };
 
   const toggleBreathing = () => {
@@ -112,7 +111,7 @@ const BreathingExercise = () => {
     if (!isBreathing) {
       setCurrentPhase(0);
       setProgress(0);
-      playSound("/sounds/pop.mp3");
+      play("/sounds/pop.mp3");
     }
   };
 
