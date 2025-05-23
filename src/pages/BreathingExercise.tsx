@@ -86,7 +86,7 @@ const BreathingExercise = () => {
             }
             
             // Play a subtle sound when transitioning phases
-            playSound("pop");
+            playSound("/sounds/pop.mp3");
             return 0;
           }
           return newProgress;
@@ -104,7 +104,7 @@ const BreathingExercise = () => {
     setSelectedTechnique(value);
     setCurrentPhase(0);
     setProgress(0);
-    playSound("click.mp3");
+    playSound("/sounds/click.mp3");
   };
 
   const toggleBreathing = () => {
@@ -112,7 +112,7 @@ const BreathingExercise = () => {
     if (!isBreathing) {
       setCurrentPhase(0);
       setProgress(0);
-      playSound("pop");
+      playSound("/sounds/pop.mp3");
     }
   };
 
