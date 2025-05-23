@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-// Import our components and hooks
-import BreathingCircle from "@/features/breathing/components/BreathingCircle";
-import TechniqueSelector from "@/features/breathing/components/TechniqueSelector";
-import BreathingInstructions from "@/features/breathing/components/BreathingInstructions";
-import BreathingControls from "@/features/breathing/components/BreathingControls";
-import { useBreathingExercise } from "@/features/breathing/hooks/useBreathingExercise";
+// Import our components and hooks with the updated paths
+import BreathingCircle from "@/components/breathing/BreathingCircle";
+import TechniqueSelector from "@/components/breathing/TechniqueSelector";
+import BreathingInstructions from "@/components/breathing/BreathingInstructions";
+import BreathingControls from "@/components/breathing/BreathingControls";
+import { useBreathingExercise } from "@/hooks/useBreathingExercise";
 
 const BreathingExercise = () => {
+  console.log('Enhanced Breathing Component Loaded');
+  
   const navigate = useNavigate();
   const { 
     selectedTechnique,
