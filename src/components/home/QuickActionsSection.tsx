@@ -2,20 +2,20 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Timer, Smile, Wind, Music } from "lucide-react";
+import { MessageCircle, Timer, Smile, Music } from "lucide-react";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { useState } from "react";
 import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
 import EmotionLoggerSheet from "@/components/sheets/EmotionLoggerSheet";
 import { motion } from "framer-motion";
-import { useAudio } from "@/context/AudioContext"; // Import useAudio
+import { useAudio } from "@/context/AudioContext";
 
 const QuickActionsSection = () => {
   const navigate = useNavigate();
   const { highContrastEnabled } = useAccessibility();
   const [isBreakTimerOpen, setIsBreakTimerOpen] = useState(false);
   const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
-  const { play } = useAudio(); // Use audio context
+  const { play } = useAudio();
   
   // Primary actions - most important/frequently used
   const primaryActions = [
@@ -28,12 +28,17 @@ const QuickActionsSection = () => {
       borderColor: "border-l-4 border-blue-500 dark:border-blue-700"
     },
     {
-      title: "Breathing",
-      description: "Guided patterns",
-      icon: <Wind className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-primary' : 'text-purple-500'}`} />,
+      title: "Visual",
+      description: "Calming patterns",
+      icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={`h-6 w-6 ${highContrastEnabled ? 'text-high-contrast-primary' : 'text-purple-500'}`}>
+        <path d="M12 5C13.6569 5 15 6.34315 15 8C15 9.65685 13.6569 11 12 11C10.3431 11 9 9.65685 9 8C9 6.34315 10.3431 5 12 5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5 12H5.01M19 12H19.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 19V19.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 1C10.22 1 8.47991 1.52784 6.99987 2.51677C5.51983 3.50571 4.36628 4.91131 3.68509 6.55585C3.0039 8.20038 2.82567 10.01 3.17294 11.7558C3.5202 13.5016 4.37737 15.1053 5.63604 16.364C6.89472 17.6226 8.49836 18.4798 10.2442 18.8271C11.99 19.1743 13.7996 18.9961 15.4442 18.3149C17.0887 17.6337 18.4943 16.4802 19.4832 15.0001C20.4722 13.5201 21 11.78 21 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>,
       action: () => {
-        play('click.mp3');  // Play click sound when clicking on breathing
-        navigate('/breathing');
+        play('click.mp3');
+        navigate('/visual');
       },
       color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-purple-50 via-purple-100 to-purple-50 dark:from-purple-900/30 dark:via-purple-800/20 dark:to-purple-900/10',
       borderColor: "border-l-4 border-purple-500 dark:border-purple-700"

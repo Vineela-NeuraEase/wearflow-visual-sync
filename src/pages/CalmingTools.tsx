@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Music, Wind } from "lucide-react"; // Added Wind icon
+import { ArrowLeft, Music } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -51,28 +51,6 @@ const CalmingTools = () => {
         <h3 className="text-xl font-medium mt-6 mb-4">Activities</h3>
         
         <motion.div className="space-y-4" variants={containerVariants}>
-          {/* Breathing Exercise Card - Added first with prominent styling */}
-          <motion.div variants={itemVariants}>
-            <Card 
-              className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow border-2 border-blue-200"
-              onClick={() => navigate('/breathing')}
-            >
-              <motion.div 
-                className="bg-blue-100 rounded-full p-3 mr-4"
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                <Wind className="h-6 w-6 text-blue-500" />
-              </motion.div>
-              <div>
-                <h3 className="font-medium text-lg">Breathing Exercise</h3>
-                <p className="text-muted-foreground">Guided breathing patterns for relaxation</p>
-              </div>
-            </Card>
-          </motion.div>
-        
           <motion.div variants={itemVariants}>
             <Card 
               className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
@@ -125,11 +103,11 @@ const CalmingTools = () => {
           variants={itemVariants}
           transition={{ delay: 0.4 }}
         >
-          <h3 className="text-xl font-medium mt-8 mb-4">Featured: Breathing Exercise</h3>
+          <h3 className="text-xl font-medium mt-8 mb-4">Featured Tools</h3>
           
           <Card 
             className="bg-white rounded-xl p-4 overflow-hidden cursor-pointer hover:shadow-md"
-            onClick={() => navigate('/breathing')}
+            onClick={() => navigate('/visual')}
           >
             <motion.div
               animate={{ 
@@ -152,11 +130,15 @@ const CalmingTools = () => {
                   }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Wind className="h-16 w-16 text-blue-500" />
+                  <svg className="h-16 w-16 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 8v8"></path>
+                    <path d="M8 12h8"></path>
+                  </svg>
                 </motion.div>
               </div>
               <p className="mt-4 text-center text-muted-foreground">
-                Guided breathing patterns to help reduce stress and promote relaxation
+                Visual calming patterns to help reduce stress and promote relaxation
               </p>
             </motion.div>
           </Card>

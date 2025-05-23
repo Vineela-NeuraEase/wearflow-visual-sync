@@ -15,7 +15,6 @@ import DataCollectionHub from "@/pages/DataCollectionHub";
 import ResourceLibrary from "@/pages/ResourceLibrary";
 import CalmingTools from "@/pages/CalmingTools";
 import SOSCalm from "@/pages/SOSCalm";
-import BreathingExercise from "@/pages/BreathingExercise";
 import VisualStim from "@/pages/VisualStim";
 
 // Components
@@ -34,7 +33,6 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/tools" element={<CalmingTools />} />
               <Route path="/sos" element={<SOSCalm />} />
-              <Route path="/breathing" element={<BreathingExercise />} />
               <Route path="/visual" element={<VisualStim />} />
               
               {/* Protected routes */}
