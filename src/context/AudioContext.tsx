@@ -5,7 +5,7 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 interface AudioContextType {
   muted: boolean;
   toggleMute: () => void;
-  playSound: (soundFile: string) => void;
+  play: (soundFile: string) => void;  // Renamed from playSound to play
   stopSound: () => void;
 }
 
@@ -13,7 +13,7 @@ interface AudioContextType {
 const AudioContext = createContext<AudioContextType>({
   muted: false,
   toggleMute: () => {},
-  playSound: () => {},
+  play: () => {},  // Renamed from playSound to play
   stopSound: () => {}
 });
 
@@ -35,8 +35,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     setMuted(prev => !prev);
   }, []);
 
-  // Play sound function that uses the basic HTML5 Audio API
-  const playSound = useCallback((soundPath: string) => {
+  // Play sound function that uses the basic HTML5 Audio API - renamed from playSound to play
+  const play = useCallback((soundPath: string) => {
     if (muted) return;
     
     try {
@@ -79,7 +79,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const contextValue = {
     muted,
     toggleMute,
-    playSound,
+    play,  // Renamed from playSound to play
     stopSound
   };
   

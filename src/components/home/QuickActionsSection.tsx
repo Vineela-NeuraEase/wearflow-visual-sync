@@ -15,7 +15,7 @@ const QuickActionsSection = () => {
   const { highContrastEnabled } = useAccessibility();
   const [isBreakTimerOpen, setIsBreakTimerOpen] = useState(false);
   const [isEmotionLoggerOpen, setIsEmotionLoggerOpen] = useState(false);
-  const { playSound } = useAudio();
+  const { play } = useAudio();
   
   // Primary actions - most important/frequently used
   const primaryActions = [
@@ -37,7 +37,7 @@ const QuickActionsSection = () => {
         <path d="M12 1C10.22 1 8.47991 1.52784 6.99987 2.51677C5.51983 3.50571 4.36628 4.91131 3.68509 6.55585C3.0039 8.20038 2.82567 10.01 3.17294 11.7558C3.5202 13.5016 4.37737 15.1053 5.63604 16.364C6.89472 17.6226 8.49836 18.4798 10.2442 18.8271C11.99 19.1743 13.7996 18.9961 15.4442 18.3149C17.0887 17.6337 18.4943 16.4802 19.4832 15.0001C20.4722 13.5201 21 11.78 21 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>,
       action: () => {
-        playSound('/sounds/click.mp3');
+        play('/sounds/click.mp3');
         navigate('/visual');
       },
       color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-purple-50 via-purple-100 to-purple-50 dark:from-purple-900/30 dark:via-purple-800/20 dark:to-purple-900/10',
