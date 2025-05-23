@@ -6,6 +6,10 @@ interface AudioContextType {
   toggleMute: () => void;
   playSound: (soundFile: string) => void;
   stopSound: () => void;
+  // Add backward compatibility properties
+  play: (soundFile: string) => void;
+  soundEnabled: boolean;
+  toggleSound: () => void;
 }
 
 const initialAudioContext: AudioContextType = {
@@ -13,6 +17,10 @@ const initialAudioContext: AudioContextType = {
   toggleMute: () => {},
   playSound: () => {},
   stopSound: () => {},
+  // Initialize backward compatibility properties
+  play: () => {},
+  soundEnabled: true,
+  toggleSound: () => {},
 };
 
 const AudioContext = createContext<AudioContextType>(initialAudioContext);
@@ -27,10 +35,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [muted, setMuted] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
+  // Define toggleMute function
   const toggleMute = useCallback(() => {
     setMuted((prev) => !prev);
   }, []);
 
+  // Define playSound function
   const playSound = useCallback((soundFile: string) => {
     if (muted) return;
     
@@ -47,6 +57,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     setAudio(newAudio);
   }, [muted, audio]);
 
+  // Define stopSound function
   const stopSound = useCallback(() => {
     if (audio) {
       audio.pause();
@@ -54,6 +65,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   }, [audio]);
 
+  // Cleanup effect
   useEffect(() => {
     return () => {
       if (audio) {
@@ -63,11 +75,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     };
   }, [audio]);
 
+  // Create the context value with all required properties
   const value = {
     muted,
     toggleMute,
     playSound,
     stopSound,
+    // Add backward compatibility aliases
+    play: playSound,
+    soundEnabled: !muted,
+    toggleSound: toggleMute,
   };
 
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;
