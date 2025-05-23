@@ -16,6 +16,7 @@ import ResourceLibrary from "@/pages/ResourceLibrary";
 import CalmingTools from "@/pages/CalmingTools";
 import SOSCalm from "@/pages/SOSCalm";
 import BreathingExercise from "@/pages/BreathingExercise";
+import VisualStim from "@/pages/VisualStim";
 
 // Components
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -23,8 +24,8 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AccessibilityProvider>
+      <AccessibilityProvider>
+        <AuthProvider>
           <AudioProvider>
             <Routes>
               {/* Public routes */}
@@ -34,6 +35,7 @@ function App() {
               <Route path="/tools" element={<CalmingTools />} />
               <Route path="/sos" element={<SOSCalm />} />
               <Route path="/breathing" element={<BreathingExercise />} />
+              <Route path="/visual" element={<VisualStim />} />
               
               {/* Protected routes */}
               <Route
@@ -63,8 +65,8 @@ function App() {
             </Routes>
             <Toaster />
           </AudioProvider>
-        </AccessibilityProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </AccessibilityProvider>
     </Router>
   );
 }
