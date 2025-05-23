@@ -8,13 +8,15 @@ interface BreathingCircleProps {
   technique: BreathingTechnique;
   currentPhase: number;
   progress: number;
+  remainingSeconds: number;
 }
 
 const BreathingCircle: React.FC<BreathingCircleProps> = ({ 
   isBreathing, 
   technique, 
   currentPhase, 
-  progress 
+  progress,
+  remainingSeconds
 }) => {
   // Animation properties based on current phase
   const getCircleAnimation = () => {
@@ -23,17 +25,17 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
     switch (technique.phases[currentPhase]) {
       case "Inhale":
         return {
-          scale: [1, 1.4],
+          scale: [1, 1.5],
           transition: { duration: technique.pattern[currentPhase], ease: "easeInOut" }
         };
       case "Exhale":
         return {
-          scale: [1.4, 1],
+          scale: [1.5, 1],
           transition: { duration: technique.pattern[currentPhase], ease: "easeInOut" }
         };
       case "Hold":
         return {
-          scale: currentPhase === 1 ? 1.4 : 1, // Hold after inhale or exhale
+          scale: currentPhase === 1 ? 1.5 : 1, // Hold after inhale or exhale
           transition: { duration: technique.pattern[currentPhase] }
         };
       default:
@@ -87,7 +89,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
             }}
             transition={{ duration: technique.pattern[currentPhase], repeat: isBreathing ? Infinity : 0 }}
           >
-            {isBreathing && (
+            {isBreathing ? (
               <div className="text-center">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -99,12 +101,10 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
                   {technique.phases[currentPhase]}
                 </motion.div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {Math.round((technique.pattern[currentPhase] - (progress / 100 * technique.pattern[currentPhase])) * 10) / 10}s
+                  <span className="text-xl font-bold">{remainingSeconds}</span>s
                 </div>
               </div>
-            )}
-            
-            {!isBreathing && (
+            ) : (
               <div className="text-center">
                 <p className="text-lg font-medium mb-1">Ready to begin</p>
                 <p className="text-sm text-muted-foreground">Press Start</p>

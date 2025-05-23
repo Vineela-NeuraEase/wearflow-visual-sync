@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 const BreathingInstructions: React.FC = () => {
   return (
     <>
-      <div className="mt-4">
+      <div className="mt-8">
         <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Instructions</h3>
         <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
           <li>• Find a comfortable seated position</li>

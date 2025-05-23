@@ -10,16 +10,12 @@ interface TechniqueSelectorProps {
   selectedTechnique: string;
   onTechniqueChange: (value: string) => void;
   technique: BreathingTechnique;
-  isBreathing: boolean;
-  onToggleBreathing: () => void;
 }
 
 const TechniqueSelector: React.FC<TechniqueSelectorProps> = ({
   selectedTechnique,
   onTechniqueChange,
-  technique,
-  isBreathing,
-  onToggleBreathing
+  technique
 }) => {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -59,14 +55,6 @@ const TechniqueSelector: React.FC<TechniqueSelectorProps> = ({
           </Popover>
         </div>
       </div>
-      
-      <Button 
-        onClick={onToggleBreathing}
-        variant={isBreathing ? "destructive" : "default"}
-        className="px-6"
-      >
-        {isBreathing ? "Stop" : "Start"}
-      </Button>
     </div>
   );
 };

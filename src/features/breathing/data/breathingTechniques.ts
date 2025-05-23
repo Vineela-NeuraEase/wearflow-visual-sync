@@ -3,35 +3,35 @@
 export const BREATHING_TECHNIQUES = [
   {
     id: "box",
-    name: "Box Breathing",
+    name: "Box Breathing (4-4-4-4)",
     pattern: [4, 4, 4, 4],
     phases: ["Inhale", "Hold", "Exhale", "Hold"],
-    description: "Great for focus and stress relief",
-    colors: ["#60a5fa", "#93c5fd", "#3b82f6", "#93c5fd"]
+    description: "Improves focus and reduces stress",
+    colors: ["#60a5fa", "#8b5cf6", "#10b981", "#8b5cf6"]
   },
   {
     id: "relaxing",
-    name: "Relaxing Breath",
+    name: "Relaxing Breath (4-7-8)",
     pattern: [4, 7, 8, 0],
     phases: ["Inhale", "Hold", "Exhale", ""],
-    description: "Perfect for bedtime and deep relaxation",
-    colors: ["#8b5cf6", "#a78bfa", "#7c3aed", "transparent"]
+    description: "Perfect for sleep and deep relaxation",
+    colors: ["#60a5fa", "#8b5cf6", "#10b981", "transparent"]
   },
   {
     id: "energizing",
-    name: "Energizing Breath",
+    name: "Energizing Breath (5-2-5)",
     pattern: [5, 2, 5, 0],
     phases: ["Inhale", "Hold", "Exhale", ""],
-    description: "Ideal for morning energy boost",
-    colors: ["#f59e0b", "#fbbf24", "#d97706", "transparent"]
+    description: "Boosts energy and alertness",
+    colors: ["#60a5fa", "#8b5cf6", "#10b981", "transparent"]
   },
   {
     id: "quick",
-    name: "Quick Calm",
+    name: "Quick Calm (2-1-2)",
     pattern: [2, 1, 2, 0],
     phases: ["Inhale", "Hold", "Exhale", ""],
-    description: "Quick stress relief in under a minute",
-    colors: ["#10b981", "#34d399", "#059669", "transparent"]
+    description: "Fast stress relief in under a minute",
+    colors: ["#60a5fa", "#8b5cf6", "#10b981", "transparent"]
   }
 ];
 
