@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Session, User } from '@supabase/supabase-js';
-import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextProps {
   user: User | null;
@@ -36,7 +35,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+  
+  // Simple toast replacement function
+  const showToast = (title: string, description: string, variant: string = "default") => {
+    console.log(`Toast: ${title} - ${description} (${variant})`);
+  };
 
   useEffect(() => {
     // Set up the auth state listener first
@@ -48,15 +51,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Handle auth events
         if (event === 'SIGNED_IN') {
-          toast({
-            title: "Signed in",
-            description: "You have successfully signed in",
-          });
+          showToast(
+            "Signed in",
+            "You have successfully signed in"
+          );
         } else if (event === 'SIGNED_OUT') {
-          toast({
-            title: "Signed out",
-            description: "You have been signed out",
-          });
+          showToast(
+            "Signed out",
+            "You have been signed out"
+          );
         }
       }
     );
@@ -71,26 +74,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        toast({
-          title: "Authentication error",
-          description: error.message,
-          variant: "destructive",
-        });
+        showToast(
+          "Authentication error",
+          error.message,
+          "destructive"
+        );
         return { error };
       }
       return { error: null };
     } catch (error: any) {
-      toast({
-        title: "Authentication error",
-        description: error.message,
-        variant: "destructive",
-      });
+      showToast(
+        "Authentication error",
+        error.message,
+        "destructive"
+      );
       return { error };
     }
   };
@@ -99,24 +102,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
-        toast({
-          title: "Sign up error",
-          description: error.message,
-          variant: "destructive",
-        });
+        showToast(
+          "Sign up error",
+          error.message,
+          "destructive"
+        );
         return { error, data: null };
       }
-      toast({
-        title: "Account created",
-        description: "Please check your email to verify your account",
-      });
+      showToast(
+        "Account created",
+        "Please check your email to verify your account"
+      );
       return { error: null, data };
     } catch (error: any) {
-      toast({
-        title: "Sign up error",
-        description: error.message,
-        variant: "destructive",
-      });
+      showToast(
+        "Sign up error",
+        error.message,
+        "destructive"
+      );
       return { error, data: null };
     }
   };
@@ -125,20 +128,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        toast({
-          title: "Sign out error",
-          description: error.message,
-          variant: "destructive",
-        });
+        showToast(
+          "Sign out error",
+          error.message,
+          "destructive"
+        );
         return { error };
       }
       return { error: null };
     } catch (error: any) {
-      toast({
-        title: "Sign out error",
-        description: error.message,
-        variant: "destructive",
-      });
+      showToast(
+        "Sign out error",
+        error.message,
+        "destructive"
+      );
       return { error };
     }
   };
@@ -149,24 +152,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
       if (error) {
-        toast({
-          title: "Password reset error",
-          description: error.message,
-          variant: "destructive",
-        });
+        showToast(
+          "Password reset error",
+          error.message,
+          "destructive"
+        );
         return { error };
       }
-      toast({
-        title: "Password reset email sent",
-        description: "Please check your email to reset your password",
-      });
+      showToast(
+        "Password reset email sent",
+        "Please check your email to reset your password"
+      );
       return { error: null };
     } catch (error: any) {
-      toast({
-        title: "Password reset error",
-        description: error.message,
-        variant: "destructive",
-      });
+      showToast(
+        "Password reset error",
+        error.message,
+        "destructive"
+      );
       return { error };
     }
   };
