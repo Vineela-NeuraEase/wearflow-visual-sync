@@ -25,8 +25,8 @@ function App() {
   return (
     <Router>
       <AccessibilityProvider>
-        <AuthProvider>
-          <AudioProvider>
+        <AudioProvider>
+          <AuthProvider>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Home />} />
@@ -64,8 +64,8 @@ function App() {
               />
             </Routes>
             <Toaster />
-          </AudioProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </AudioProvider>
       </AccessibilityProvider>
     </Router>
   );
