@@ -43,11 +43,6 @@ const CalmingTools = () => {
         initial="hidden"
         animate="visible"
       >
-        <div className="flex items-center mb-2">
-          <ArrowLeft className="h-5 w-5 text-primary cursor-pointer" onClick={() => navigate('/')} />
-          <h2 className="text-2xl font-semibold ml-4">Calming Tools</h2>
-        </div>
-        
         <h3 className="text-xl font-medium mt-6 mb-4">Activities</h3>
         
         <motion.div className="space-y-4" variants={containerVariants}>

@@ -1,30 +1,35 @@
 
-import { Activity, HeartPulse, Calendar, BookOpen } from "lucide-react";
-import { ToolOption } from "@/components/overlay/ToolButton";
+import { Eye, Music, Vibrate, Moon, Sparkles } from 'lucide-react';
 
-export const toolOptions: ToolOption[] = [
-  { 
-    name: "Monitor", 
-    icon: <Activity className="h-10 w-10 text-blue-500 mb-2" />, 
-    path: "/monitor", 
-    bgColor: "bg-blue-100 hover:bg-blue-200" 
+export const toolOptions = [
+  {
+    name: 'Visual',
+    icon: <Eye className="h-6 w-6 text-blue-500" />,
+    path: '/visual',
+    bgColor: 'bg-blue-100 text-blue-800',
   },
-  { 
-    name: "Support", 
-    icon: <HeartPulse className="h-10 w-10 text-red-500 mb-2" />, 
-    path: "/support", 
-    bgColor: "bg-red-100 hover:bg-red-200" 
+  {
+    name: 'Sounds',
+    icon: <Music className="h-6 w-6 text-green-500" />,
+    path: '/sounds',
+    bgColor: 'bg-green-100 text-green-800',
   },
-  { 
-    name: "Plan", 
-    icon: <Calendar className="h-10 w-10 text-purple-500 mb-2" />, 
-    path: "/plan", 
-    bgColor: "bg-purple-100 hover:bg-purple-200" 
+  {
+    name: 'Haptic',
+    icon: <Vibrate className="h-6 w-6 text-purple-500" />,
+    path: '/haptic',
+    bgColor: 'bg-purple-100 text-purple-800',
   },
-  { 
-    name: "Learn", 
-    icon: <BookOpen className="h-10 w-10 text-green-500 mb-2" />, 
-    path: "/learn", 
-    bgColor: "bg-green-100 hover:bg-green-200" 
+  {
+    name: 'Rest',
+    icon: <Moon className="h-6 w-6 text-indigo-500" />,
+    path: '/rest',
+    bgColor: 'bg-indigo-100 text-indigo-800',
+  },
+  {
+    name: 'Focus',
+    icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+    path: '/focus',
+    bgColor: 'bg-amber-100 text-amber-800',
   }
 ];
