@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { AudioProvider } from "./context/AudioContext";
+import { AccessibilityProvider } from "./context/AccessibilityContext";
 import { Toaster } from "@/components/ui/toaster";
 
 // Pages
@@ -23,44 +24,46 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AudioProvider>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/index" element={<Index />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/tools" element={<CalmingTools />} />
-            <Route path="/sos" element={<SOSCalm />} />
-            <Route path="/breathing" element={<BreathingExercise />} />
-            
-            {/* Protected routes */}
-            <Route
-              path="/warning-system"
-              element={
-                <ProtectedRoute>
-                  <WarningSystem />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/data-collection"
-              element={
-                <ProtectedRoute>
-                  <DataCollectionHub />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/resource-library"
-              element={
-                <ProtectedRoute>
-                  <ResourceLibrary />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-          <Toaster />
-        </AudioProvider>
+        <AccessibilityProvider>
+          <AudioProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/index" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/tools" element={<CalmingTools />} />
+              <Route path="/sos" element={<SOSCalm />} />
+              <Route path="/breathing" element={<BreathingExercise />} />
+              
+              {/* Protected routes */}
+              <Route
+                path="/warning-system"
+                element={
+                  <ProtectedRoute>
+                    <WarningSystem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-collection"
+                element={
+                  <ProtectedRoute>
+                    <DataCollectionHub />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/resource-library"
+                element={
+                  <ProtectedRoute>
+                    <ResourceLibrary />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+            <Toaster />
+          </AudioProvider>
+        </AccessibilityProvider>
       </AuthProvider>
     </Router>
   );
