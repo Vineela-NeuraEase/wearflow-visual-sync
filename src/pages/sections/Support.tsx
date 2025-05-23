@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Eye, Music, Vibrate, AlertTriangle } from "lucide-react";
+import { Eye, Music, Vibrate, AlertTriangle, Wind } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
 import { motion } from "framer-motion";
 
@@ -24,6 +24,14 @@ const Support = () => {
       path: "/sounds",
       color: "bg-green-100",
       gradient: "from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/30"
+    },
+    {
+      title: "Breathing",
+      description: "Guided breathing patterns",
+      icon: <Wind className="h-6 w-6 text-blue-500" />,
+      path: "/breathing",
+      color: "bg-blue-100",
+      gradient: "from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/30"
     },
     {
       title: "Haptic",

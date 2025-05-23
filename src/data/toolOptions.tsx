@@ -1,5 +1,5 @@
 
-import { Eye, Music, Vibrate, Moon, Sparkles } from 'lucide-react';
+import { Eye, Music, Vibrate, Moon, Sparkles, Wind } from 'lucide-react';
 
 export const toolOptions = [
   {
@@ -13,6 +13,12 @@ export const toolOptions = [
     icon: <Music className="h-6 w-6 text-green-500" />,
     path: '/sounds',
     bgColor: 'bg-green-100 text-green-800',
+  },
+  {
+    name: 'Breathing',
+    icon: <Wind className="h-6 w-6 text-indigo-500" />,
+    path: '/breathing',
+    bgColor: 'bg-indigo-100 text-indigo-800',
   },
   {
     name: 'Haptic',

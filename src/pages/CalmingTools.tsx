@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Music } from "lucide-react";
+import { ArrowLeft, Music, Wind } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
@@ -89,6 +89,27 @@ const CalmingTools = () => {
               <div>
                 <h3 className="font-medium text-lg">Soothing Sounds</h3>
                 <p className="text-muted-foreground">White noise and nature sounds</p>
+              </div>
+            </Card>
+          </motion.div>
+          
+          <motion.div variants={itemVariants}>
+            <Card 
+              className="bg-white rounded-xl p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/breathing')}
+            >
+              <motion.div 
+                className="bg-blue-100/70 rounded-full p-3 mr-4"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <Wind className="h-6 w-6 text-blue-500" />
+              </motion.div>
+              <div>
+                <h3 className="font-medium text-lg">Breathing Exercises</h3>
+                <p className="text-muted-foreground">Guided breathing patterns</p>
               </div>
             </Card>
           </motion.div>

@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Timer, Smile, Music } from "lucide-react";
+import { MessageCircle, Timer, Smile, Music, Wind } from "lucide-react";
 import { useAccessibility } from "@/context/AccessibilityContext";
 import { useState } from "react";
 import BreakTimerSheet from "@/components/sheets/BreakTimerSheet";
@@ -62,11 +62,11 @@ const QuickActionsSection = () => {
       borderColor: "border-b-2 border-purple-300 dark:border-purple-700"
     },
     {
-      title: "Sounds",
-      icon: <Music className={`h-5 w-5 ${highContrastEnabled ? 'text-high-contrast-secondary' : 'text-pink-500'}`} />,
-      action: () => navigate('/sounds'),
-      color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/10',
-      borderColor: "border-b-2 border-pink-300 dark:border-pink-700"
+      title: "Breathing",
+      icon: <Wind className={`h-5 w-5 ${highContrastEnabled ? 'text-high-contrast-secondary' : 'text-indigo-500'}`} />,
+      action: () => navigate('/breathing'),
+      color: highContrastEnabled ? 'bg-white border-2 border-black' : 'bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/10',
+      borderColor: "border-b-2 border-indigo-300 dark:border-indigo-700"
     }
   ];
 
