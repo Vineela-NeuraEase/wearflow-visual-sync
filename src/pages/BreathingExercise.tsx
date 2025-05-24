@@ -1,10 +1,11 @@
 
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-// Import our components and hooks with the updated paths
+// Import our components and hooks
 import BreathingCircle from "@/components/breathing/BreathingCircle";
 import TechniqueSelector from "@/components/breathing/TechniqueSelector";
 import BreathingInstructions from "@/components/breathing/BreathingInstructions";
