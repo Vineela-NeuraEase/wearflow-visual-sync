@@ -5,28 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-// Import our components and hooks
-import BreathingCircle from "@/components/breathing/BreathingCircle";
-import TechniqueSelector from "@/components/breathing/TechniqueSelector";
-import BreathingInstructions from "@/components/breathing/BreathingInstructions";
-import BreathingControls from "@/components/breathing/BreathingControls";
-import { useBreathingExercise } from "@/hooks/useBreathingExercise";
-
 const BreathingExercise = () => {
-  console.log('Enhanced Breathing Component Loaded');
-  
   const navigate = useNavigate();
-  const { 
-    selectedTechnique,
-    currentPhase,
-    isBreathing,
-    progress,
-    technique,
-    remainingSeconds,
-    handleTechniqueChange,
-    toggleBreathing,
-    resetExercise
-  } = useBreathingExercise();
 
   return (
     <div className="space-y-6">
@@ -40,29 +20,14 @@ const BreathingExercise = () => {
       </div>
       
       <Card className="p-6 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 dark:from-indigo-900/30 dark:via-blue-900/20 dark:to-purple-900/20 border-indigo-200 dark:border-indigo-800">
-        <TechniqueSelector 
-          selectedTechnique={selectedTechnique}
-          onTechniqueChange={handleTechniqueChange}
-          technique={technique}
-        />
-        
-        <div className="mt-8 mb-6">
-          <BreathingCircle 
-            isBreathing={isBreathing}
-            technique={technique}
-            currentPhase={currentPhase}
-            progress={progress}
-            remainingSeconds={remainingSeconds}
-          />
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-lg text-center mb-6">
+            Breathing exercises have been removed from this application.
+          </p>
+          <Button onClick={() => navigate('/')}>
+            Return Home
+          </Button>
         </div>
-        
-        <BreathingControls
-          isBreathing={isBreathing}
-          onToggleBreathing={toggleBreathing}
-          onReset={resetExercise}
-        />
-        
-        <BreathingInstructions />
       </Card>
     </div>
   );
