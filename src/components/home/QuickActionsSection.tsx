@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wind, Activity, Sparkles } from "lucide-react";
+import { Activity, Sparkles } from "lucide-react";
 
 const QuickActionsSection = () => {
   const navigate = useNavigate();
@@ -11,17 +11,7 @@ const QuickActionsSection = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Quick Actions</h2>
-      <div className="grid grid-cols-3 gap-4">
-        <Card 
-          className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-          onClick={() => navigate("/breathing")}
-        >
-          <div className="rounded-full bg-blue-100 dark:bg-blue-900/20 p-2 mb-2">
-            <Wind className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          </div>
-          <span className="text-sm">Breathing</span>
-        </Card>
-        
+      <div className="grid grid-cols-2 gap-4">
         <Card 
           className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-muted/50 transition-colors"
           onClick={() => navigate("/sos")}
