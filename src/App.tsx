@@ -16,6 +16,7 @@ import ResourceLibrary from "@/pages/ResourceLibrary";
 import CalmingTools from "@/pages/CalmingTools";
 import SOSCalm from "@/pages/SOSCalm";
 import VisualStim from "@/pages/VisualStim";
+import BreathingExercises from "@/pages/BreathingExercises";
 
 // Components
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -34,6 +35,7 @@ function App() {
               <Route path="/tools" element={<CalmingTools />} />
               <Route path="/sos" element={<SOSCalm />} />
               <Route path="/visual" element={<VisualStim />} />
+              <Route path="/breathing" element={<BreathingExercises />} />
               
               {/* Protected routes */}
               <Route

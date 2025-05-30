@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Eye, Music, Vibrate, AlertTriangle } from "lucide-react";
+import { Eye, Music, Vibrate, AlertTriangle, Wind } from "lucide-react";
 import MenuDrawer from "@/components/home/MenuDrawer";
 import { motion } from "framer-motion";
 
@@ -15,6 +15,14 @@ const Support = () => {
       path: "/visual",
       color: "bg-purple-100",
       gradient: "from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/30"
+    },
+    {
+      title: "Breathing",
+      description: "Guided breathing exercises",
+      icon: <Wind className="h-6 w-6 text-cyan-500" />,
+      path: "/breathing",
+      color: "bg-cyan-100",
+      gradient: "from-cyan-100 to-cyan-200 dark:from-cyan-900/40 dark:to-cyan-800/30"
     },
     {
       title: "Sounds",
@@ -51,6 +59,7 @@ const Support = () => {
   
   return (
     <div className="space-y-6">
+      
       <motion.div 
         className="flex items-center mb-4 bg-gradient-to-r from-primary/10 to-primary/5 p-3 rounded-xl"
         initial={{ opacity: 0 }}
@@ -66,7 +75,7 @@ const Support = () => {
         </div>
       </motion.div>
       
-      {/* SOS Button - Enhanced with stronger visual gradients */}
+      
       <motion.div 
         className="w-full"
         initial={{ scale: 0.95 }}
@@ -126,6 +135,7 @@ const Support = () => {
           </motion.div>
         ))}
       </motion.div>
+      
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
