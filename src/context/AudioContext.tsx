@@ -29,9 +29,9 @@ interface AudioProviderProps {
 
 // The provider component
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
-  // Use React.useState directly with fallback to prevent null errors
-  const [muted, setMuted] = React.useState(false);
-  const [audioElement, setAudioElement] = React.useState<HTMLAudioElement | null>(null);
+  // Use useState directly instead of React.useState
+  const [muted, setMuted] = useState(false);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   // Toggle mute function
   const toggleMute = useCallback(() => {
